@@ -1,0 +1,316 @@
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { AnalysisResult } from "@shared/schema";
+import { 
+  User, 
+  Heart, 
+  Briefcase, 
+  Leaf, 
+  Gem,
+  Download,
+  Share,
+  RotateCcw,
+  Star,
+  Trophy,
+  Activity,
+  Compass,
+  CheckCircle
+} from "lucide-react";
+
+interface AnalysisResultsProps {
+  result: AnalysisResult;
+  imageUrl: string;
+  onAnalyzeAnother: () => void;
+}
+
+export function AnalysisResults({ result, imageUrl, onAnalyzeAnother }: AnalysisResultsProps) {
+  const handleDownloadReport = () => {
+    // TODO: Implement PDF report generation
+    console.log("Download report functionality would be implemented here");
+  };
+
+  const handleShareResults = () => {
+    // TODO: Implement sharing functionality
+    console.log("Share results functionality would be implemented here");
+  };
+
+  return (
+    <section id="results-section" className="py-20 bg-white">
+      <div className="container mx-auto px-4">
+        <div className="max-w-6xl mx-auto">
+          
+          {/* Results Header */}
+          <div className="text-center mb-12">
+            <h3 className="text-3xl font-bold text-primary mb-4">Your Palm Reading Results</h3>
+            <p className="text-lg text-secondary">
+              AI-powered analysis of your palm reveals fascinating insights about your life
+            </p>
+          </div>
+
+          {/* Analysis Overview */}
+          <div className="grid lg:grid-cols-3 gap-8 mb-12">
+            {/* Palm Image with Annotations */}
+            <div className="lg:col-span-1">
+              <Card className="bg-slate-50">
+                <CardContent className="p-6">
+                  <h4 className="font-semibold text-primary mb-4">Analyzed Palm Image</h4>
+                  <div className="relative">
+                    <img 
+                      src={imageUrl} 
+                      alt="Analyzed palm" 
+                      className="w-full rounded-lg shadow-md"
+                      data-testid="img-analyzed-palm"
+                    />
+                    <div className="absolute top-2 right-2 bg-white bg-opacity-90 rounded-full p-2">
+                      <CheckCircle className="h-4 w-4 text-success" />
+                    </div>
+                  </div>
+                  <div className="mt-4 space-y-2">
+                    <div className="flex items-center gap-2 text-sm">
+                      <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                      <span>Heart Line</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                      <span>Head Line</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                      <span>Life Line</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                      <span>Fate Line</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Overall Summary */}
+            <div className="lg:col-span-2">
+              <div className="grid gap-6">
+                {/* Personality Overview */}
+                <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                        <User className="h-5 w-5 text-white" />
+                      </div>
+                      <h4 className="text-xl font-semibold text-primary">Personality Overview</h4>
+                    </div>
+                    <p className="text-secondary leading-relaxed mb-4" data-testid="text-personality-overview">
+                      {result.personalityOverview}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {result.traits.map((trait, index) => (
+                        <Badge key={index} variant="secondary" className="bg-blue-100 text-blue-800">
+                          {trait}
+                        </Badge>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Quick Stats */}
+                <div className="grid md:grid-cols-3 gap-4">
+                  <Card className="text-center">
+                    <CardContent className="p-4">
+                      <div className="text-2xl font-bold text-accent mb-1" data-testid="text-life-energy">
+                        {result.lifeEnergyPercentage}%
+                      </div>
+                      <div className="text-sm text-secondary">Life Energy</div>
+                    </CardContent>
+                  </Card>
+                  <Card className="text-center">
+                    <CardContent className="p-4">
+                      <div className="text-2xl font-bold text-success mb-1" data-testid="text-emotional-balance">
+                        {result.emotionalBalancePercentage}%
+                      </div>
+                      <div className="text-sm text-secondary">Emotional Balance</div>
+                    </CardContent>
+                  </Card>
+                  <Card className="text-center">
+                    <CardContent className="p-4">
+                      <div className="text-2xl font-bold text-purple-600 mb-1" data-testid="text-career-potential">
+                        {result.careerPotentialPercentage}%
+                      </div>
+                      <div className="text-sm text-secondary">Career Potential</div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Detailed Analysis Sections */}
+          <div className="grid lg:grid-cols-2 gap-8">
+            {/* Love & Relationships */}
+            <Card className="bg-rose-50 border-rose-200">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-rose-500 rounded-full flex items-center justify-center">
+                    <Heart className="h-5 w-5 text-white" />
+                  </div>
+                  <h4 className="text-xl font-semibold text-primary">Love & Relationships</h4>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <h5 className="font-medium text-primary mb-2">Heart Line Analysis</h5>
+                    <p className="text-secondary text-sm" data-testid="text-heart-line-analysis">
+                      {result.loveAndRelationships.heartLineAnalysis}
+                    </p>
+                  </div>
+                  <div>
+                    <h5 className="font-medium text-primary mb-2">Compatibility Insights</h5>
+                    <p className="text-secondary text-sm" data-testid="text-compatibility-insights">
+                      {result.loveAndRelationships.compatibilityInsights}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-rose-600">
+                    <Star className="h-4 w-4" />
+                    <span data-testid="text-relationship-strength">
+                      Relationship Strength: {result.loveAndRelationships.relationshipStrength}
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Career & Success */}
+            <Card className="bg-amber-50 border-amber-200">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center">
+                    <Briefcase className="h-5 w-5 text-white" />
+                  </div>
+                  <h4 className="text-xl font-semibold text-primary">Career & Success</h4>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <h5 className="font-medium text-primary mb-2">Professional Strengths</h5>
+                    <p className="text-secondary text-sm" data-testid="text-professional-strengths">
+                      {result.careerAndSuccess.professionalStrengths}
+                    </p>
+                  </div>
+                  <div>
+                    <h5 className="font-medium text-primary mb-2">Recommended Paths</h5>
+                    <ul className="text-secondary text-sm space-y-1">
+                      {result.careerAndSuccess.recommendedPaths.map((path, index) => (
+                        <li key={index} data-testid={`text-career-path-${index}`}>• {path}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-amber-600">
+                    <Trophy className="h-4 w-4" />
+                    <span data-testid="text-success-potential">
+                      Success Potential: {result.careerAndSuccess.successPotential}
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Health & Wellness */}
+            <Card className="bg-emerald-50 border-emerald-200">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center">
+                    <Leaf className="h-5 w-5 text-white" />
+                  </div>
+                  <h4 className="text-xl font-semibold text-primary">Health & Wellness</h4>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <h5 className="font-medium text-primary mb-2">Life Line Insights</h5>
+                    <p className="text-secondary text-sm" data-testid="text-life-line-insights">
+                      {result.healthAndWellness.lifeLineInsights}
+                    </p>
+                  </div>
+                  <div>
+                    <h5 className="font-medium text-primary mb-2">Wellness Recommendations</h5>
+                    <ul className="text-secondary text-sm space-y-1">
+                      {result.healthAndWellness.wellnessRecommendations.map((recommendation, index) => (
+                        <li key={index} data-testid={`text-wellness-recommendation-${index}`}>• {recommendation}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-emerald-600">
+                    <Activity className="h-4 w-4" />
+                    <span data-testid="text-vitality-level">
+                      Vitality Level: {result.healthAndWellness.vitalityLevel}
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Future Predictions */}
+            <Card className="bg-indigo-50 border-indigo-200">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center">
+                    <Gem className="h-5 w-5 text-white" />
+                  </div>
+                  <h4 className="text-xl font-semibold text-primary">Future Insights</h4>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <h5 className="font-medium text-primary mb-2">Near Future (1-3 Years)</h5>
+                    <p className="text-secondary text-sm" data-testid="text-near-future">
+                      {result.futureInsights.nearFuture}
+                    </p>
+                  </div>
+                  <div>
+                    <h5 className="font-medium text-primary mb-2">Life Path Direction</h5>
+                    <p className="text-secondary text-sm" data-testid="text-life-path-direction">
+                      {result.futureInsights.lifePathDirection}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-indigo-600">
+                    <Compass className="h-4 w-4" />
+                    <span data-testid="text-path-clarity">
+                      Path Clarity: {result.futureInsights.pathClarity}
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="text-center mt-12">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button 
+                onClick={handleDownloadReport}
+                className="bg-accent hover:bg-blue-600"
+                data-testid="button-download-report"
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Download Full Report
+              </Button>
+              <Button 
+                variant="outline"
+                onClick={handleShareResults}
+                data-testid="button-share-results"
+              >
+                <Share className="mr-2 h-4 w-4" />
+                Share Results
+              </Button>
+              <Button 
+                variant="ghost"
+                onClick={onAnalyzeAnother}
+                className="text-accent hover:text-blue-600"
+                data-testid="button-analyze-another"
+              >
+                <RotateCcw className="mr-2 h-4 w-4" />
+                Analyze Another Palm
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
