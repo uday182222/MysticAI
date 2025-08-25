@@ -1,5 +1,6 @@
-import { type PalmAnalysis, type InsertPalmAnalysis, type Analysis, type InsertAnalysis } from "@shared/schema";
-import { randomUUID } from "crypto";
+import { type PalmAnalysis, type InsertPalmAnalysis, type Analysis, type InsertAnalysis, palmAnalyses, analyses } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   createPalmAnalysis(analysis: InsertPalmAnalysis): Promise<PalmAnalysis>;
@@ -8,45 +9,32 @@ export interface IStorage {
   getAnalysis(id: string): Promise<Analysis | undefined>;
 }
 
-export class MemStorage implements IStorage {
-  private palmAnalyses: Map<string, PalmAnalysis>;
-  private analyses: Map<string, Analysis>;
-
-  constructor() {
-    this.palmAnalyses = new Map();
-    this.analyses = new Map();
-  }
-
+export class DatabaseStorage implements IStorage {
   async createPalmAnalysis(insertAnalysis: InsertPalmAnalysis): Promise<PalmAnalysis> {
-    const id = randomUUID();
-    const analysis: PalmAnalysis = { 
-      ...insertAnalysis, 
-      id,
-      createdAt: new Date()
-    };
-    this.palmAnalyses.set(id, analysis);
+    const [analysis] = await db
+      .insert(palmAnalyses)
+      .values(insertAnalysis)
+      .returning();
     return analysis;
   }
 
   async getPalmAnalysis(id: string): Promise<PalmAnalysis | undefined> {
-    return this.palmAnalyses.get(id);
+    const [analysis] = await db.select().from(palmAnalyses).where(eq(palmAnalyses.id, id));
+    return analysis || undefined;
   }
 
   async createAnalysis(insertAnalysis: InsertAnalysis): Promise<Analysis> {
-    const id = randomUUID();
-    const analysis: Analysis = { 
-      ...insertAnalysis, 
-      id,
-      imageUrl: insertAnalysis.imageUrl ?? null,
-      createdAt: new Date()
-    };
-    this.analyses.set(id, analysis);
+    const [analysis] = await db
+      .insert(analyses)
+      .values(insertAnalysis)
+      .returning();
     return analysis;
   }
 
   async getAnalysis(id: string): Promise<Analysis | undefined> {
-    return this.analyses.get(id);
+    const [analysis] = await db.select().from(analyses).where(eq(analyses.id, id));
+    return analysis || undefined;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
