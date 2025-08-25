@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { AnalysisResult } from "@shared/schema";
+import { PalmAnalysisResult } from "@shared/schema";
 import { 
   User, 
   Heart, 
@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 
 interface AnalysisResultsProps {
-  result: AnalysisResult;
+  result: PalmAnalysisResult;
   imageUrl: string;
   onAnalyzeAnother: () => void;
 }
@@ -104,7 +104,7 @@ export function AnalysisResults({ result, imageUrl, onAnalyzeAnother }: Analysis
                       {result.personalityOverview}
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {result.traits.map((trait, index) => (
+                      {result.traits?.map((trait, index) => (
                         <Badge key={index} variant="secondary" className="bg-blue-100 text-blue-800">
                           {trait}
                         </Badge>
@@ -159,19 +159,19 @@ export function AnalysisResults({ result, imageUrl, onAnalyzeAnother }: Analysis
                   <div>
                     <h5 className="font-medium text-primary mb-2">Heart Line Analysis</h5>
                     <p className="text-secondary text-sm" data-testid="text-heart-line-analysis">
-                      {result.loveAndRelationships.heartLineAnalysis}
+                      {result.loveAndRelationships?.heartLineAnalysis || 'Analysis not available'}
                     </p>
                   </div>
                   <div>
                     <h5 className="font-medium text-primary mb-2">Compatibility Insights</h5>
                     <p className="text-secondary text-sm" data-testid="text-compatibility-insights">
-                      {result.loveAndRelationships.compatibilityInsights}
+                      {result.loveAndRelationships?.compatibilityInsights || 'Analysis not available'}
                     </p>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-rose-600">
                     <Star className="h-4 w-4" />
                     <span data-testid="text-relationship-strength">
-                      Relationship Strength: {result.loveAndRelationships.relationshipStrength}
+                      Relationship Strength: {result.loveAndRelationships?.relationshipStrength || 'Not analyzed'}
                     </span>
                   </div>
                 </div>
@@ -191,13 +191,13 @@ export function AnalysisResults({ result, imageUrl, onAnalyzeAnother }: Analysis
                   <div>
                     <h5 className="font-medium text-primary mb-2">Professional Strengths</h5>
                     <p className="text-secondary text-sm" data-testid="text-professional-strengths">
-                      {result.careerAndSuccess.professionalStrengths}
+                      {result.careerAndSuccess?.professionalStrengths || 'Analysis not available'}
                     </p>
                   </div>
                   <div>
                     <h5 className="font-medium text-primary mb-2">Recommended Paths</h5>
                     <ul className="text-secondary text-sm space-y-1">
-                      {result.careerAndSuccess.recommendedPaths.map((path, index) => (
+                      {result.careerAndSuccess?.recommendedPaths?.map((path, index) => (
                         <li key={index} data-testid={`text-career-path-${index}`}>• {path}</li>
                       ))}
                     </ul>
@@ -205,7 +205,7 @@ export function AnalysisResults({ result, imageUrl, onAnalyzeAnother }: Analysis
                   <div className="flex items-center gap-2 text-sm text-amber-600">
                     <Trophy className="h-4 w-4" />
                     <span data-testid="text-success-potential">
-                      Success Potential: {result.careerAndSuccess.successPotential}
+                      Success Potential: {result.careerAndSuccess?.successPotential || 'Not analyzed'}
                     </span>
                   </div>
                 </div>
@@ -225,13 +225,13 @@ export function AnalysisResults({ result, imageUrl, onAnalyzeAnother }: Analysis
                   <div>
                     <h5 className="font-medium text-primary mb-2">Life Line Insights</h5>
                     <p className="text-secondary text-sm" data-testid="text-life-line-insights">
-                      {result.healthAndWellness.lifeLineInsights}
+                      {result.healthAndWellness?.lifeLineInsights || 'Analysis not available'}
                     </p>
                   </div>
                   <div>
                     <h5 className="font-medium text-primary mb-2">Wellness Recommendations</h5>
                     <ul className="text-secondary text-sm space-y-1">
-                      {result.healthAndWellness.wellnessRecommendations.map((recommendation, index) => (
+                      {result.healthAndWellness?.wellnessRecommendations?.map((recommendation, index) => (
                         <li key={index} data-testid={`text-wellness-recommendation-${index}`}>• {recommendation}</li>
                       ))}
                     </ul>
@@ -239,7 +239,7 @@ export function AnalysisResults({ result, imageUrl, onAnalyzeAnother }: Analysis
                   <div className="flex items-center gap-2 text-sm text-emerald-600">
                     <Activity className="h-4 w-4" />
                     <span data-testid="text-vitality-level">
-                      Vitality Level: {result.healthAndWellness.vitalityLevel}
+                      Vitality Level: {result.healthAndWellness?.vitalityLevel || 'Not analyzed'}
                     </span>
                   </div>
                 </div>
@@ -259,19 +259,19 @@ export function AnalysisResults({ result, imageUrl, onAnalyzeAnother }: Analysis
                   <div>
                     <h5 className="font-medium text-primary mb-2">Near Future (1-3 Years)</h5>
                     <p className="text-secondary text-sm" data-testid="text-near-future">
-                      {result.futureInsights.nearFuture}
+                      {result.futureInsights?.nearFuture || 'Analysis not available'}
                     </p>
                   </div>
                   <div>
                     <h5 className="font-medium text-primary mb-2">Life Path Direction</h5>
                     <p className="text-secondary text-sm" data-testid="text-life-path-direction">
-                      {result.futureInsights.lifePathDirection}
+                      {result.futureInsights?.lifePathDirection || 'Analysis not available'}
                     </p>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-indigo-600">
                     <Compass className="h-4 w-4" />
                     <span data-testid="text-path-clarity">
-                      Path Clarity: {result.futureInsights.pathClarity}
+                      Path Clarity: {result.futureInsights?.pathClarity || 'Not analyzed'}
                     </span>
                   </div>
                 </div>
