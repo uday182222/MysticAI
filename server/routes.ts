@@ -42,6 +42,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Analyze palm using OpenAI
       const analysisResult = await analyzePalmImage(base64Image);
       
+      // Log the raw response to debug schema mismatch
+      console.log("Raw GPT-5 Response:", JSON.stringify(analysisResult, null, 2));
+      
       // Validate the analysis result
       const validatedResult = palmAnalysisResultSchema.parse(analysisResult);
       

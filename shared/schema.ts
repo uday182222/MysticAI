@@ -23,38 +23,38 @@ export const palmAnalyses = pgTable("palm_analyses", {
 
 // Palm analysis result schema
 export const palmAnalysisResultSchema = z.object({
-  personalityOverview: z.string(),
-  traits: z.array(z.string()),
-  lifeEnergyPercentage: z.number(),
-  emotionalBalancePercentage: z.number(),
-  careerPotentialPercentage: z.number(),
+  personalityOverview: z.string().optional(),
+  traits: z.array(z.string()).optional(),
+  lifeEnergyPercentage: z.number().optional(),
+  emotionalBalancePercentage: z.number().optional(),
+  careerPotentialPercentage: z.number().optional(),
   loveAndRelationships: z.object({
-    heartLineAnalysis: z.string(),
-    compatibilityInsights: z.string(),
-    relationshipStrength: z.string(),
-  }),
+    heartLineAnalysis: z.string().optional(),
+    compatibilityInsights: z.string().optional(),
+    relationshipStrength: z.string().optional(),
+  }).optional(),
   careerAndSuccess: z.object({
-    professionalStrengths: z.string(),
-    recommendedPaths: z.array(z.string()),
-    successPotential: z.string(),
-  }),
+    professionalStrengths: z.string().optional(),
+    recommendedPaths: z.array(z.string()).optional(),
+    successPotential: z.string().optional(),
+  }).optional(),
   healthAndWellness: z.object({
-    lifeLineInsights: z.string(),
-    wellnessRecommendations: z.array(z.string()),
-    vitalityLevel: z.string(),
-  }),
+    lifeLineInsights: z.string().optional(),
+    wellnessRecommendations: z.array(z.string()).optional(),
+    vitalityLevel: z.string().optional(),
+  }).optional(),
   futureInsights: z.object({
-    nearFuture: z.string(),
-    lifePathDirection: z.string(),
-    pathClarity: z.string(),
-  }),
+    nearFuture: z.string().optional(),
+    lifePathDirection: z.string().optional(),
+    pathClarity: z.string().optional(),
+  }).optional(),
   palmLines: z.object({
-    heartLine: z.string(),
-    headLine: z.string(),
-    lifeLine: z.string(),
-    fateLine: z.string(),
-  }),
-});
+    heartLine: z.string().optional(),
+    headLine: z.string().optional(),
+    lifeLine: z.string().optional(),
+    fateLine: z.string().optional(),
+  }).optional(),
+}).passthrough();
 
 // Astrology analysis schemas
 export const astrologyInputSchema = z.object({
