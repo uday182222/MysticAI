@@ -11,11 +11,11 @@ export function HeroSection({ onStartReading }: HeroSectionProps) {
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-6xl font-bold text-primary mb-6">
-            Discover Your Future <br />
-            <span className="text-accent">Through AI Palmistry</span>
+            Discover what the Stars say with <br />
+            <span className="text-accent">Ai Precision</span>
           </h2>
           <p className="text-xl text-secondary mb-8 max-w-2xl mx-auto">
-            Upload or capture a photo of your palm and let our advanced AI analyze the lines, mounts, and patterns to reveal insights about your personality, relationships, and future.
+            Explore palmistry, astrology, and Vastu analysis powered by advanced AI to unlock mystical insights about your personality, relationships, and destiny.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button 
@@ -25,7 +25,7 @@ export function HeroSection({ onStartReading }: HeroSectionProps) {
               data-testid="button-start-reading"
             >
               <Camera className="mr-2 h-5 w-5" />
-              Start Palm Reading
+              Start Analysis
             </Button>
             <Button 
               variant="outline" 
