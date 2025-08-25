@@ -1,7 +1,7 @@
 import OpenAI from "openai";
 import { AstrologyInput, VastuInput } from "@shared/schema";
 
-// Using gpt-4o which is the latest available OpenAI model with vision capabilities
+// Using gpt-4-vision-preview which provides vision capabilities for image analysis
 const openai = new OpenAI({ 
   apiKey: process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY_ENV_VAR || "default_key"
 });
@@ -9,7 +9,7 @@ const openai = new OpenAI({
 export async function analyzePalmImage(base64Image: string): Promise<any> {
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4-vision-preview",
       messages: [
         {
           role: "system",
@@ -82,7 +82,7 @@ Focus on traditional palmistry principles including line analysis, mounts, finge
 export async function analyzeAstrologyChart(astrologyData: AstrologyInput): Promise<any> {
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4-vision-preview",
       messages: [
         {
           role: "system",
@@ -228,7 +228,7 @@ Provide a comprehensive Vastu analysis with practical recommendations for optima
     }
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4-vision-preview",
       messages,
       response_format: { type: "json_object" },
       max_tokens: 3000,
