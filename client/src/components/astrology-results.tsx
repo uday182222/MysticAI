@@ -146,19 +146,19 @@ export function AstrologyResults({ result, inputData, onAnalyzeAnother }: Astrol
                   <div>
                     <h5 className="font-medium text-primary mb-2">Overview</h5>
                     <p className="text-secondary text-sm" data-testid="text-love-overview">
-                      {result.lifeAreas.loveAndRelationships.overview}
+                      {result.lifeAreas?.loveAndRelationships?.overview || 'Analysis not available'}
                     </p>
                   </div>
                   <div>
                     <h5 className="font-medium text-primary mb-2">Compatibility</h5>
                     <p className="text-secondary text-sm" data-testid="text-love-compatibility">
-                      {result.lifeAreas.loveAndRelationships.compatibility}
+                      {result.lifeAreas?.loveAndRelationships?.compatibility || 'Analysis not available'}
                     </p>
                   </div>
                   <div>
                     <h5 className="font-medium text-primary mb-2">Romantic Tendencies</h5>
                     <p className="text-secondary text-sm" data-testid="text-romantic-tendencies">
-                      {result.lifeAreas.loveAndRelationships.romanticTendencies}
+                      {result.lifeAreas?.loveAndRelationships?.romanticTendencies || 'Analysis not available'}
                     </p>
                   </div>
                 </div>
@@ -178,19 +178,19 @@ export function AstrologyResults({ result, inputData, onAnalyzeAnother }: Astrol
                   <div>
                     <h5 className="font-medium text-primary mb-2">Career Path</h5>
                     <p className="text-secondary text-sm" data-testid="text-career-path">
-                      {result.lifeAreas.careerAndFinances.careerPath}
+                      {result.lifeAreas?.careerAndFinances?.careerPath || 'Analysis not available'}
                     </p>
                   </div>
                   <div>
                     <h5 className="font-medium text-primary mb-2">Financial Prospects</h5>
                     <p className="text-secondary text-sm" data-testid="text-financial-luck">
-                      {result.lifeAreas.careerAndFinances.financialLuck}
+                      {result.lifeAreas?.careerAndFinances?.financialLuck || 'Analysis not available'}
                     </p>
                   </div>
                   <div>
                     <h5 className="font-medium text-primary mb-2">Professional Strengths</h5>
                     <div className="flex flex-wrap gap-2">
-                      {result.lifeAreas.careerAndFinances.professionalStrengths.map((strength, index) => (
+                      {result.lifeAreas?.careerAndFinances?.professionalStrengths?.map((strength, index) => (
                         <Badge key={index} variant="secondary" className="bg-amber-100 text-amber-800">
                           {strength}
                         </Badge>
@@ -214,19 +214,19 @@ export function AstrologyResults({ result, inputData, onAnalyzeAnother }: Astrol
                   <div>
                     <h5 className="font-medium text-primary mb-2">Physical Health</h5>
                     <p className="text-secondary text-sm" data-testid="text-physical-health">
-                      {result.lifeAreas.healthAndWellbeing.physicalHealth}
+                      {result.lifeAreas?.healthAndWellbeing?.physicalHealth || 'Analysis not available'}
                     </p>
                   </div>
                   <div>
                     <h5 className="font-medium text-primary mb-2">Mental Health</h5>
                     <p className="text-secondary text-sm" data-testid="text-mental-health">
-                      {result.lifeAreas.healthAndWellbeing.mentalHealth}
+                      {result.lifeAreas?.healthAndWellbeing?.mentalHealth || 'Analysis not available'}
                     </p>
                   </div>
                   <div>
                     <h5 className="font-medium text-primary mb-2">Recommendations</h5>
                     <ul className="text-secondary text-sm space-y-1">
-                      {result.lifeAreas.healthAndWellbeing.recommendations.map((recommendation, index) => (
+                      {result.lifeAreas?.healthAndWellbeing?.recommendations?.map((recommendation, index) => (
                         <li key={index} data-testid={`text-health-recommendation-${index}`}>• {recommendation}</li>
                       ))}
                     </ul>
@@ -248,19 +248,19 @@ export function AstrologyResults({ result, inputData, onAnalyzeAnother }: Astrol
                   <div>
                     <h5 className="font-medium text-primary mb-2">Life Lesson</h5>
                     <p className="text-secondary text-sm" data-testid="text-life-lesson">
-                      {result.lifeAreas.spiritualGrowth.lifeLesson}
+                      {result.lifeAreas?.spiritualGrowth?.lifeLesson || 'Analysis not available'}
                     </p>
                   </div>
                   <div>
                     <h5 className="font-medium text-primary mb-2">Spiritual Path</h5>
                     <p className="text-secondary text-sm" data-testid="text-spiritual-path">
-                      {result.lifeAreas.spiritualGrowth.spiritualPath}
+                      {result.lifeAreas?.spiritualGrowth?.spiritualPath || 'Analysis not available'}
                     </p>
                   </div>
                   <div>
                     <h5 className="font-medium text-primary mb-2">Karma Insights</h5>
                     <p className="text-secondary text-sm" data-testid="text-karma-insights">
-                      {result.lifeAreas.spiritualGrowth.karmaInsights}
+                      {result.lifeAreas?.spiritualGrowth?.karmaInsights || 'Analysis not available'}
                     </p>
                   </div>
                 </div>
@@ -281,20 +281,20 @@ export function AstrologyResults({ result, inputData, onAnalyzeAnother }: Astrol
                 <div>
                   <h5 className="font-medium text-primary mb-3">This Year</h5>
                   <p className="text-secondary text-sm" data-testid="text-this-year">
-                    {result.predictions.thisYear}
+                    {result.predictions?.thisYear || 'Analysis not available'}
                   </p>
                 </div>
                 <div>
                   <h5 className="font-medium text-primary mb-3">Next Three Years</h5>
                   <p className="text-secondary text-sm" data-testid="text-next-three-years">
-                    {result.predictions.nextThreeYears}
+                    {result.predictions?.nextThreeYears || 'Analysis not available'}
                   </p>
                 </div>
               </div>
               <div className="mt-6">
                 <h5 className="font-medium text-primary mb-3">Major Life Events</h5>
                 <ul className="text-secondary text-sm space-y-1">
-                  {result.predictions.majorLifeEvents.map((event, index) => (
+                  {result.predictions?.majorLifeEvents?.map((event, index) => (
                     <li key={index} data-testid={`text-major-event-${index}`}>• {event}</li>
                   ))}
                 </ul>

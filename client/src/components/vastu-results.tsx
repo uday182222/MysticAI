@@ -123,7 +123,7 @@ export function VastuResults({ result, inputData, imageUrl, onAnalyzeAnother }: 
                           <span className="font-medium text-green-600">Positive</span>
                         </div>
                         <div className="space-y-1">
-                          {result.energyFlow.positive.map((area, index) => (
+                          {result.energyFlow?.positive?.map((area, index) => (
                             <Badge key={index} variant="secondary" className="bg-green-100 text-green-800 text-xs">
                               {area}
                             </Badge>
@@ -136,7 +136,7 @@ export function VastuResults({ result, inputData, imageUrl, onAnalyzeAnother }: 
                           <span className="font-medium text-red-600">Negative</span>
                         </div>
                         <div className="space-y-1">
-                          {result.energyFlow.negative.map((area, index) => (
+                          {result.energyFlow?.negative?.map((area, index) => (
                             <Badge key={index} variant="secondary" className="bg-red-100 text-red-800 text-xs">
                               {area}
                             </Badge>
@@ -149,7 +149,7 @@ export function VastuResults({ result, inputData, imageUrl, onAnalyzeAnother }: 
                           <span className="font-medium text-gray-600">Neutral</span>
                         </div>
                         <div className="space-y-1">
-                          {result.energyFlow.neutral.map((area, index) => (
+                          {result.energyFlow?.neutral?.map((area, index) => (
                             <Badge key={index} variant="secondary" className="bg-gray-100 text-gray-800 text-xs">
                               {area}
                             </Badge>
@@ -171,27 +171,27 @@ export function VastuResults({ result, inputData, imageUrl, onAnalyzeAnother }: 
                 Room-wise Analysis
               </h4>
               <div className="grid md:grid-cols-2 gap-6">
-                {result.roomAnalysis.map((room, index) => (
+                {result.roomAnalysis?.map((room, index) => (
                   <Card key={index} className="bg-slate-50">
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between mb-3">
-                        <h5 className="font-medium text-primary">{room.room}</h5>
+                        <h5 className="font-medium text-primary">{room?.room || 'Unknown Room'}</h5>
                         <div className="flex items-center gap-2">
                           <Badge variant="outline" className="text-xs">
-                            {room.direction}
+                            {room?.direction || 'N/A'}
                           </Badge>
                           <div className={`text-sm font-bold ${getScoreColor(room.score)}`}>
-                            {room.score}/100
+                            {room?.score || 0}/100
                           </div>
                         </div>
                       </div>
                       <p className="text-sm text-secondary mb-3" data-testid={`text-room-compliance-${index}`}>
-                        {room.vastuCompliance}
+                        {room?.vastuCompliance || 'Analysis not available'}
                       </p>
                       <div>
                         <h6 className="text-xs font-medium text-primary mb-1">Recommendations:</h6>
                         <ul className="text-xs text-secondary space-y-1">
-                          {room.recommendations.map((rec, recIndex) => (
+                          {room.recommendations?.map((rec, recIndex) => (
                             <li key={recIndex} data-testid={`text-room-recommendation-${index}-${recIndex}`}>
                               • {rec}
                             </li>
@@ -216,7 +216,7 @@ export function VastuResults({ result, inputData, imageUrl, onAnalyzeAnother }: 
                   <h4 className="text-xl font-semibold text-primary">Immediate Actions</h4>
                 </div>
                 <ul className="text-secondary text-sm space-y-2">
-                  {result.recommendations.immediate.map((recommendation, index) => (
+                  {result.recommendations?.immediate?.map((recommendation, index) => (
                     <li key={index} data-testid={`text-immediate-recommendation-${index}`}>
                       • {recommendation}
                     </li>
@@ -234,7 +234,7 @@ export function VastuResults({ result, inputData, imageUrl, onAnalyzeAnother }: 
                   <h4 className="text-xl font-semibold text-primary">Long-term Changes</h4>
                 </div>
                 <ul className="text-secondary text-sm space-y-2">
-                  {result.recommendations.longTerm.map((recommendation, index) => (
+                  {result.recommendations?.longTerm?.map((recommendation, index) => (
                     <li key={index} data-testid={`text-longterm-recommendation-${index}`}>
                       • {recommendation}
                     </li>
@@ -252,7 +252,7 @@ export function VastuResults({ result, inputData, imageUrl, onAnalyzeAnother }: 
                   <h4 className="text-xl font-semibold text-primary">Vastu Remedies</h4>
                 </div>
                 <ul className="text-secondary text-sm space-y-2">
-                  {result.recommendations.remedies.map((remedy, index) => (
+                  {result.recommendations?.remedies?.map((remedy, index) => (
                     <li key={index} data-testid={`text-remedy-${index}`}>
                       • {remedy}
                     </li>
@@ -276,7 +276,7 @@ export function VastuResults({ result, inputData, imageUrl, onAnalyzeAnother }: 
                   </div>
                   <h5 className="font-medium text-primary mb-2">Wealth</h5>
                   <p className="text-sm text-secondary" data-testid="text-wealth-impact">
-                    {result.prosperity.wealth}
+                    {result.prosperity?.wealth || 'Analysis not available'}
                   </p>
                 </div>
                 <div className="text-center">
@@ -285,7 +285,7 @@ export function VastuResults({ result, inputData, imageUrl, onAnalyzeAnother }: 
                   </div>
                   <h5 className="font-medium text-primary mb-2">Health</h5>
                   <p className="text-sm text-secondary" data-testid="text-health-impact">
-                    {result.prosperity.health}
+                    {result.prosperity?.health || 'Analysis not available'}
                   </p>
                 </div>
                 <div className="text-center">
@@ -294,7 +294,7 @@ export function VastuResults({ result, inputData, imageUrl, onAnalyzeAnother }: 
                   </div>
                   <h5 className="font-medium text-primary mb-2">Relationships</h5>
                   <p className="text-sm text-secondary" data-testid="text-relationships-impact">
-                    {result.prosperity.relationships}
+                    {result.prosperity?.relationships || 'Analysis not available'}
                   </p>
                 </div>
                 <div className="text-center">
@@ -303,7 +303,7 @@ export function VastuResults({ result, inputData, imageUrl, onAnalyzeAnother }: 
                   </div>
                   <h5 className="font-medium text-primary mb-2">Career</h5>
                   <p className="text-sm text-secondary" data-testid="text-career-impact">
-                    {result.prosperity.career}
+                    {result.prosperity?.career || 'Analysis not available'}
                   </p>
                 </div>
               </div>
