@@ -177,6 +177,29 @@ export default function Home() {
       )}
       
       <HowItWorksSection />
+      
+      {/* About Section */}
+      <section id="about" className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <h3 className="text-3xl font-bold text-primary mb-6">About MysticRead AI</h3>
+            <div className="space-y-6 text-lg text-secondary">
+              <p>
+                MysticRead AI is a comprehensive mystical analysis platform that combines ancient wisdom with cutting-edge artificial intelligence. Our web application offers three powerful analysis types: palmistry reading through photo analysis, detailed astrology chart interpretations, and Vastu Shastra guidance for optimal living and working spaces.
+              </p>
+              <p>
+                Using OpenAI's latest GPT-5 model, we provide accurate and personalized insights about your personality, relationships, career prospects, health, and future possibilities. Whether you're seeking guidance through palm reading, astrological charts, or Vastu principles, our AI delivers comprehensive analyses rooted in traditional mystical knowledge.
+              </p>
+              <p className="font-semibold text-primary">
+                MysticRead AI is a project proudly developed by <span className="text-accent">Team Motion Falcon</span>, 
+                bringing together expertise in artificial intelligence, traditional mystical arts, and modern web development 
+                to create an accessible platform for personal insight and guidance.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      
       <Footer />
     </div>
   );
