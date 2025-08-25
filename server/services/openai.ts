@@ -1,64 +1,74 @@
 import OpenAI from "openai";
 import { AstrologyInput, VastuInput } from "@shared/schema";
 
-// Using gpt-3.5-turbo which is available with the current API key
+// the newest OpenAI model is "gpt-5" which was released August 7, 2025. do not change this unless explicitly requested by the user
 const openai = new OpenAI({ 
   apiKey: process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY_ENV_VAR || "default_key"
 });
 
 export async function analyzePalmImage(base64Image: string): Promise<any> {
   try {
-    // Since the current API key doesn't support vision models, we'll provide a general palmistry reading
     const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "gpt-5",
       messages: [
         {
           role: "system",
-          content: `You are an expert palmist with decades of experience in palm reading and analysis. Since the user has uploaded a palm image but vision analysis is not available, provide a comprehensive general palmistry reading based on common palm characteristics. Return your analysis in JSON format with the following structure:
+          content: `You are an expert palmist with decades of experience in palm reading and analysis. Analyze the provided palm image and provide detailed insights. Return your analysis in JSON format with the following structure:
 
 {
-  "personalityOverview": "Detailed personality analysis based on common palm patterns",
+  "personalityOverview": "Detailed personality analysis based on palm features",
   "traits": ["trait1", "trait2", "trait3", "trait4"],
   "lifeEnergyPercentage": 85,
   "emotionalBalancePercentage": 92,
   "careerPotentialPercentage": 78,
   "loveAndRelationships": {
-    "heartLineAnalysis": "General heart line characteristics and relationship insights",
-    "compatibilityInsights": "Relationship compatibility guidance",
+    "heartLineAnalysis": "Analysis of the heart line and its implications",
+    "compatibilityInsights": "Relationship compatibility insights",
     "relationshipStrength": "High|Medium|Low"
   },
   "careerAndSuccess": {
-    "professionalStrengths": "Professional strengths and career guidance",
+    "professionalStrengths": "Professional strengths based on palm analysis",
     "recommendedPaths": ["path1", "path2", "path3"],
     "successPotential": "Very High|High|Medium|Low"
   },
   "healthAndWellness": {
-    "lifeLineInsights": "Life line characteristics and health guidance",
+    "lifeLineInsights": "Life line analysis and health insights",
     "wellnessRecommendations": ["recommendation1", "recommendation2", "recommendation3"],
     "vitalityLevel": "Strong|Moderate|Weak"
   },
   "futureInsights": {
-    "nearFuture": "General predictions for the next 1-3 years",
+    "nearFuture": "Predictions for the next 1-3 years",
     "lifePathDirection": "Overall life path direction insights",
     "pathClarity": "High|Medium|Low"
   },
   "palmLines": {
-    "heartLine": "General heart line characteristics",
-    "headLine": "General head line characteristics", 
-    "lifeLine": "General life line characteristics",
-    "fateLine": "General fate line characteristics"
+    "heartLine": "Description of heart line characteristics",
+    "headLine": "Description of head line characteristics", 
+    "lifeLine": "Description of life line characteristics",
+    "fateLine": "Description of fate line characteristics"
   }
 }
 
-Provide positive, constructive insights based on traditional palmistry principles. Make the reading feel personalized and meaningful.`
+Focus on traditional palmistry principles including line analysis, mounts, finger analysis, and overall palm shape. Provide positive, constructive insights while being specific and detailed.`
         },
         {
           role: "user",
-          content: "The user has uploaded a palm image for analysis. Please provide a comprehensive palmistry reading with insights about personality, relationships, career, health, and future prospects based on traditional palmistry wisdom."
+          content: [
+            {
+              type: "text",
+              text: "Please analyze this palm image and provide a comprehensive palmistry reading. Focus on the major lines, mounts, and overall palm characteristics to give insights about personality, relationships, career, health, and future prospects."
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:image/jpeg;base64,${base64Image}`
+              }
+            }
+          ],
         },
       ],
       response_format: { type: "json_object" },
-      max_tokens: 2000,
+      max_completion_tokens: 2000,
     });
 
     const result = JSON.parse(response.choices[0].message.content || "{}");
@@ -72,7 +82,7 @@ Provide positive, constructive insights based on traditional palmistry principle
 export async function analyzeAstrologyChart(astrologyData: AstrologyInput): Promise<any> {
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "gpt-5",
       messages: [
         {
           role: "system",
@@ -134,7 +144,7 @@ Provide a comprehensive astrological reading covering personality, relationships
         },
       ],
       response_format: { type: "json_object" },
-      max_tokens: 3000,
+      max_completion_tokens: 3000,
     });
 
     const result = JSON.parse(response.choices[0].message.content || "{}");
@@ -218,10 +228,10 @@ Provide a comprehensive Vastu analysis with practical recommendations for optima
     }
 
     const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "gpt-5",
       messages,
       response_format: { type: "json_object" },
-      max_tokens: 3000,
+      max_completion_tokens: 3000,
     });
 
     const result = JSON.parse(response.choices[0].message.content || "{}");
