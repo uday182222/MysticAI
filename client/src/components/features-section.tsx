@@ -29,9 +29,9 @@ export function FeaturesSection() {
     <section id="features" className="py-20 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h3 className="text-3xl font-bold text-primary mb-4">Advanced AI Palm Analysis</h3>
+          <h3 className="text-3xl font-bold text-primary mb-4">Advanced Ai Assisted Analysis</h3>
           <p className="text-lg text-secondary max-w-2xl mx-auto">
-            Our cutting-edge AI technology provides detailed insights by analyzing multiple aspects of your palm.
+            Our cutting-edge AI technology provides detailed mystical insights through palmistry, astrology, and Vastu analysis.
           </p>
         </div>
         
