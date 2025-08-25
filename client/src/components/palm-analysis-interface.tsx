@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useCamera } from "@/hooks/use-camera";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { Camera, Upload, Key, CheckCircle, X, RefreshCw, Loader2 } from "lucide-react";
+import { Camera, Upload, X, RefreshCw, Loader2 } from "lucide-react";
 import { PalmAnalysisResult } from "@shared/schema";
 
 interface PalmAnalysisInterfaceProps {
@@ -14,8 +14,6 @@ interface PalmAnalysisInterfaceProps {
 }
 
 export function PalmAnalysisInterface({ onAnalysisComplete }: PalmAnalysisInterfaceProps) {
-  const [apiKey, setApiKey] = useState(localStorage.getItem("openai_api_key") || "");
-  const [isApiKeySet, setIsApiKeySet] = useState(!!localStorage.getItem("openai_api_key"));
   const [selectedMethod, setSelectedMethod] = useState<"upload" | "camera">("upload");
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -66,16 +64,6 @@ export function PalmAnalysisInterface({ onAnalysisComplete }: PalmAnalysisInterf
     },
   });
 
-  const handleSaveApiKey = () => {
-    if (apiKey.trim()) {
-      localStorage.setItem("openai_api_key", apiKey.trim());
-      setIsApiKeySet(true);
-      toast({
-        title: "API Key Saved",
-        description: "Your OpenAI API key has been saved securely.",
-      });
-    }
-  };
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -140,43 +128,6 @@ export function PalmAnalysisInterface({ onAnalysisComplete }: PalmAnalysisInterf
             </p>
           </div>
 
-          {/* API Key Configuration - Hidden */}
-          {false && (
-            <Card className="mb-8">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <Key className="h-5 w-5 text-accent" />
-                  <h4 className="text-lg font-semibold text-primary">OpenAI API Configuration</h4>
-                </div>
-                <p className="text-sm text-secondary mb-4">
-                  Enter your OpenAI API key to enable palm analysis. Your key is stored securely in your browser and never shared.
-                </p>
-                <div className="flex gap-3">
-                  <Input
-                    type="password"
-                    placeholder="sk-..."
-                    value={apiKey}
-                    onChange={(e) => setApiKey(e.target.value)}
-                    className="flex-1"
-                    data-testid="input-api-key"
-                  />
-                  <Button 
-                    onClick={handleSaveApiKey}
-                    disabled={!apiKey.trim()}
-                    data-testid="button-save-api-key"
-                  >
-                    Save Key
-                  </Button>
-                </div>
-                {isApiKeySet && (
-                  <div className="flex items-center gap-2 mt-3">
-                    <CheckCircle className="h-4 w-4 text-success" />
-                    <span className="text-sm text-success">API key configured successfully</span>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
 
           {/* Upload Methods */}
           <div className="grid md:grid-cols-2 gap-6 mb-8">
@@ -345,7 +296,7 @@ export function PalmAnalysisInterface({ onAnalysisComplete }: PalmAnalysisInterf
               {/* Photo Guidelines */}
               <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
                 <h5 className="font-medium text-primary mb-3 flex items-center">
-                  <CheckCircle className="text-accent mr-2 h-4 w-4" />
+                  <Camera className="text-accent mr-2 h-4 w-4" />
                   Photo Guidelines for Best Results
                 </h5>
                 <ul className="text-sm text-secondary space-y-1">
