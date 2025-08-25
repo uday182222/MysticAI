@@ -64,7 +64,7 @@ Discover your future through advanced AI-powered mystical analysis including pal
         
         <div className="border-t border-slate-700 mt-12 pt-8 text-center text-slate-400">
           <p>&copy; 2025 MysticRead AI. All rights reserved. Built with advanced AI technology.</p>
-          <p className="mt-2">Part of MOtion Falcon</p>
+          <p className="mt-2">Made by Motion Falcon</p>
         </div>
       </div>
     </footer>
