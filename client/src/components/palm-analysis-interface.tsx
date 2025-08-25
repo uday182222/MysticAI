@@ -36,13 +36,18 @@ export function PalmAnalysisInterface({ onAnalysisComplete }: PalmAnalysisInterf
       const formData = new FormData();
       formData.append('palmImage', imageFile);
       
-      // Set API key in headers if provided
-      const headers: Record<string, string> = {};
-      if (apiKey) {
-        headers['X-OpenAI-API-Key'] = apiKey;
+      // Use fetch directly for file uploads (apiRequest doesn't handle FormData properly)
+      const response = await fetch("/api/palm/analyze", {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
+      
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`${response.status}: ${text}`);
       }
       
-      const response = await apiRequest("POST", "/api/palm/analyze", formData);
       return response.json();
     },
     onSuccess: (data) => {
