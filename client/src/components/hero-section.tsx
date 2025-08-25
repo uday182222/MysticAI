@@ -11,8 +11,8 @@ export function HeroSection({ onStartReading }: HeroSectionProps) {
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-6xl font-bold text-primary mb-6">
-            Discover what the Stars say with <br />
-            <span className="text-accent">Ai Precision</span>
+            Discover what the Stars say <br />
+            <span className="text-accent">with Ai Precision</span>
           </h2>
           <p className="text-xl text-secondary mb-8 max-w-2xl mx-auto">
             Explore palmistry, astrology, and Vastu analysis powered by advanced AI to unlock mystical insights about your personality, relationships, and destiny.
