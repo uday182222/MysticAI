@@ -2,18 +2,18 @@ export function HowItWorksSection() {
   const steps = [
     {
       number: "1",
-      title: "Capture or Upload",
-      description: "Take a clear photo of your palm using your device camera or upload an existing image from your gallery.",
+      title: "Choose Analysis",
+      description: "Select from palmistry (upload palm photos), astrology (enter birth details), or Vastu analysis (describe your space).",
     },
     {
       number: "2",
       title: "AI Analysis",
-      description: "Our GPT-4 Vision model analyzes your palm lines, mounts, and patterns with incredible accuracy and detail.",
+      description: "Our GPT-5 model analyzes your data using ancient wisdom combined with advanced artificial intelligence.",
     },
     {
       number: "3",
       title: "Get Insights",
-      description: "Receive comprehensive insights about your personality, relationships, career, health, and future prospects.",
+      description: "Receive comprehensive mystical insights about your personality, relationships, career, health, and future prospects.",
     },
   ];
 
@@ -21,9 +21,9 @@ export function HowItWorksSection() {
     <section id="how-it-works" className="py-20 bg-slate-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h3 className="text-3xl font-bold text-primary mb-4">How PalmRead AI Works</h3>
+          <h3 className="text-3xl font-bold text-primary mb-4">How MysticRead AI Works</h3>
           <p className="text-lg text-secondary max-w-2xl mx-auto">
-            Our advanced AI technology combines traditional palmistry knowledge with modern computer vision
+            Our advanced AI technology combines ancient mystical wisdom with modern artificial intelligence
           </p>
         </div>
         
