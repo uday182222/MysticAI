@@ -115,14 +115,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Analyze Vastu layout endpoint
   app.post("/api/vastu/analyze", upload.single('layoutImage'), async (req, res) => {
     try {
-      console.log("Request body:", req.body);
-      console.log("Request file:", req.file ? "File present" : "No file");
-      
       // Parse the Vastu data from the form
       let vastuDataRaw;
       try {
         vastuDataRaw = JSON.parse(req.body.vastuData || '{}');
-        console.log("Parsed vastu data:", vastuDataRaw);
       } catch (parseError) {
         console.error("JSON parse error:", parseError);
         return res.status(400).json({ message: "Invalid JSON in vastuData" });
