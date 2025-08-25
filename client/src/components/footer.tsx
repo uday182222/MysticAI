@@ -11,10 +11,10 @@ export function Footer() {
               <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
                 <Hand className="text-white text-sm" />
               </div>
-              <h5 className="text-xl font-bold">PalmRead AI</h5>
+              <h5 className="text-xl font-bold">MysticRead AI</h5>
             </Link>
             <p className="text-slate-400 mb-6">
-              Discover your future through advanced AI-powered palmistry analysis.
+Discover your future through advanced AI-powered mystical analysis including palmistry, astrology, and Vastu.
             </p>
             <div className="flex space-x-4">
               <a href="#" className="text-slate-400 hover:text-white transition-colors">
@@ -61,7 +61,7 @@ export function Footer() {
         </div>
         
         <div className="border-t border-slate-700 mt-12 pt-8 text-center text-slate-400">
-          <p>&copy; 2024 PalmRead AI. All rights reserved. Built with advanced AI technology.</p>
+          <p>&copy; 2024 MysticRead AI. All rights reserved. Built with advanced AI technology.</p>
         </div>
       </div>
     </footer>

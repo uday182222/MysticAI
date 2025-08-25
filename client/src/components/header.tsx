@@ -15,7 +15,7 @@ export function Header() {
             <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
               <Hand className="text-white text-sm" />
             </div>
-            <h1 className="text-xl font-bold text-primary">PalmRead AI</h1>
+            <h1 className="text-xl font-bold text-primary">MysticRead AI</h1>
           </Link>
           
           <div className="hidden md:flex items-center space-x-6">

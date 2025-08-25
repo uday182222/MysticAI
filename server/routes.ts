@@ -1,8 +1,16 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertPalmAnalysisSchema, analysisResultSchema } from "@shared/schema";
-import { analyzePalmImage } from "./services/openai";
+import { 
+  insertPalmAnalysisSchema, 
+  palmAnalysisResultSchema, 
+  astrologyInputSchema, 
+  astrologyAnalysisResultSchema,
+  vastuInputSchema,
+  vastuAnalysisResultSchema,
+  insertAnalysisSchema 
+} from "@shared/schema";
+import { analyzePalmImage, analyzeAstrologyChart, analyzeVastu } from "./services/openai";
 import multer from "multer";
 
 // Configure multer for image uploads
@@ -35,7 +43,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const analysisResult = await analyzePalmImage(base64Image);
       
       // Validate the analysis result
-      const validatedResult = analysisResultSchema.parse(analysisResult);
+      const validatedResult = palmAnalysisResultSchema.parse(analysisResult);
       
       // Store the analysis
       const palmAnalysis = await storage.createPalmAnalysis({
@@ -60,6 +68,92 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/palm/:id", async (req, res) => {
     try {
       const analysis = await storage.getPalmAnalysis(req.params.id);
+      if (!analysis) {
+        return res.status(404).json({ message: "Analysis not found" });
+      }
+      res.json(analysis);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to retrieve analysis" });
+    }
+  });
+
+  // Analyze astrology chart endpoint
+  app.post("/api/astrology/analyze", async (req, res) => {
+    try {
+      const astrologyData = astrologyInputSchema.parse(req.body);
+      
+      // Analyze astrology chart using OpenAI
+      const analysisResult = await analyzeAstrologyChart(astrologyData);
+      
+      // Validate the analysis result
+      const validatedResult = astrologyAnalysisResultSchema.parse(analysisResult);
+      
+      // Store the analysis
+      const analysis = await storage.createAnalysis({
+        type: "astrology",
+        imageUrl: null,
+        inputData: astrologyData,
+        analysisResult: validatedResult,
+      });
+
+      res.json({
+        id: analysis.id,
+        result: validatedResult,
+        inputData: astrologyData,
+      });
+    } catch (error) {
+      console.error("Astrology analysis error:", error);
+      res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Failed to analyze astrology chart" 
+      });
+    }
+  });
+
+  // Analyze Vastu layout endpoint
+  app.post("/api/vastu/analyze", upload.single('layoutImage'), async (req, res) => {
+    try {
+      const vastuData = vastuInputSchema.parse(JSON.parse(req.body.vastuData || '{}'));
+      
+      let base64Image: string | undefined;
+      let imageUrl: string | null = null;
+      
+      if (req.file) {
+        base64Image = req.file.buffer.toString('base64');
+        imageUrl = `data:${req.file.mimetype};base64,${base64Image}`;
+      }
+      
+      // Analyze Vastu using OpenAI
+      const analysisResult = await analyzeVastu(vastuData, base64Image);
+      
+      // Validate the analysis result
+      const validatedResult = vastuAnalysisResultSchema.parse(analysisResult);
+      
+      // Store the analysis
+      const analysis = await storage.createAnalysis({
+        type: "vastu",
+        imageUrl,
+        inputData: vastuData,
+        analysisResult: validatedResult,
+      });
+
+      res.json({
+        id: analysis.id,
+        result: validatedResult,
+        inputData: vastuData,
+        imageUrl,
+      });
+    } catch (error) {
+      console.error("Vastu analysis error:", error);
+      res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Failed to analyze Vastu layout" 
+      });
+    }
+  });
+
+  // Get analysis by ID (generic endpoint)
+  app.get("/api/analysis/:id", async (req, res) => {
+    try {
+      const analysis = await storage.getAnalysis(req.params.id);
       if (!analysis) {
         return res.status(404).json({ message: "Analysis not found" });
       }

@@ -7,10 +7,10 @@ import { useCamera } from "@/hooks/use-camera";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Camera, Upload, Key, CheckCircle, X, RefreshCw, Loader2 } from "lucide-react";
-import { AnalysisResult } from "@shared/schema";
+import { PalmAnalysisResult } from "@shared/schema";
 
 interface PalmAnalysisInterfaceProps {
-  onAnalysisComplete: (result: AnalysisResult, imageUrl: string) => void;
+  onAnalysisComplete: (result: PalmAnalysisResult, imageUrl: string) => void;
 }
 
 export function PalmAnalysisInterface({ onAnalysisComplete }: PalmAnalysisInterfaceProps) {
@@ -125,7 +125,7 @@ export function PalmAnalysisInterface({ onAnalysisComplete }: PalmAnalysisInterf
   };
 
   return (
-    <section id="upload-section" className="py-20 bg-background">
+    <div className="py-8">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
@@ -377,6 +377,6 @@ export function PalmAnalysisInterface({ onAnalysisComplete }: PalmAnalysisInterf
           </Card>
         </div>
       </div>
-    </section>
+    </div>
   );
 }

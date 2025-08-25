@@ -1,6 +1,12 @@
 # Overview
 
-PalmRead AI is a web application that uses artificial intelligence to analyze palm images and provide personalized palmistry readings. The app allows users to upload or capture photos of their palms, which are then analyzed by OpenAI's GPT-4 Vision model to generate comprehensive insights about personality traits, relationships, career prospects, health, and future predictions.
+MysticRead AI is a comprehensive web application that uses artificial intelligence to provide personalized mystical insights through three main analysis types:
+
+1. **Palmistry Analysis** - Upload or capture palm photos analyzed by AI to reveal personality traits, relationships, career prospects, health, and future predictions
+2. **Astrology Chart Analysis** - Generate detailed astrological readings using birth date, time, and location for comprehensive life insights
+3. **Vastu Analysis** - Analyze home and office layouts according to Vastu Shastra principles for optimal energy flow and prosperity
+
+All analyses are powered by OpenAI's GPT-5 model for accurate and detailed insights.
 
 # User Preferences
 
@@ -14,19 +20,21 @@ Preferred communication style: Simple, everyday language.
 - **Styling**: Tailwind CSS with CSS variables for theming and responsive design
 - **State Management**: TanStack Query for server state management and caching
 - **Routing**: Wouter for lightweight client-side routing
+- **Navigation**: Tabbed interface for switching between palmistry, astrology, and Vastu analysis
 - **Camera Integration**: Custom camera hook using Web APIs for palm image capture
 
 ## Backend Architecture
 - **Server Framework**: Express.js with TypeScript running on Node.js
 - **API Design**: RESTful endpoints with structured error handling and request logging
 - **File Processing**: Multer middleware for handling image uploads with validation
-- **AI Integration**: OpenAI GPT-4 Vision API for palm analysis with structured response validation
-- **Data Validation**: Zod schemas for runtime type checking and API response validation
+- **AI Integration**: OpenAI GPT-5 API for multi-modal analysis including vision and text processing with structured response validation
+- **Data Validation**: Zod schemas for runtime type checking and API response validation for all analysis types
 
 ## Data Storage Solutions
 - **Development Storage**: In-memory storage using Map data structures for rapid prototyping
 - **Production Ready**: Drizzle ORM configured with PostgreSQL schema for persistent data storage
-- **Schema Definition**: Shared schema between frontend and backend for type consistency
+- **Schema Definition**: Shared schema between frontend and backend for type consistency across all analysis types
+- **Multi-Analysis Support**: Unified storage system handling palmistry, astrology, and Vastu analysis data
 
 ## Authentication and Authorization
 - **Current Implementation**: No authentication system implemented
@@ -42,7 +50,9 @@ Preferred communication style: Simple, everyday language.
 # External Dependencies
 
 ## AI and Machine Learning
-- **OpenAI API**: GPT-4 Vision model for palm image analysis and interpretation
+- **OpenAI API**: GPT-5 model for comprehensive analysis across palmistry, astrology, and Vastu
+- **Vision Analysis**: Advanced image processing for palm reading and Vastu layout analysis
+- **Text Analysis**: Sophisticated astrological chart interpretation using birth data
 - **Image Processing**: Base64 encoding for image transmission to AI service
 
 ## Database and Storage
@@ -65,3 +75,22 @@ Preferred communication style: Simple, everyday language.
 ## Third-Party Services
 - **Replit Integration**: Development environment optimizations and deployment tools
 - **Font Loading**: Google Fonts integration for typography (Architects Daughter, DM Sans, Fira Code, Geist Mono)
+
+# Recent Changes
+
+## August 2025 - Multi-Analysis Platform Launch
+- **Expanded Analysis Types**: Added astrology chart analysis and Vastu layout analysis alongside palmistry
+- **Enhanced AI Integration**: Upgraded to OpenAI GPT-5 model for improved accuracy across all analysis types
+- **Tabbed Interface**: Implemented intuitive tab-based navigation between palmistry, astrology, and Vastu analysis
+- **Comprehensive Schemas**: Developed detailed data schemas for all three analysis types with structured results
+- **Advanced UI Components**: Created specialized interfaces for each analysis type with appropriate input methods
+- **Results Management**: Built separate results components for displaying palmistry, astrology, and Vastu insights
+- **Unified Storage**: Extended storage system to handle multiple analysis types with consistent data management
+- **Brand Evolution**: Renamed from PalmRead AI to MysticRead AI to reflect expanded capabilities
+
+## Initial Launch
+- Initial setup of palmistry web application
+- Integration of OpenAI Vision API for palm analysis
+- Implementation of camera capture and image upload functionality
+- Development of comprehensive UI components using Shadcn/ui
+- Setup of backend API endpoints for palm image analysis
