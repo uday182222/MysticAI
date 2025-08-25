@@ -102,7 +102,6 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       <Header />
       <HeroSection onStartReading={handleStartReading} />
-      <FeaturesSection />
       
       {/* Analysis Section */}
       <section id="analysis-section" className="py-20 bg-background">
@@ -146,6 +145,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+      
+      <FeaturesSection />
       
       {/* Results Section */}
       {hasAnyResults && (
