@@ -1,7 +1,6 @@
 import OpenAI from "openai";
 import { AstrologyInput, VastuInput } from "@shared/schema";
 
-// the newest OpenAI model is "gpt-5" which was released August 7, 2025. do not change this unless explicitly requested by the user
 const openai = new OpenAI({ 
   apiKey: process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY_ENV_VAR || "default_key"
 });
@@ -9,7 +8,7 @@ const openai = new OpenAI({
 export async function analyzePalmImage(base64Image: string): Promise<any> {
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-5",
+      model: "gpt-4o",
       messages: [
         {
           role: "system",
@@ -82,7 +81,7 @@ Focus on traditional palmistry principles including line analysis, mounts, finge
 export async function analyzeAstrologyChart(astrologyData: AstrologyInput): Promise<any> {
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-5",
+      model: "gpt-4o",
       messages: [
         {
           role: "system",
@@ -228,7 +227,7 @@ Provide a comprehensive Vastu analysis with practical recommendations for optima
     }
 
     const response = await openai.chat.completions.create({
-      model: "gpt-5",
+      model: "gpt-4o",
       messages,
       response_format: { type: "json_object" },
       max_completion_tokens: 3000,
