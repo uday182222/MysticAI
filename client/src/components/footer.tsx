@@ -33,6 +33,8 @@ Discover your future through advanced AI-powered mystical analysis including pal
             <h6 className="font-semibold mb-4">Features</h6>
             <ul className="space-y-2 text-slate-400">
               <li><a href="#" className="hover:text-white transition-colors">Palm Analysis</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Astrology</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Vaastu</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Camera Integration</a></li>
               <li><a href="#" className="hover:text-white transition-colors">AI Technology</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Detailed Reports</a></li>
