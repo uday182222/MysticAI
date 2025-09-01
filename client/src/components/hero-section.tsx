@@ -21,79 +21,72 @@ export function HeroSection() {
   };
   
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Mystical Background Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background"></div>
-      
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-6xl mx-auto text-center">
-          {/* Mystical Runes */}
-          <div className="flex justify-center space-x-8 mb-8 opacity-70">
-            <span className="rune text-2xl">ᚱ</span>
-            <span className="rune text-3xl">ᚢ</span>
-            <span className="rune text-2xl">ᚾ</span>
-            <span className="rune text-3xl">ᚨ</span>
-            <span className="rune text-2xl">ᚱ</span>
-          </div>
+    <section className="relative min-h-screen flex items-center justify-center subtle-bg">
+      <div className="container mx-auto px-6 py-20">
+        <div className="max-w-4xl mx-auto text-center">
           
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-mystical font-bold mb-8 leading-tight">
-            <span className="glow">Unveil the</span><br />
-            <span className="text-transparent bg-gradient-to-r from-purple-400 via-violet-400 to-indigo-400 bg-clip-text">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-heading font-bold mb-8 leading-tight">
+            <span className="text-foreground">Unveil the</span><br />
+            <span className="text-gradient">
               Cosmic Mysteries
             </span><br />
-            <span className="glow text-4xl md:text-5xl lg:text-6xl">within You</span>
+            <span className="text-foreground text-3xl md:text-4xl lg:text-5xl">within You</span>
           </h1>
           
-          <p className="text-xl md:text-2xl font-ethereal text-secondary mb-12 max-w-4xl mx-auto leading-relaxed opacity-90">
-            Journey through the ethereal realms of 
-            <span className="text-purple-400 glow"> palmistry</span>,
-            <span className="text-violet-400 glow"> astrology</span>, and
-            <span className="text-indigo-400 glow"> mystical arts</span>. 
-            Guided by ancient wisdom and cosmic AI precision, discover the secrets of your soul's blueprint.
+          <p className="text-lg md:text-xl text-secondary-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
+            Discover the secrets of your destiny through ancient wisdom powered by AI. 
+            Explore palmistry, astrology, Vastu, numerology, and tarot readings with unprecedented accuracy and insight.
           </p>
-          {/* Mystical Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
+          
+          {/* Clean Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
             <Button 
               onClick={handleGetStarted}
               size="lg" 
-              className="mystical-btn px-12 py-6 text-xl font-mystical tracking-wide relative overflow-hidden group"
+              className="accent-gradient text-white px-8 py-4 text-lg font-medium hover:opacity-90 transition-all hover-lift"
               data-testid="button-get-started"
             >
-              <span className="relative z-10 flex items-center">
-                {user ? (
-                  <>
-                    <ArrowRight className="mr-3 h-6 w-6" />
-                    Enter the Realm
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="mr-3 h-6 w-6" />
-                    Begin Your Journey
-                  </>
-                )}
-              </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-violet-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              {user ? (
+                <>
+                  <ArrowRight className="mr-2 h-5 w-5" />
+                  Go to Dashboard
+                </>
+              ) : (
+                <>
+                  <Sparkles className="mr-2 h-5 w-5" />
+                  Start Your Reading
+                </>
+              )}
             </Button>
             
             <Button 
               variant="outline" 
               size="lg"
-              className="glow-border px-12 py-6 text-xl font-ethereal bg-transparent text-purple-300 hover:text-purple-100 border-purple-400/50 hover:border-purple-300 transition-all duration-300 hover:bg-purple-900/20"
+              className="border-border text-foreground hover:bg-muted px-8 py-4 text-lg font-medium hover-lift"
               data-testid="button-learn-more"
               onClick={() => {
                 document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
               }}
             >
-              <Eye className="mr-3 h-6 w-6" />
-              Explore the Arts
+              <Eye className="mr-2 h-5 w-5" />
+              Learn More
             </Button>
           </div>
           
-          {/* Mystical Separator */}
-          <div className="flex justify-center items-center space-x-4 opacity-60">
-            <div className="w-16 h-px bg-gradient-to-r from-transparent to-purple-400"></div>
-            <span className="rune text-lg">✦</span>
-            <div className="w-16 h-px bg-gradient-to-r from-purple-400 to-transparent"></div>
+          {/* Clean Stats or Features Preview */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-gradient mb-2">5</div>
+              <div className="text-sm text-muted-foreground">Mystical Arts</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-gradient mb-2">AI</div>
+              <div className="text-sm text-muted-foreground">Powered Analysis</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-gradient mb-2">∞</div>
+              <div className="text-sm text-muted-foreground">Possibilities</div>
+            </div>
           </div>
         </div>
       </div>

@@ -9,27 +9,27 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <header className="bg-background/95 backdrop-blur-md border-b border-purple-500/20 sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-4">
+    <header className="bg-background/95 backdrop-blur-md border-b border-border sticky top-0 z-50">
+      <div className="container mx-auto px-6 py-4">
         <nav className="flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-3 group">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center shadow-lg group-hover:shadow-purple-500/30 transition-all duration-300">
+            <div className="w-10 h-10 rounded-full accent-gradient flex items-center justify-center shadow-lg hover:scale-105 transition-all duration-300">
               <Sparkles className="text-white h-5 w-5" />
             </div>
-            <h1 className="text-2xl font-mystical font-bold text-purple-200 group-hover:text-purple-100 transition-colors duration-300">
-              MysticRead<span className="text-purple-400"> AI</span>
+            <h1 className="text-2xl font-heading font-bold text-foreground group-hover:text-accent transition-colors duration-300">
+              MysticRead<span className="text-accent"> AI</span>
             </h1>
           </Link>
           
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="font-ethereal text-purple-300 hover:text-purple-100 transition-colors duration-300 hover:glow">
-              Sacred Arts
+            <a href="#features" className="text-secondary-foreground hover:text-foreground transition-colors duration-300">
+              Features
             </a>
-            <a href="#how-it-works" className="font-ethereal text-purple-300 hover:text-purple-100 transition-colors duration-300 hover:glow">
-              The Ritual
+            <a href="#how-it-works" className="text-secondary-foreground hover:text-foreground transition-colors duration-300">
+              How It Works
             </a>
-            <a href="#about" className="font-ethereal text-purple-300 hover:text-purple-100 transition-colors duration-300 hover:glow">
-              Mysteries
+            <a href="#about" className="text-secondary-foreground hover:text-foreground transition-colors duration-300">
+              About
             </a>
           </div>
           
