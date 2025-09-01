@@ -3,6 +3,13 @@ import { pgTable, text, varchar, timestamp, jsonb, integer, boolean, decimal } f
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// Session table for express-session storage
+export const session = pgTable("session", {
+  sid: varchar("sid").primaryKey(),
+  sess: jsonb("sess").notNull(),
+  expire: timestamp("expire").notNull(),
+});
+
 // Users table for authentication and account management
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
