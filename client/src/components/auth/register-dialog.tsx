@@ -39,8 +39,10 @@ export function RegisterDialog({ isOpen, onClose, onSwitchToLogin }: RegisterDia
       setPassword("");
       setFirstName("");
       setLastName("");
-      // Navigate to dashboard after successful registration
-      setLocation("/dashboard");
+      // Navigate to dashboard after successful registration with a small delay to ensure user state is updated
+      setTimeout(() => {
+        setLocation("/dashboard");
+      }, 100);
     } catch (error) {
       toast({
         title: "Registration Failed",

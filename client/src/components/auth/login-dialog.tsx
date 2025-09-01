@@ -35,8 +35,10 @@ export function LoginDialog({ isOpen, onClose, onSwitchToRegister }: LoginDialog
       onClose();
       setEmail("");
       setPassword("");
-      // Navigate to dashboard after successful login
-      setLocation("/dashboard");
+      // Navigate to dashboard after successful login with a small delay to ensure user state is updated
+      setTimeout(() => {
+        setLocation("/dashboard");
+      }, 100);
     } catch (error) {
       toast({
         title: "Login Failed",
