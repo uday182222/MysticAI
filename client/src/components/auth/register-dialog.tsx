@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "./auth-context";
+import { useLocation } from "wouter";
 import { Loader2 } from "lucide-react";
 
 interface RegisterDialogProps {
@@ -21,6 +22,7 @@ export function RegisterDialog({ isOpen, onClose, onSwitchToLogin }: RegisterDia
   const [isLoading, setIsLoading] = useState(false);
   const { register } = useAuth();
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,6 +39,8 @@ export function RegisterDialog({ isOpen, onClose, onSwitchToLogin }: RegisterDia
       setPassword("");
       setFirstName("");
       setLastName("");
+      // Navigate to dashboard after successful registration
+      setLocation("/dashboard");
     } catch (error) {
       toast({
         title: "Registration Failed",

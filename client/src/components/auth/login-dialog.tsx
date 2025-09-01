@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "./auth-context";
+import { useLocation } from "wouter";
 import { Loader2 } from "lucide-react";
 
 interface LoginDialogProps {
@@ -19,6 +20,7 @@ export function LoginDialog({ isOpen, onClose, onSwitchToRegister }: LoginDialog
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,6 +35,8 @@ export function LoginDialog({ isOpen, onClose, onSwitchToRegister }: LoginDialog
       onClose();
       setEmail("");
       setPassword("");
+      // Navigate to dashboard after successful login
+      setLocation("/dashboard");
     } catch (error) {
       toast({
         title: "Login Failed",
