@@ -194,16 +194,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Validate the analysis result
       const validatedResult = palmAnalysisResultSchema.parse(analysisResult);
       
-      // Store the analysis
-      const palmAnalysis = await storage.createPalmAnalysis({
+      // Store the analysis in main analyses table for chat compatibility
+      const analysis = await storage.createAnalysis({
+        type: "palm",
         imageUrl: `data:${req.file.mimetype};base64,${base64Image}`,
+        inputData: { imageUrl: `data:${req.file.mimetype};base64,${base64Image}` },
         analysisResult: validatedResult,
       });
 
       res.json({
-        id: palmAnalysis.id,
+        id: analysis.id,
         result: validatedResult,
-        imageUrl: palmAnalysis.imageUrl,
+        imageUrl: analysis.imageUrl,
       });
     } catch (error) {
       console.error("Palm analysis error:", error);
