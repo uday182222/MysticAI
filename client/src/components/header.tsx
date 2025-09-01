@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { Hand } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
@@ -9,25 +9,27 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
+    <header className="bg-background/95 backdrop-blur-md border-b border-purple-500/20 sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4">
         <nav className="flex items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
-              <Hand className="text-white text-sm" />
+          <Link href="/" className="flex items-center space-x-3 group">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center shadow-lg group-hover:shadow-purple-500/30 transition-all duration-300">
+              <Sparkles className="text-white h-5 w-5" />
             </div>
-            <h1 className="text-xl font-bold text-primary">MysticRead AI</h1>
+            <h1 className="text-2xl font-mystical font-bold text-purple-200 group-hover:text-purple-100 transition-colors duration-300">
+              MysticRead<span className="text-purple-400"> AI</span>
+            </h1>
           </Link>
           
-          <div className="hidden md:flex items-center space-x-6">
-            <a href="#features" className="text-secondary hover:text-primary transition-colors">
-              Features
+          <div className="hidden md:flex items-center space-x-8">
+            <a href="#features" className="font-ethereal text-purple-300 hover:text-purple-100 transition-colors duration-300 hover:glow">
+              Sacred Arts
             </a>
-            <a href="#how-it-works" className="text-secondary hover:text-primary transition-colors">
-              How It Works
+            <a href="#how-it-works" className="font-ethereal text-purple-300 hover:text-purple-100 transition-colors duration-300 hover:glow">
+              The Ritual
             </a>
-            <a href="#about" className="text-secondary hover:text-primary transition-colors">
-              About
+            <a href="#about" className="font-ethereal text-purple-300 hover:text-purple-100 transition-colors duration-300 hover:glow">
+              Mysteries
             </a>
           </div>
           
