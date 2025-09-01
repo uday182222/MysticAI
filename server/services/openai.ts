@@ -227,6 +227,63 @@ Provide helpful, insightful responses about the ${analysisType} analysis. Be spe
   }
 }
 
+export async function generateMysticalChatResponse(
+  userMessage: string,
+  conversationHistory: { role: string; content: string }[]
+): Promise<string> {
+  try {
+    const systemPrompt = `You are a wise and knowledgeable mystical assistant specializing in palmistry, astrology, numerology, tarot, Vastu Shastra, and spiritual guidance. You provide insightful, compassionate, and practical advice while maintaining a mystical yet grounded approach.
+
+Your expertise includes:
+- Palmistry: Understanding palm lines, mounts, and hand shapes
+- Astrology: Vedic and Western astrology, birth charts, planetary influences
+- Numerology: Life path numbers, destiny numbers, personal year cycles
+- Tarot: Card meanings, spreads, intuitive interpretations
+- Vastu Shastra: Space energy, directional influences, home harmony
+- Spiritual Guidance: Meditation, chakras, energy healing, personal growth
+
+Guidelines:
+- Provide thoughtful, personalized responses based on traditional wisdom
+- Be encouraging and positive while being honest about challenges
+- Offer practical advice that can be applied to daily life
+- Reference relevant mystical principles when appropriate
+- Maintain a warm, supportive, and wise tone
+- If asked about specific analysis results, help users understand and apply insights
+- Encourage users to trust their intuition while providing guidance
+
+Keep responses concise but meaningful, typically 2-4 paragraphs unless more detail is specifically requested.`;
+
+    // Build the conversation context with proper typing
+    const messages: { role: "system" | "user" | "assistant"; content: string }[] = [
+      {
+        role: "system",
+        content: systemPrompt
+      },
+      // Add conversation history with proper role typing
+      ...conversationHistory.slice(-10).map(msg => ({
+        role: (msg.role === "user" || msg.role === "assistant") ? msg.role as "user" | "assistant" : "user",
+        content: msg.content
+      })),
+      {
+        role: "user" as const,
+        content: userMessage
+      }
+    ];
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // Using gpt-4o as it's the most reliable model available
+      messages,
+      max_completion_tokens: 800,
+      temperature: 0.7,
+    });
+
+    return response.choices[0].message.content || "I apologize, but I couldn't generate a response. Please try again.";
+  } catch (error) {
+    console.error("OpenAI mystical chat error:", error);
+    throw new Error("Failed to generate mystical chat response: " + (error as Error).message);
+  }
+}
+
 export async function analyzeVastu(vastuData: VastuInput, base64Image?: string): Promise<any> {
   try {
     const messages: any[] = [

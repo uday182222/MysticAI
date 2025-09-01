@@ -16,7 +16,7 @@ import {
   userRegistrationSchema,
   userLoginSchema
 } from "@shared/schema";
-import { analyzePalmImage, analyzeAstrologyChart, analyzeVastu, analyzeNumerology, analyzeTarot, generateChatResponse } from "./services/openai";
+import { analyzePalmImage, analyzeAstrologyChart, analyzeVastu, analyzeNumerology, analyzeTarot, generateChatResponse, generateMysticalChatResponse } from "./services/openai";
 import multer from "multer";
 import bcrypt from "bcryptjs";
 import session from "express-session";
@@ -455,6 +455,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Send message error:", error);
       res.status(500).json({ message: "Failed to send message" });
+    }
+  });
+
+  // General AI Chat endpoint for mystical guidance
+  app.post("/api/chat", async (req: any, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+
+      const { message, conversationHistory } = req.body;
+
+      if (!message || typeof message !== 'string') {
+        return res.status(400).json({ message: "Message is required" });
+      }
+
+      // Generate AI response using OpenAI for general mystical chat
+      const aiResponse = await generateMysticalChatResponse(
+        message, 
+        conversationHistory || []
+      );
+
+      res.json({ response: aiResponse });
+    } catch (error) {
+      console.error("Mystical chat error:", error);
+      res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Failed to generate chat response" 
+      });
     }
   });
 

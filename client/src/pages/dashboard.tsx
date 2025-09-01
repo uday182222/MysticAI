@@ -7,6 +7,7 @@ import { AstrologyAnalysisInterface } from "@/components/astrology-analysis-inte
 import { VastuAnalysisInterface } from "@/components/vastu-analysis-interface";
 import { NumerologyAnalysisInterface } from "@/components/numerology-analysis-interface";
 import { TarotAnalysisInterface } from "@/components/tarot-analysis-interface";
+import { AiChatInterface } from "@/components/ai-chat-interface";
 import { AnalysisResults } from "@/components/analysis-results";
 import { AstrologyResults } from "@/components/astrology-results";
 import { VastuResults } from "@/components/vastu-results";
@@ -16,7 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/components/auth/auth-context";
-import { Hand, Stars, Home as HomeIcon, Calculator, Zap, User, Sparkles } from "lucide-react";
+import { Hand, Stars, Home as HomeIcon, Calculator, Zap, User, Sparkles, MessageCircle } from "lucide-react";
 import { PalmAnalysisResult, AstrologyAnalysisResult, AstrologyInput, VastuAnalysisResult, VastuInput, NumerologyAnalysisResult, NumerologyInput, TarotAnalysisResult, TarotInput } from "@shared/schema";
 
 export default function Dashboard() {
@@ -220,6 +221,10 @@ export default function Dashboard() {
                     <TabsContent value="tarot" className="mt-0">
                       <TarotAnalysisInterface onAnalysisComplete={handleTarotAnalysisComplete} />
                     </TabsContent>
+                    
+                    <TabsContent value="chat" className="mt-0">
+                      <AiChatInterface />
+                    </TabsContent>
                   </div>
                 </div>
 
@@ -286,6 +291,18 @@ export default function Dashboard() {
                           <div className="text-left">
                             <div className="font-medium">Tarot</div>
                             <div className="text-xs text-muted-foreground">Card divination</div>
+                          </div>
+                        </TabsTrigger>
+                        
+                        <TabsTrigger 
+                          value="chat" 
+                          className="w-full justify-start gap-3 p-4 h-auto data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-secondary-foreground hover:text-foreground hover:bg-muted transition-all"
+                          data-testid="tab-chat"
+                        >
+                          <MessageCircle className="h-5 w-5" />
+                          <div className="text-left">
+                            <div className="font-medium">AI Chat</div>
+                            <div className="text-xs text-muted-foreground">Mystical guidance</div>
                           </div>
                         </TabsTrigger>
                       </TabsList>
