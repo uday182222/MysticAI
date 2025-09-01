@@ -159,47 +159,47 @@ export default function Dashboard() {
       <Header />
       
       {/* Dashboard Header */}
-      <section className="pt-24 pb-12 bg-gradient-to-r from-blue-50 to-purple-50">
-        <div className="container mx-auto px-4">
+      <section className="pt-24 pb-12 subtle-bg">
+        <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center">
             <div className="flex items-center justify-center mb-4">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
+              <div className="w-16 h-16 accent-gradient rounded-full flex items-center justify-center shadow-lg">
                 <User className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h1 className="text-4xl font-bold text-primary mb-4">
+            <h1 className="text-4xl font-heading font-bold text-foreground mb-4">
               Welcome back{user?.firstName ? `, ${user.firstName}` : ''}!
             </h1>
-            <p className="text-xl text-secondary mb-6">
+            <p className="text-xl text-secondary-foreground mb-6">
               Your personal mystical insights dashboard. Choose an analysis type to begin your journey of discovery.
             </p>
             <div className="flex items-center justify-center gap-2">
-              <Sparkles className="h-5 w-5 text-yellow-500" />
-              <span className="text-sm text-secondary">All analysis types available</span>
+              <Sparkles className="h-5 w-5 text-gradient" />
+              <span className="text-sm text-muted-foreground">All analysis types available</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* Analysis Section */}
-      <section id="analysis-section" className="py-20 bg-white">
-        <div className="container mx-auto px-4">
+      <section id="analysis-section" className="py-20 bg-card">
+        <div className="container mx-auto px-6">
           <div className="max-w-6xl mx-auto">
             
             {/* Section Header */}
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-primary mb-4">Choose Your Analysis</h2>
-              <p className="text-lg text-secondary max-w-2xl mx-auto">
+              <h2 className="text-3xl font-heading font-bold text-foreground mb-4">Choose Your Analysis</h2>
+              <p className="text-lg text-secondary-foreground max-w-2xl mx-auto">
                 Select from our comprehensive range of mystical analysis tools. Each provides unique insights into different aspects of your life.
               </p>
             </div>
 
             {/* Analysis Tabs */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid grid-cols-5 gap-2 h-auto p-2 bg-gray-50 rounded-xl mb-8">
+              <TabsList className="grid grid-cols-5 gap-2 h-auto p-2 bg-muted rounded-xl mb-8">
                 <TabsTrigger 
                   value="palm" 
-                  className="flex flex-col items-center gap-2 p-4 data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                  className="flex flex-col items-center gap-2 p-4 data-[state=active]:bg-card data-[state=active]:shadow-sm text-secondary-foreground data-[state=active]:text-foreground"
                   data-testid="tab-palm"
                 >
                   <Hand className="h-6 w-6" />
@@ -207,7 +207,7 @@ export default function Dashboard() {
                 </TabsTrigger>
                 <TabsTrigger 
                   value="astrology" 
-                  className="flex flex-col items-center gap-2 p-4 data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                  className="flex flex-col items-center gap-2 p-4 data-[state=active]:bg-card data-[state=active]:shadow-sm text-secondary-foreground data-[state=active]:text-foreground"
                   data-testid="tab-astrology"
                 >
                   <Stars className="h-6 w-6" />
@@ -215,7 +215,7 @@ export default function Dashboard() {
                 </TabsTrigger>
                 <TabsTrigger 
                   value="vastu" 
-                  className="flex flex-col items-center gap-2 p-4 data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                  className="flex flex-col items-center gap-2 p-4 data-[state=active]:bg-card data-[state=active]:shadow-sm text-secondary-foreground data-[state=active]:text-foreground"
                   data-testid="tab-vastu"
                 >
                   <HomeIcon className="h-6 w-6" />
@@ -223,7 +223,7 @@ export default function Dashboard() {
                 </TabsTrigger>
                 <TabsTrigger 
                   value="numerology" 
-                  className="flex flex-col items-center gap-2 p-4 data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                  className="flex flex-col items-center gap-2 p-4 data-[state=active]:bg-card data-[state=active]:shadow-sm text-secondary-foreground data-[state=active]:text-foreground"
                   data-testid="tab-numerology"
                 >
                   <Calculator className="h-6 w-6" />
@@ -231,7 +231,7 @@ export default function Dashboard() {
                 </TabsTrigger>
                 <TabsTrigger 
                   value="tarot" 
-                  className="flex flex-col items-center gap-2 p-4 data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                  className="flex flex-col items-center gap-2 p-4 data-[state=active]:bg-card data-[state=active]:shadow-sm text-secondary-foreground data-[state=active]:text-foreground"
                   data-testid="tab-tarot"
                 >
                   <Zap className="h-6 w-6" />
@@ -240,7 +240,7 @@ export default function Dashboard() {
               </TabsList>
 
               {/* Tab Content */}
-              <div className="bg-white rounded-xl border border-gray-200 p-8">
+              <div className="clean-card p-8">
                 <TabsContent value="palm" className="mt-0">
                   <PalmAnalysisInterface onAnalysisComplete={handlePalmAnalysisComplete} />
                 </TabsContent>
