@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AstrologyAnalysisResult, AstrologyInput } from "@shared/schema";
 import { KundliChart } from "./kundli-chart";
+import { PostAnalysisChat } from "./post-analysis-chat";
 import { 
   Stars, 
   Sun, 
@@ -24,9 +25,19 @@ interface AstrologyResultsProps {
   result: AstrologyAnalysisResult;
   inputData: AstrologyInput;
   onAnalyzeAnother: () => void;
+  analysisId?: string;
+  isAuthenticated?: boolean;
+  onLoginRequired?: () => void;
 }
 
-export function AstrologyResults({ result, inputData, onAnalyzeAnother }: AstrologyResultsProps) {
+export function AstrologyResults({ 
+  result, 
+  inputData, 
+  onAnalyzeAnother, 
+  analysisId, 
+  isAuthenticated = false, 
+  onLoginRequired 
+}: AstrologyResultsProps) {
   const handleDownloadReport = () => {
     const reportContent = `ASTROLOGY CHART ANALYSIS REPORT\n\n` +
       `Birth Details:\n` +
@@ -342,6 +353,19 @@ export function AstrologyResults({ result, inputData, onAnalyzeAnother }: Astrol
               </div>
             </CardContent>
           </Card>
+
+          {/* Post-Analysis Chat */}
+          {analysisId && (
+            <div className="mb-12">
+              <PostAnalysisChat
+                analysisId={analysisId}
+                analysisType="astrology"
+                analysisData={result}
+                isAuthenticated={isAuthenticated}
+                onLoginRequired={onLoginRequired || (() => {})}
+              />
+            </div>
+          )}
 
           {/* Action Buttons */}
           <div className="text-center">

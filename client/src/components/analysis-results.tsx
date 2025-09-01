@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PalmAnalysisResult } from "@shared/schema";
+import { PostAnalysisChat } from "./post-analysis-chat";
 import { 
   User, 
   Heart, 
@@ -22,9 +23,19 @@ interface AnalysisResultsProps {
   result: PalmAnalysisResult;
   imageUrl: string;
   onAnalyzeAnother: () => void;
+  analysisId?: string;
+  isAuthenticated?: boolean;
+  onLoginRequired?: () => void;
 }
 
-export function AnalysisResults({ result, imageUrl, onAnalyzeAnother }: AnalysisResultsProps) {
+export function AnalysisResults({ 
+  result, 
+  imageUrl, 
+  onAnalyzeAnother, 
+  analysisId, 
+  isAuthenticated = false, 
+  onLoginRequired 
+}: AnalysisResultsProps) {
   const handleDownloadReport = () => {
     const reportContent = `PALM READING ANALYSIS REPORT
 
@@ -310,6 +321,19 @@ export function AnalysisResults({ result, imageUrl, onAnalyzeAnother }: Analysis
               </CardContent>
             </Card>
           </div>
+
+          {/* Post-Analysis Chat */}
+          {analysisId && (
+            <div className="mb-12">
+              <PostAnalysisChat
+                analysisId={analysisId}
+                analysisType="palm"
+                analysisData={result}
+                isAuthenticated={isAuthenticated}
+                onLoginRequired={onLoginRequired || (() => {})}
+              />
+            </div>
+          )}
 
           {/* Action Buttons */}
           <div className="text-center mt-12">

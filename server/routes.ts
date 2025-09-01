@@ -16,7 +16,7 @@ import {
   userRegistrationSchema,
   userLoginSchema
 } from "@shared/schema";
-import { analyzePalmImage, analyzeAstrologyChart, analyzeVastu, analyzeNumerology, analyzeTarot } from "./services/openai";
+import { analyzePalmImage, analyzeAstrologyChart, analyzeVastu, analyzeNumerology, analyzeTarot, generateChatResponse } from "./services/openai";
 import multer from "multer";
 import bcrypt from "bcryptjs";
 import session from "express-session";
@@ -383,15 +383,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Chat conversation endpoints
-  app.get("/api/chat/conversation/:analysisId", async (req, res) => {
+  // Chat conversation endpoints  
+  app.get("/api/chat/conversation/:analysisId", async (req: any, res) => {
     try {
-      if (!req.isAuthenticated()) {
+      if (!req.session.userId) {
         return res.status(401).json({ message: "Authentication required" });
       }
 
       const { analysisId } = req.params;
-      const userId = req.user!.id;
+      const userId = req.session.userId;
 
       // Get or create conversation
       let conversation = await storage.getChatConversationByAnalysis(analysisId, userId);
@@ -399,7 +399,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         conversation = await storage.createChatConversation({
           analysisId,
           userId,
-          analysisType: 'palm', // Will be updated based on actual analysis
         });
       }
 
@@ -413,15 +412,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Send chat message
-  app.post("/api/chat/send", async (req, res) => {
+  // Send chat message (simplified without payment)
+  app.post("/api/chat/send", async (req: any, res) => {
     try {
-      if (!req.isAuthenticated()) {
+      if (!req.session.userId) {
         return res.status(401).json({ message: "Authentication required" });
       }
 
       const { analysisId, analysisType, message, analysisData } = req.body;
-      const userId = req.user!.id;
+      const userId = req.session.userId;
 
       // Get or create conversation
       let conversation = await storage.getChatConversationByAnalysis(analysisId, userId);
@@ -429,31 +428,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         conversation = await storage.createChatConversation({
           analysisId,
           userId,
-          analysisType,
         });
       }
 
-      // Count user messages in this conversation
+      // Get current messages
       const messages = await storage.getChatMessagesByConversation(conversation.id);
-      const userMessagesCount = messages.filter(m => m.role === 'user').length;
-
-      // Check if user can send message (5 free questions, then requires credits)
-      const user = await storage.getUser(userId);
-      const freeQuestionsRemaining = Math.max(0, 5 - userMessagesCount);
-      
-      if (freeQuestionsRemaining === 0) {
-        // Need to use credits
-        if (user!.credits < 5) {
-          return res.status(402).json({ 
-            message: "Insufficient credits. Purchase 5 credits for $1 to continue chatting.",
-            creditsRequired: 5,
-            creditsAvailable: user!.credits
-          });
-        }
-        
-        // Deduct credits
-        await storage.updateUserCredits(userId, user!.credits - 5);
-      }
 
       // Save user message
       await storage.createChatMessage({
@@ -479,27 +458,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Purchase credits endpoint
-  app.post("/api/payments/purchase-credits", async (req, res) => {
-    try {
-      if (!req.isAuthenticated()) {
-        return res.status(401).json({ message: "Authentication required" });
-      }
-
-      // For now, we'll create a simple payment intent for $1 = 5 credits
-      // This will be enhanced with Stripe integration
-      const paymentIntent = {
-        amount: 100, // $1.00 in cents
-        credits: 5,
-        checkoutUrl: "/checkout?credits=5&amount=100"
-      };
-
-      res.json(paymentIntent);
-    } catch (error) {
-      console.error("Purchase credits error:", error);
-      res.status(500).json({ message: "Failed to create payment" });
-    }
-  });
 
   const httpServer = createServer(app);
   return httpServer;

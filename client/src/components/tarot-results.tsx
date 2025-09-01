@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TarotAnalysisResult, TarotInput } from "@shared/schema";
+import { PostAnalysisChat } from "./post-analysis-chat";
 import { 
   Zap, 
   Sparkles, 
@@ -21,9 +22,19 @@ interface TarotResultsProps {
   result: TarotAnalysisResult;
   inputData: TarotInput;
   onAnalyzeAnother: () => void;
+  analysisId?: string;
+  isAuthenticated?: boolean;
+  onLoginRequired?: () => void;
 }
 
-export function TarotResults({ result, inputData, onAnalyzeAnother }: TarotResultsProps) {
+export function TarotResults({ 
+  result, 
+  inputData, 
+  onAnalyzeAnother, 
+  analysisId, 
+  isAuthenticated = false, 
+  onLoginRequired 
+}: TarotResultsProps) {
   const handleDownloadReport = () => {
     const reportContent = `TAROT READING REPORT\\n\\n` +
       `Spread Type: ${result.spreadType}\\n` +
@@ -258,6 +269,19 @@ export function TarotResults({ result, inputData, onAnalyzeAnother }: TarotResul
               </CardContent>
             </Card>
           </div>
+
+          {/* Post-Analysis Chat */}
+          {analysisId && (
+            <div className="mb-12">
+              <PostAnalysisChat
+                analysisId={analysisId}
+                analysisType="tarot"
+                analysisData={result}
+                isAuthenticated={isAuthenticated}
+                onLoginRequired={onLoginRequired || (() => {})}
+              />
+            </div>
+          )}
 
           {/* Action Buttons */}
           <div className="text-center">

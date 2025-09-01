@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { NumerologyAnalysisResult, NumerologyInput } from "@shared/schema";
+import { PostAnalysisChat } from "./post-analysis-chat";
 import { 
   Calculator, 
   Hash, 
@@ -21,9 +22,19 @@ interface NumerologyResultsProps {
   result: NumerologyAnalysisResult;
   inputData: NumerologyInput;
   onAnalyzeAnother: () => void;
+  analysisId?: string;
+  isAuthenticated?: boolean;
+  onLoginRequired?: () => void;
 }
 
-export function NumerologyResults({ result, inputData, onAnalyzeAnother }: NumerologyResultsProps) {
+export function NumerologyResults({ 
+  result, 
+  inputData, 
+  onAnalyzeAnother, 
+  analysisId, 
+  isAuthenticated = false, 
+  onLoginRequired 
+}: NumerologyResultsProps) {
   const handleDownloadReport = () => {
     const reportContent = `NUMEROLOGY ANALYSIS REPORT\\n\\n` +
       `Analysis Type: ${inputData.analysisType}\\n` +
@@ -330,6 +341,19 @@ export function NumerologyResults({ result, inputData, onAnalyzeAnother }: Numer
               </CardContent>
             </Card>
           </div>
+
+          {/* Post-Analysis Chat */}
+          {analysisId && (
+            <div className="mb-12">
+              <PostAnalysisChat
+                analysisId={analysisId}
+                analysisType="numerology"
+                analysisData={result}
+                isAuthenticated={isAuthenticated}
+                onLoginRequired={onLoginRequired || (() => {})}
+              />
+            </div>
+          )}
 
           {/* Action Buttons */}
           <div className="text-center">

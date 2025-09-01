@@ -37,7 +37,6 @@ export function PostAnalysisChat({
   onLoginRequired 
 }: PostAnalysisChatProps) {
   const [message, setMessage] = useState("");
-  const [showPayment, setShowPayment] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -71,36 +70,14 @@ export function PostAnalysisChat({
       queryClient.invalidateQueries({ queryKey: ['/api/auth/me'] });
     },
     onError: (error: any) => {
-      if (error.message?.includes('credits')) {
-        setShowPayment(true);
-      } else {
-        toast({
-          title: "Error",
-          description: "Failed to send message. Please try again.",
-          variant: "destructive"
-        });
-      }
-    }
-  });
-
-  // Purchase credits mutation
-  const purchaseCreditsMutation = useMutation({
-    mutationFn: async () => {
-      const response = await apiRequest("POST", "/api/payments/purchase-credits");
-      return response.json();
-    },
-    onSuccess: (data) => {
-      // Redirect to Stripe checkout
-      window.location.href = data.checkoutUrl;
-    },
-    onError: () => {
       toast({
-        title: "Payment Error",
-        description: "Failed to initiate payment. Please try again.",
+        title: "Error",
+        description: "Failed to send message. Please try again.",
         variant: "destructive"
       });
     }
   });
+
 
   const handleSendMessage = () => {
     if (!isAuthenticated) {
@@ -113,9 +90,6 @@ export function PostAnalysisChat({
     sendMessageMutation.mutate(message.trim());
   };
 
-  const handlePurchaseCredits = () => {
-    purchaseCreditsMutation.mutate();
-  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -142,7 +116,7 @@ export function PostAnalysisChat({
               </p>
               <div className="flex items-center justify-center gap-2 text-sm text-blue-700">
                 <Sparkles className="h-4 w-4" />
-                <span>5 Free Questions • $1 for 5 More</span>
+                <span>Ask unlimited questions about your analysis</span>
               </div>
             </div>
             <Button onClick={onLoginRequired} className="bg-blue-600 hover:bg-blue-700">
@@ -155,10 +129,7 @@ export function PostAnalysisChat({
   }
 
   const messages = conversation?.messages || [];
-  const freeQuestionsUsed = messages.filter((m: ChatMessage) => m.role === 'user').length;
-  const creditsAvailable = userCredits?.credits || 0;
-  const freeQuestionsRemaining = Math.max(0, 5 - freeQuestionsUsed);
-  const canSendMessage = freeQuestionsRemaining > 0 || creditsAvailable >= 5;
+  const canSendMessage = true; // Simplified - no limits for now
 
   return (
     <Card className="bg-gradient-to-br from-purple-50 to-blue-50 border-purple-200">
@@ -169,17 +140,10 @@ export function PostAnalysisChat({
             <span>Chat About Your {analysisType} Analysis</span>
           </div>
           <div className="flex items-center gap-2">
-            {freeQuestionsRemaining > 0 ? (
-              <Badge variant="secondary" className="bg-green-100 text-green-800">
-                <Sparkles className="h-3 w-3 mr-1" />
-                {freeQuestionsRemaining} Free Left
-              </Badge>
-            ) : (
-              <Badge variant="secondary" className="bg-orange-100 text-orange-800">
-                <Coins className="h-3 w-3 mr-1" />
-                {creditsAvailable} Credits
-              </Badge>
-            )}
+            <Badge variant="secondary" className="bg-green-100 text-green-800">
+              <Sparkles className="h-3 w-3 mr-1" />
+              Unlimited Chat
+            </Badge>
           </div>
         </CardTitle>
       </CardHeader>
@@ -229,32 +193,6 @@ export function PostAnalysisChat({
 
         <Separator />
 
-        {/* Payment Prompt */}
-        {showPayment && !canSendMessage && (
-          <div className="p-4 bg-orange-50 border-t border-orange-200">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Lock className="h-5 w-5 text-orange-600" />
-                <div>
-                  <p className="text-sm font-medium text-orange-800">
-                    You've used your 5 free questions
-                  </p>
-                  <p className="text-xs text-orange-600">
-                    Purchase 5 more questions for just $1 to continue chatting
-                  </p>
-                </div>
-              </div>
-              <Button 
-                onClick={handlePurchaseCredits}
-                disabled={purchaseCreditsMutation.isPending}
-                className="bg-orange-500 hover:bg-orange-600"
-              >
-                <CreditCard className="h-4 w-4 mr-2" />
-                {purchaseCreditsMutation.isPending ? 'Processing...' : 'Buy $1'}
-              </Button>
-            </div>
-          </div>
-        )}
 
         {/* Input Area */}
         <div className="p-4 bg-gray-50">
@@ -262,14 +200,14 @@ export function PostAnalysisChat({
             <Input
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder={canSendMessage ? "Ask about your analysis..." : "Purchase credits to continue chatting"}
+              placeholder="Ask about your analysis..."
               onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-              disabled={!canSendMessage || sendMessageMutation.isPending}
+              disabled={sendMessageMutation.isPending}
               className="flex-1"
             />
             <Button 
               onClick={handleSendMessage}
-              disabled={!canSendMessage || !message.trim() || sendMessageMutation.isPending}
+              disabled={!message.trim() || sendMessageMutation.isPending}
               className="bg-purple-600 hover:bg-purple-700"
             >
               {sendMessageMutation.isPending ? (
@@ -279,19 +217,6 @@ export function PostAnalysisChat({
               )}
             </Button>
           </div>
-          
-          {!canSendMessage && (
-            <div className="mt-2 text-center">
-              <Button 
-                variant="outline"
-                onClick={() => setShowPayment(true)}
-                className="text-purple-600 border-purple-200 hover:bg-purple-50"
-              >
-                <CreditCard className="h-4 w-4 mr-2" />
-                Get 5 More Questions for $1
-              </Button>
-            </div>
-          )}
         </div>
       </CardContent>
     </Card>

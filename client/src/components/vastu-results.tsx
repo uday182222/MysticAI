@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { VastuAnalysisResult, VastuInput } from "@shared/schema";
+import { PostAnalysisChat } from "./post-analysis-chat";
 import { 
   Home, 
   TrendingUp, 
@@ -27,9 +28,20 @@ interface VastuResultsProps {
   inputData: VastuInput;
   imageUrl?: string;
   onAnalyzeAnother: () => void;
+  analysisId?: string;
+  isAuthenticated?: boolean;
+  onLoginRequired?: () => void;
 }
 
-export function VastuResults({ result, inputData, imageUrl, onAnalyzeAnother }: VastuResultsProps) {
+export function VastuResults({ 
+  result, 
+  inputData, 
+  imageUrl, 
+  onAnalyzeAnother, 
+  analysisId, 
+  isAuthenticated = false, 
+  onLoginRequired 
+}: VastuResultsProps) {
   const handleDownloadReport = () => {
     const reportContent = `VASTU ANALYSIS REPORT\n\n` +
       `Layout Details:\n` +
@@ -347,6 +359,19 @@ export function VastuResults({ result, inputData, imageUrl, onAnalyzeAnother }: 
               </div>
             </CardContent>
           </Card>
+
+          {/* Post-Analysis Chat */}
+          {analysisId && (
+            <div className="mb-12">
+              <PostAnalysisChat
+                analysisId={analysisId}
+                analysisType="vastu"
+                analysisData={result}
+                isAuthenticated={isAuthenticated}
+                onLoginRequired={onLoginRequired || (() => {})}
+              />
+            </div>
+          )}
 
           {/* Action Buttons */}
           <div className="text-center">
