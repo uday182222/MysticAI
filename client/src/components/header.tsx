@@ -3,6 +3,7 @@ import { Hand } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { AuthHeader } from "@/components/auth/auth-header";
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -28,6 +29,10 @@ export function Header() {
             <a href="#about" className="text-secondary hover:text-primary transition-colors">
               About
             </a>
+          </div>
+          
+          <div className="hidden md:flex">
+            <AuthHeader />
           </div>
           
           <div className="md:hidden">

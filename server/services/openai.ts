@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { AstrologyInput, VastuInput } from "@shared/schema";
+import { AstrologyInput, VastuInput, NumerologyInput } from "@shared/schema";
 
 const openai = new OpenAI({ 
   apiKey: process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY_ENV_VAR || "default_key"
@@ -238,5 +238,84 @@ Provide a comprehensive Vastu analysis with practical recommendations for optima
   } catch (error) {
     console.error("OpenAI Vastu analysis error:", error);
     throw new Error("Failed to analyze Vastu layout: " + (error as Error).message);
+  }
+}
+
+export async function analyzeNumerology(numerologyData: NumerologyInput): Promise<any> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: `You are an expert numerologist with deep knowledge of Pythagorean and Chaldean numerology systems. Analyze the provided information and calculate core numbers with detailed insights. Return your analysis in JSON format with the following structure:
+
+{
+  "personalityOverview": "Comprehensive personality analysis based on numerological calculations",
+  "coreNumbers": {
+    "lifePathNumber": {
+      "number": 7,
+      "meaning": "Detailed meaning of the life path number",
+      "traits": ["trait1", "trait2", "trait3", "trait4"]
+    },
+    "destinyNumber": {
+      "number": 5,
+      "meaning": "Detailed meaning of the destiny number",
+      "purpose": "Life purpose and ultimate goals"
+    },
+    "soulUrgeNumber": {
+      "number": 3,
+      "meaning": "Detailed meaning of the soul urge number",
+      "desires": "Inner desires and motivations"
+    },
+    "personalityNumber": {
+      "number": 9,
+      "meaning": "Detailed meaning of the personality number",
+      "impression": "How others perceive you"
+    }
+  },
+  "lifeAreas": {
+    "strengths": ["strength1", "strength2", "strength3", "strength4"],
+    "challenges": ["challenge1", "challenge2", "challenge3"],
+    "careerPath": "Ideal career paths and professional guidance",
+    "relationships": "Relationship patterns and compatibility insights",
+    "luckyNumbers": [7, 14, 21, 28],
+    "favorableColors": ["color1", "color2", "color3"]
+  },
+  "predictions": {
+    "currentYear": "Analysis of current year's energy and focus areas",
+    "nextPhase": "What to expect in the next phase of life",
+    "opportunities": ["opportunity1", "opportunity2", "opportunity3"]
+  }
+}
+
+Calculate numbers using traditional numerological methods. For Life Path, reduce birth date to single digit. For Destiny/Expression, use full birth name. For Soul Urge, use vowels in name. For Personality, use consonants in name. Provide positive, empowering insights while being specific and actionable.`
+        },
+        {
+          role: "user",
+          content: `Please analyze my numerology with the following details:
+${numerologyData.analysisType === 'personal' ? `
+Analysis Type: Personal Numerology
+Full Name: ${numerologyData.name}
+Birth Date: ${numerologyData.birthDate}
+
+Calculate my Life Path Number from birth date, Destiny Number from full name, Soul Urge Number from vowels, and Personality Number from consonants. Provide comprehensive insights about my personality, life purpose, strengths, challenges, and future guidance.` : `
+Analysis Type: Business Numerology  
+Company Name: ${numerologyData.companyName}
+
+Calculate the business destiny number from the company name and provide insights about business potential, success factors, favorable activities, and growth opportunities.`}
+
+Provide detailed numerological analysis with practical guidance for personal and professional development.`
+        },
+      ],
+      response_format: { type: "json_object" },
+      max_completion_tokens: 3000,
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    return result;
+  } catch (error) {
+    console.error("OpenAI numerology analysis error:", error);
+    throw new Error("Failed to analyze numerology: " + (error as Error).message);
   }
 }

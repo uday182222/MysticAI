@@ -1,15 +1,57 @@
-import { type PalmAnalysis, type InsertPalmAnalysis, type Analysis, type InsertAnalysis, palmAnalyses, analyses } from "@shared/schema";
+import { 
+  type PalmAnalysis, 
+  type InsertPalmAnalysis, 
+  type Analysis, 
+  type InsertAnalysis, 
+  type User,
+  type InsertUser,
+  type ChatConversation,
+  type InsertChatConversation,
+  type ChatMessage,
+  type InsertChatMessage,
+  type Payment,
+  type InsertPayment,
+  palmAnalyses, 
+  analyses,
+  users,
+  chatConversations,
+  chatMessages,
+  payments
+} from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 
 export interface IStorage {
+  // Palm analysis methods
   createPalmAnalysis(analysis: InsertPalmAnalysis): Promise<PalmAnalysis>;
   getPalmAnalysis(id: string): Promise<PalmAnalysis | undefined>;
+  
+  // General analysis methods  
   createAnalysis(analysis: InsertAnalysis): Promise<Analysis>;
   getAnalysis(id: string): Promise<Analysis | undefined>;
+  
+  // User authentication methods
+  createUser(user: InsertUser): Promise<User>;
+  getUserByEmail(email: string): Promise<User | undefined>;
+  getUserById(id: string): Promise<User | undefined>;
+  updateUserCredits(userId: string, credits: number): Promise<User>;
+  
+  // Chat methods
+  createChatConversation(conversation: InsertChatConversation): Promise<ChatConversation>;
+  getChatConversation(analysisId: string): Promise<ChatConversation | undefined>;
+  updateConversationQuestions(conversationId: string, questionsUsed: number): Promise<ChatConversation>;
+  
+  // Chat message methods
+  createChatMessage(message: InsertChatMessage): Promise<ChatMessage>;
+  getChatMessages(conversationId: string): Promise<ChatMessage[]>;
+  
+  // Payment methods
+  createPayment(payment: InsertPayment): Promise<Payment>;
+  updatePaymentStatus(paymentId: string, status: string, completedAt?: Date): Promise<Payment>;
 }
 
 export class DatabaseStorage implements IStorage {
+  // Palm analysis methods
   async createPalmAnalysis(insertAnalysis: InsertPalmAnalysis): Promise<PalmAnalysis> {
     const [analysis] = await db
       .insert(palmAnalyses)
@@ -23,6 +65,7 @@ export class DatabaseStorage implements IStorage {
     return analysis || undefined;
   }
 
+  // General analysis methods
   async createAnalysis(insertAnalysis: InsertAnalysis): Promise<Analysis> {
     const [analysis] = await db
       .insert(analyses)
@@ -34,6 +77,99 @@ export class DatabaseStorage implements IStorage {
   async getAnalysis(id: string): Promise<Analysis | undefined> {
     const [analysis] = await db.select().from(analyses).where(eq(analyses.id, id));
     return analysis || undefined;
+  }
+
+  // User authentication methods
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
+    return user;
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user || undefined;
+  }
+
+  async getUserById(id: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async updateUserCredits(userId: string, credits: number): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({ credits, updatedAt: new Date() })
+      .where(eq(users.id, userId))
+      .returning();
+    return user;
+  }
+
+  // Chat methods
+  async createChatConversation(insertConversation: InsertChatConversation): Promise<ChatConversation> {
+    const [conversation] = await db
+      .insert(chatConversations)
+      .values(insertConversation)
+      .returning();
+    return conversation;
+  }
+
+  async getChatConversation(analysisId: string): Promise<ChatConversation | undefined> {
+    const [conversation] = await db
+      .select()
+      .from(chatConversations)
+      .where(eq(chatConversations.analysisId, analysisId));
+    return conversation || undefined;
+  }
+
+  async updateConversationQuestions(conversationId: string, questionsUsed: number): Promise<ChatConversation> {
+    const [conversation] = await db
+      .update(chatConversations)
+      .set({ questionsUsed, updatedAt: new Date() })
+      .where(eq(chatConversations.id, conversationId))
+      .returning();
+    return conversation;
+  }
+
+  // Chat message methods
+  async createChatMessage(insertMessage: InsertChatMessage): Promise<ChatMessage> {
+    const [message] = await db
+      .insert(chatMessages)
+      .values(insertMessage)
+      .returning();
+    return message;
+  }
+
+  async getChatMessages(conversationId: string): Promise<ChatMessage[]> {
+    const messages = await db
+      .select()
+      .from(chatMessages)
+      .where(eq(chatMessages.conversationId, conversationId))
+      .orderBy(chatMessages.createdAt);
+    return messages;
+  }
+
+  // Payment methods
+  async createPayment(insertPayment: InsertPayment): Promise<Payment> {
+    const [payment] = await db
+      .insert(payments)
+      .values(insertPayment)
+      .returning();
+    return payment;
+  }
+
+  async updatePaymentStatus(paymentId: string, status: string, completedAt?: Date): Promise<Payment> {
+    const [payment] = await db
+      .update(payments)
+      .set({ 
+        status, 
+        ...(completedAt && { completedAt })
+      })
+      .where(eq(payments.id, paymentId))
+      .returning();
+    return payment;
   }
 }
 

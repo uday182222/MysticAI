@@ -5,14 +5,16 @@ import { FeaturesSection } from "@/components/features-section";
 import { PalmAnalysisInterface } from "@/components/palm-analysis-interface";
 import { AstrologyAnalysisInterface } from "@/components/astrology-analysis-interface";
 import { VastuAnalysisInterface } from "@/components/vastu-analysis-interface";
+import { NumerologyAnalysisInterface } from "@/components/numerology-analysis-interface";
 import { AnalysisResults } from "@/components/analysis-results";
 import { AstrologyResults } from "@/components/astrology-results";
 import { VastuResults } from "@/components/vastu-results";
+import { NumerologyResults } from "@/components/numerology-results";
 import { HowItWorksSection } from "@/components/how-it-works-section";
 import { Footer } from "@/components/footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Hand, Stars, Home as HomeIcon } from "lucide-react";
-import { PalmAnalysisResult, AstrologyAnalysisResult, AstrologyInput, VastuAnalysisResult, VastuInput } from "@shared/schema";
+import { Hand, Stars, Home as HomeIcon, Calculator } from "lucide-react";
+import { PalmAnalysisResult, AstrologyAnalysisResult, AstrologyInput, VastuAnalysisResult, VastuInput, NumerologyAnalysisResult, NumerologyInput } from "@shared/schema";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("palm");
@@ -29,6 +31,10 @@ export default function Home() {
   const [vastuAnalysisResult, setVastuAnalysisResult] = useState<VastuAnalysisResult | null>(null);
   const [vastuInputData, setVastuInputData] = useState<VastuInput | null>(null);
   const [vastuImageUrl, setVastuImageUrl] = useState<string | null>(null);
+
+  // Numerology analysis state
+  const [numerologyAnalysisResult, setNumerologyAnalysisResult] = useState<NumerologyAnalysisResult | null>(null);
+  const [numerologyInputData, setNumerologyInputData] = useState<NumerologyInput | null>(null);
 
   const handleStartReading = () => {
     const analysisSection = document.getElementById("analysis-section");
@@ -78,6 +84,19 @@ export default function Home() {
     scrollToAnalysis();
   };
 
+  // Numerology analysis handlers
+  const handleNumerologyAnalysisComplete = (result: NumerologyAnalysisResult, inputData: NumerologyInput) => {
+    setNumerologyAnalysisResult(result);
+    setNumerologyInputData(inputData);
+    scrollToResults();
+  };
+
+  const handleNumerologyAnalyzeAnother = () => {
+    setNumerologyAnalysisResult(null);
+    setNumerologyInputData(null);
+    scrollToAnalysis();
+  };
+
   const scrollToResults = () => {
     setTimeout(() => {
       const resultsSection = document.getElementById("results-section");
@@ -96,7 +115,7 @@ export default function Home() {
     }, 100);
   };
 
-  const hasAnyResults = palmAnalysisResult || astrologyAnalysisResult || vastuAnalysisResult;
+  const hasAnyResults = palmAnalysisResult || astrologyAnalysisResult || vastuAnalysisResult || numerologyAnalysisResult;
 
   return (
     <div className="min-h-screen bg-background">
@@ -110,12 +129,12 @@ export default function Home() {
             <div className="text-center mb-12">
               <h3 className="text-3xl font-bold text-primary mb-4">Choose Your Analysis Type</h3>
               <p className="text-lg text-secondary">
-                Select from palmistry, astrology, or Vastu analysis for personalized insights
+                Select from palmistry, astrology, Vastu, or numerology analysis for personalized insights
               </p>
             </div>
             
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="palm" className="flex items-center gap-2" data-testid="tab-palm">
                   <Hand className="h-4 w-4" />
                   Palmistry
@@ -127,6 +146,10 @@ export default function Home() {
                 <TabsTrigger value="vastu" className="flex items-center gap-2" data-testid="tab-vastu">
                   <HomeIcon className="h-4 w-4" />
                   Vastu
+                </TabsTrigger>
+                <TabsTrigger value="numerology" className="flex items-center gap-2" data-testid="tab-numerology">
+                  <Calculator className="h-4 w-4" />
+                  Numerology
                 </TabsTrigger>
               </TabsList>
               
@@ -140,6 +163,10 @@ export default function Home() {
               
               <TabsContent value="vastu" className="mt-6">
                 <VastuAnalysisInterface onAnalysisComplete={handleVastuAnalysisComplete} />
+              </TabsContent>
+              
+              <TabsContent value="numerology" className="mt-6">
+                <NumerologyAnalysisInterface onAnalysisComplete={handleNumerologyAnalysisComplete} />
               </TabsContent>
             </Tabs>
           </div>
@@ -171,6 +198,14 @@ export default function Home() {
               inputData={vastuInputData}
               imageUrl={vastuImageUrl || undefined}
               onAnalyzeAnother={handleVastuAnalyzeAnother}
+            />
+          )}
+          
+          {numerologyAnalysisResult && numerologyInputData && (
+            <NumerologyResults 
+              result={numerologyAnalysisResult} 
+              inputData={numerologyInputData}
+              onAnalyzeAnother={handleNumerologyAnalyzeAnother}
             />
           )}
         </div>

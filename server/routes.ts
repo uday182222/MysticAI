@@ -8,10 +8,27 @@ import {
   astrologyAnalysisResultSchema,
   vastuInputSchema,
   vastuAnalysisResultSchema,
-  insertAnalysisSchema 
+  numerologyInputSchema,
+  numerologyAnalysisResultSchema,
+  insertAnalysisSchema,
+  userRegistrationSchema,
+  userLoginSchema
 } from "@shared/schema";
-import { analyzePalmImage, analyzeAstrologyChart, analyzeVastu } from "./services/openai";
+import { analyzePalmImage, analyzeAstrologyChart, analyzeVastu, analyzeNumerology } from "./services/openai";
 import multer from "multer";
+import bcrypt from "bcryptjs";
+import session from "express-session";
+import connectPgSimple from "connect-pg-simple";
+
+const PgSession = connectPgSimple(session);
+
+// Middleware to check if user is authenticated
+function requireAuth(req: any, res: any, next: any) {
+  if (!req.session.userId) {
+    return res.status(401).json({ message: "Authentication required" });
+  }
+  next();
+}
 
 // Configure multer for image uploads
 const upload = multer({
@@ -29,6 +46,133 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Configure session middleware
+  app.use(session({
+    store: new PgSession({
+      conString: process.env.DATABASE_URL,
+      tableName: 'session'
+    }),
+    secret: process.env.SESSION_SECRET || 'mystic-read-ai-secret-key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false, // Set to true in production with HTTPS
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
+  }));
+
+  // User registration endpoint
+  app.post("/api/auth/register", async (req, res) => {
+    try {
+      const userData = userRegistrationSchema.parse(req.body);
+      
+      // Check if user already exists
+      const existingUser = await storage.getUserByEmail(userData.email);
+      if (existingUser) {
+        return res.status(400).json({ message: "Email already registered" });
+      }
+
+      // Hash password
+      const hashedPassword = await bcrypt.hash(userData.password, 10);
+      
+      // Create user
+      const user = await storage.createUser({
+        email: userData.email,
+        hashedPassword,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        credits: 0
+      });
+
+      // Start session
+      (req.session as any).userId = user.id;
+      
+      res.json({
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        credits: user.credits
+      });
+    } catch (error) {
+      console.error("Registration error:", error);
+      res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Registration failed" 
+      });
+    }
+  });
+
+  // User login endpoint
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const loginData = userLoginSchema.parse(req.body);
+      
+      // Find user by email
+      const user = await storage.getUserByEmail(loginData.email);
+      if (!user || !user.hashedPassword) {
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
+
+      // Verify password
+      const validPassword = await bcrypt.compare(loginData.password, user.hashedPassword);
+      if (!validPassword) {
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
+
+      // Start session
+      (req.session as any).userId = user.id;
+      
+      res.json({
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        credits: user.credits
+      });
+    } catch (error) {
+      console.error("Login error:", error);
+      res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Login failed" 
+      });
+    }
+  });
+
+  // User logout endpoint
+  app.post("/api/auth/logout", (req, res) => {
+    req.session.destroy(() => {
+      res.json({ message: "Logged out successfully" });
+    });
+  });
+
+  // Get current user endpoint
+  app.get("/api/auth/me", async (req, res) => {
+    try {
+      const userId = (req.session as any).userId;
+      if (!userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const user = await storage.getUserById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.json({
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        credits: user.credits
+      });
+    } catch (error) {
+      console.error("Get user error:", error);
+      res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Failed to get user" 
+      });
+    }
+  });
+
   // Analyze palm image endpoint
   app.post("/api/palm/analyze", upload.single('palmImage'), async (req, res) => {
     try {
@@ -158,6 +302,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Vastu analysis error:", error);
       res.status(500).json({ 
         message: error instanceof Error ? error.message : "Failed to analyze Vastu layout" 
+      });
+    }
+  });
+
+  // Analyze numerology endpoint
+  app.post("/api/numerology/analyze", async (req, res) => {
+    try {
+      const numerologyData = numerologyInputSchema.parse(req.body);
+      
+      // Analyze using OpenAI
+      const analysisResult = await analyzeNumerology(numerologyData);
+      
+      // Validate the analysis result
+      const validatedResult = numerologyAnalysisResultSchema.parse(analysisResult);
+      
+      // Store the analysis
+      const numerologyAnalysis = await storage.createAnalysis({
+        type: "numerology",
+        inputData: numerologyData,
+        analysisResult: validatedResult,
+      });
+
+      res.json({
+        id: numerologyAnalysis.id,
+        result: validatedResult,
+        inputData: numerologyData,
+      });
+    } catch (error) {
+      console.error("Numerology analysis error:", error);
+      res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Failed to analyze numerology" 
       });
     }
   });
