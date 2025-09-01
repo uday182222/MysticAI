@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AstrologyAnalysisResult, AstrologyInput } from "@shared/schema";
+import { KundliChart } from "./kundli-chart";
 import { 
   Stars, 
   Sun, 
@@ -82,6 +83,13 @@ export function AstrologyResults({ result, inputData, onAnalyzeAnother }: Astrol
               Born: {inputData.birthDate} at {inputData.birthTime} in {inputData.birthPlace}
             </div>
           </div>
+
+          {/* Kundli Chart Visualization */}
+          {result.kundliChart && (
+            <div className="mb-12">
+              <KundliChart kundliData={result.kundliChart} />
+            </div>
+          )}
 
           {/* Chart Overview */}
           <div className="grid lg:grid-cols-3 gap-8 mb-12">

@@ -85,13 +85,42 @@ export async function analyzeAstrologyChart(astrologyData: AstrologyInput): Prom
       messages: [
         {
           role: "system",
-          content: `You are an expert astrologer with decades of experience in Vedic and Western astrology. Analyze the provided birth information and create a comprehensive astrological chart reading. Return your analysis in JSON format with the following structure:
+          content: `You are an expert Vedic astrologer with decades of experience in Jyotish and birth chart analysis. Analyze the provided birth information and create a comprehensive Kundli (birth chart) reading. Return your analysis in JSON format with the following structure:
 
 {
   "personalityOverview": "Detailed personality analysis based on birth chart",
   "sunSign": "Sun sign with detailed characteristics",
   "moonSign": "Moon sign with emotional patterns", 
-  "risingSign": "Rising sign with outward personality traits",
+  "risingSign": "Rising sign (Lagna) with outward personality traits",
+  "kundliChart": {
+    "houses": [
+      {
+        "number": 1,
+        "sign": "Aries",
+        "planets": ["Sun", "Mercury"],
+        "ruling": "Mars"
+      }
+    ],
+    "planetaryPositions": {
+      "sun": {"sign": "Leo", "house": 5, "degrees": 15.30},
+      "moon": {"sign": "Cancer", "house": 4, "degrees": 22.45},
+      "mercury": {"sign": "Virgo", "house": 6, "degrees": 8.15},
+      "venus": {"sign": "Libra", "house": 7, "degrees": 12.20},
+      "mars": {"sign": "Scorpio", "house": 8, "degrees": 25.10},
+      "jupiter": {"sign": "Sagittarius", "house": 9, "degrees": 18.55},
+      "saturn": {"sign": "Capricorn", "house": 10, "degrees": 3.40},
+      "rahu": {"sign": "Gemini", "house": 3, "degrees": 14.25},
+      "ketu": {"sign": "Sagittarius", "house": 9, "degrees": 14.25}
+    },
+    "aspects": [
+      {
+        "from": "Jupiter",
+        "to": "Sun", 
+        "type": "Trine",
+        "influence": "Positive influence bringing wisdom and expansion"
+      }
+    ]
+  },
   "planetaryPositions": {
     "sun": "Sun position and its influence",
     "moon": "Moon position and its influence",
@@ -134,12 +163,18 @@ Focus on providing insightful, positive, and constructive guidance based on trad
         },
         {
           role: "user",
-          content: `Please analyze my birth chart with the following details:
+          content: `Please create a detailed Kundli (birth chart) analysis with the following birth details:
 Birth Date: ${astrologyData.birthDate}
 Birth Time: ${astrologyData.birthTime}
 Birth Place: ${astrologyData.birthPlace}
 
-Provide a comprehensive astrological reading covering personality, relationships, career, health, spiritual growth, and future predictions.`
+Calculate the exact planetary positions, houses, and aspects for this birth time and location. Generate a complete Kundli chart with:
+1. All 12 houses with their signs and ruling planets
+2. Precise planetary positions with degrees for Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Rahu, and Ketu
+3. Major planetary aspects and their influences
+4. Comprehensive Vedic astrology analysis covering personality, relationships, career, health, spiritual growth, and future predictions
+
+Use traditional Vedic astrology principles and provide accurate astronomical calculations for the birth chart.`
         },
       ],
       response_format: { type: "json_object" },
