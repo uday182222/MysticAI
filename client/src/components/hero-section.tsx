@@ -1,11 +1,24 @@
 import { Button } from "@/components/ui/button";
-import { Camera, Info } from "lucide-react";
+import { Camera, Info, ArrowRight } from "lucide-react";
+import { useLocation } from "wouter";
+import { useAuth } from "@/components/auth/auth-context";
+import { useState } from "react";
+import { LoginDialog } from "@/components/auth/login-dialog";
+import { RegisterDialog } from "@/components/auth/register-dialog";
 
-interface HeroSectionProps {
-  onStartReading: () => void;
-}
+export function HeroSection() {
+  const { user } = useAuth();
+  const [, setLocation] = useLocation();
+  const [showLogin, setShowLogin] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
 
-export function HeroSection({ onStartReading }: HeroSectionProps) {
+  const handleGetStarted = () => {
+    if (user) {
+      setLocation("/dashboard");
+    } else {
+      setShowRegister(true);
+    }
+  };
   return (
     <section className="bg-gradient-to-br from-slate-50 to-blue-50 py-20">
       <div className="container mx-auto px-4">
@@ -19,24 +32,55 @@ export function HeroSection({ onStartReading }: HeroSectionProps) {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button 
-              onClick={onStartReading}
+              onClick={handleGetStarted}
               size="lg" 
               className="bg-accent hover:bg-blue-600 text-white px-8 py-4 text-lg shadow-lg"
-              data-testid="button-start-reading"
+              data-testid="button-get-started"
             >
-              <Camera className="mr-2 h-5 w-5" />
-              Start Analysis
+              {user ? (
+                <>
+                  <ArrowRight className="mr-2 h-5 w-5" />
+                  Go to Dashboard
+                </>
+              ) : (
+                <>
+                  <Camera className="mr-2 h-5 w-5" />
+                  Get Started Free
+                </>
+              )}
             </Button>
             <Button 
               variant="outline" 
               size="lg"
               className="border-slate-300 hover:border-slate-400 text-secondary hover:text-primary px-8 py-4 text-lg"
               data-testid="button-learn-more"
+              onClick={() => {
+                document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+              }}
             >
               <Info className="mr-2 h-5 w-5" />
               Learn More
             </Button>
           </div>
+
+          {/* Auth Dialogs */}
+          <LoginDialog
+            isOpen={showLogin}
+            onClose={() => setShowLogin(false)}
+            onSwitchToRegister={() => {
+              setShowLogin(false);
+              setShowRegister(true);
+            }}
+          />
+
+          <RegisterDialog
+            isOpen={showRegister}
+            onClose={() => setShowRegister(false)}
+            onSwitchToLogin={() => {
+              setShowRegister(false);
+              setShowLogin(true);
+            }}
+          />
         </div>
       </div>
     </section>

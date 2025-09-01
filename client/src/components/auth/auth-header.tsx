@@ -4,7 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "./auth-context";
 import { LoginDialog } from "./login-dialog";
 import { RegisterDialog } from "./register-dialog";
-import { User, LogOut, CreditCard } from "lucide-react";
+import { Link } from "wouter";
+import { User, LogOut, CreditCard, LayoutDashboard } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -94,6 +95,13 @@ export function AuthHeader() {
               <span className="font-medium">{user.firstName} {user.lastName}</span>
               <span className="text-sm text-muted-foreground">{user.email}</span>
             </div>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard" className="flex items-center w-full" data-testid="link-dashboard">
+              <LayoutDashboard className="mr-2 h-4 w-4" />
+              Dashboard
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleLogout} data-testid="button-logout">
