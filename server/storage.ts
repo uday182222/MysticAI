@@ -38,12 +38,15 @@ export interface IStorage {
   
   // Chat methods
   createChatConversation(conversation: InsertChatConversation): Promise<ChatConversation>;
-  getChatConversation(analysisId: string): Promise<ChatConversation | undefined>;
+  getChatConversationByAnalysis(analysisId: string, userId: string): Promise<ChatConversation | undefined>;
   updateConversationQuestions(conversationId: string, questionsUsed: number): Promise<ChatConversation>;
   
   // Chat message methods
   createChatMessage(message: InsertChatMessage): Promise<ChatMessage>;
-  getChatMessages(conversationId: string): Promise<ChatMessage[]>;
+  getChatMessagesByConversation(conversationId: string): Promise<ChatMessage[]>;
+  
+  // User methods
+  getUser(id: string): Promise<User | undefined>;
   
   // Payment methods
   createPayment(payment: InsertPayment): Promise<Payment>;
@@ -116,7 +119,7 @@ export class DatabaseStorage implements IStorage {
     return conversation;
   }
 
-  async getChatConversation(analysisId: string): Promise<ChatConversation | undefined> {
+  async getChatConversationByAnalysis(analysisId: string, userId: string): Promise<ChatConversation | undefined> {
     const [conversation] = await db
       .select()
       .from(chatConversations)
@@ -142,13 +145,17 @@ export class DatabaseStorage implements IStorage {
     return message;
   }
 
-  async getChatMessages(conversationId: string): Promise<ChatMessage[]> {
+  async getChatMessagesByConversation(conversationId: string): Promise<ChatMessage[]> {
     const messages = await db
       .select()
       .from(chatMessages)
       .where(eq(chatMessages.conversationId, conversationId))
       .orderBy(chatMessages.createdAt);
     return messages;
+  }
+
+  async getUser(id: string): Promise<User | undefined> {
+    return this.getUserById(id);
   }
 
   // Payment methods

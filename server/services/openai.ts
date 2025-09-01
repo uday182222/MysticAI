@@ -189,6 +189,44 @@ Use traditional Vedic astrology principles and provide accurate astronomical cal
   }
 }
 
+export async function generateChatResponse(
+  userMessage: string,
+  analysisType: string,
+  analysisData: any,
+  previousMessages: any[]
+): Promise<string> {
+  try {
+    const contextPrompt = `You are an expert ${analysisType} consultant providing follow-up guidance based on a previous analysis. 
+    
+Previous analysis data: ${JSON.stringify(analysisData)}
+
+Chat history:
+${previousMessages.map(m => `${m.role}: ${m.content}`).join('\n')}
+
+Provide helpful, insightful responses about the ${analysisType} analysis. Be specific, reference the previous analysis results, and offer practical guidance. Keep responses concise but meaningful.`;
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: contextPrompt
+        },
+        {
+          role: "user",
+          content: userMessage
+        }
+      ],
+      max_completion_tokens: 500,
+    });
+
+    return response.choices[0].message.content || "I apologize, but I couldn't generate a response. Please try again.";
+  } catch (error) {
+    console.error("OpenAI chat response error:", error);
+    throw new Error("Failed to generate chat response: " + (error as Error).message);
+  }
+}
+
 export async function analyzeVastu(vastuData: VastuInput, base64Image?: string): Promise<any> {
   try {
     const messages: any[] = [

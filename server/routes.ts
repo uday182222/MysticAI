@@ -383,6 +383,124 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Chat conversation endpoints
+  app.get("/api/chat/conversation/:analysisId", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+
+      const { analysisId } = req.params;
+      const userId = req.user!.id;
+
+      // Get or create conversation
+      let conversation = await storage.getChatConversationByAnalysis(analysisId, userId);
+      if (!conversation) {
+        conversation = await storage.createChatConversation({
+          analysisId,
+          userId,
+          analysisType: 'palm', // Will be updated based on actual analysis
+        });
+      }
+
+      // Get messages for this conversation
+      const messages = await storage.getChatMessagesByConversation(conversation.id);
+
+      res.json({ messages });
+    } catch (error) {
+      console.error("Chat conversation error:", error);
+      res.status(500).json({ message: "Failed to get conversation" });
+    }
+  });
+
+  // Send chat message
+  app.post("/api/chat/send", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+
+      const { analysisId, analysisType, message, analysisData } = req.body;
+      const userId = req.user!.id;
+
+      // Get or create conversation
+      let conversation = await storage.getChatConversationByAnalysis(analysisId, userId);
+      if (!conversation) {
+        conversation = await storage.createChatConversation({
+          analysisId,
+          userId,
+          analysisType,
+        });
+      }
+
+      // Count user messages in this conversation
+      const messages = await storage.getChatMessagesByConversation(conversation.id);
+      const userMessagesCount = messages.filter(m => m.role === 'user').length;
+
+      // Check if user can send message (5 free questions, then requires credits)
+      const user = await storage.getUser(userId);
+      const freeQuestionsRemaining = Math.max(0, 5 - userMessagesCount);
+      
+      if (freeQuestionsRemaining === 0) {
+        // Need to use credits
+        if (user!.credits < 5) {
+          return res.status(402).json({ 
+            message: "Insufficient credits. Purchase 5 credits for $1 to continue chatting.",
+            creditsRequired: 5,
+            creditsAvailable: user!.credits
+          });
+        }
+        
+        // Deduct credits
+        await storage.updateUserCredits(userId, user!.credits - 5);
+      }
+
+      // Save user message
+      await storage.createChatMessage({
+        conversationId: conversation.id,
+        role: 'user',
+        content: message,
+      });
+
+      // Generate AI response using OpenAI
+      const aiResponse = await generateChatResponse(message, analysisType, analysisData, messages);
+
+      // Save AI response
+      await storage.createChatMessage({
+        conversationId: conversation.id,
+        role: 'assistant', 
+        content: aiResponse,
+      });
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Send message error:", error);
+      res.status(500).json({ message: "Failed to send message" });
+    }
+  });
+
+  // Purchase credits endpoint
+  app.post("/api/payments/purchase-credits", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+
+      // For now, we'll create a simple payment intent for $1 = 5 credits
+      // This will be enhanced with Stripe integration
+      const paymentIntent = {
+        amount: 100, // $1.00 in cents
+        credits: 5,
+        checkoutUrl: "/checkout?credits=5&amount=100"
+      };
+
+      res.json(paymentIntent);
+    } catch (error) {
+      console.error("Purchase credits error:", error);
+      res.status(500).json({ message: "Failed to create payment" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
