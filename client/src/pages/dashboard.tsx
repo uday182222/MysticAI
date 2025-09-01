@@ -194,72 +194,105 @@ export default function Dashboard() {
               </p>
             </div>
 
-            {/* Analysis Tabs */}
+            {/* Analysis Layout with Sidebar */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid grid-cols-5 gap-2 h-auto p-2 bg-muted rounded-xl mb-8">
-                <TabsTrigger 
-                  value="palm" 
-                  className="flex flex-col items-center gap-2 p-4 data-[state=active]:bg-card data-[state=active]:shadow-sm text-secondary-foreground data-[state=active]:text-foreground"
-                  data-testid="tab-palm"
-                >
-                  <Hand className="h-6 w-6" />
-                  <span className="text-sm font-medium">Palm Reading</span>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="astrology" 
-                  className="flex flex-col items-center gap-2 p-4 data-[state=active]:bg-card data-[state=active]:shadow-sm text-secondary-foreground data-[state=active]:text-foreground"
-                  data-testid="tab-astrology"
-                >
-                  <Stars className="h-6 w-6" />
-                  <span className="text-sm font-medium">Astrology</span>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="vastu" 
-                  className="flex flex-col items-center gap-2 p-4 data-[state=active]:bg-card data-[state=active]:shadow-sm text-secondary-foreground data-[state=active]:text-foreground"
-                  data-testid="tab-vastu"
-                >
-                  <HomeIcon className="h-6 w-6" />
-                  <span className="text-sm font-medium">Vastu</span>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="numerology" 
-                  className="flex flex-col items-center gap-2 p-4 data-[state=active]:bg-card data-[state=active]:shadow-sm text-secondary-foreground data-[state=active]:text-foreground"
-                  data-testid="tab-numerology"
-                >
-                  <Calculator className="h-6 w-6" />
-                  <span className="text-sm font-medium">Numerology</span>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="tarot" 
-                  className="flex flex-col items-center gap-2 p-4 data-[state=active]:bg-card data-[state=active]:shadow-sm text-secondary-foreground data-[state=active]:text-foreground"
-                  data-testid="tab-tarot"
-                >
-                  <Zap className="h-6 w-6" />
-                  <span className="text-sm font-medium">Tarot</span>
-                </TabsTrigger>
-              </TabsList>
+              <div className="flex gap-8">
+                
+                {/* Main Content Area */}
+                <div className="flex-1">
+                  <div className="clean-card p-8">
+                    <TabsContent value="palm" className="mt-0">
+                      <PalmAnalysisInterface onAnalysisComplete={handlePalmAnalysisComplete} />
+                    </TabsContent>
+                    
+                    <TabsContent value="astrology" className="mt-0">
+                      <AstrologyAnalysisInterface onAnalysisComplete={handleAstrologyAnalysisComplete} />
+                    </TabsContent>
+                    
+                    <TabsContent value="vastu" className="mt-0">
+                      <VastuAnalysisInterface onAnalysisComplete={handleVastuAnalysisComplete} />
+                    </TabsContent>
+                    
+                    <TabsContent value="numerology" className="mt-0">
+                      <NumerologyAnalysisInterface onAnalysisComplete={handleNumerologyAnalysisComplete} />
+                    </TabsContent>
+                    
+                    <TabsContent value="tarot" className="mt-0">
+                      <TarotAnalysisInterface onAnalysisComplete={handleTarotAnalysisComplete} />
+                    </TabsContent>
+                  </div>
+                </div>
 
-              {/* Tab Content */}
-              <div className="clean-card p-8">
-                <TabsContent value="palm" className="mt-0">
-                  <PalmAnalysisInterface onAnalysisComplete={handlePalmAnalysisComplete} />
-                </TabsContent>
-                
-                <TabsContent value="astrology" className="mt-0">
-                  <AstrologyAnalysisInterface onAnalysisComplete={handleAstrologyAnalysisComplete} />
-                </TabsContent>
-                
-                <TabsContent value="vastu" className="mt-0">
-                  <VastuAnalysisInterface onAnalysisComplete={handleVastuAnalysisComplete} />
-                </TabsContent>
-                
-                <TabsContent value="numerology" className="mt-0">
-                  <NumerologyAnalysisInterface onAnalysisComplete={handleNumerologyAnalysisComplete} />
-                </TabsContent>
-                
-                <TabsContent value="tarot" className="mt-0">
-                  <TarotAnalysisInterface onAnalysisComplete={handleTarotAnalysisComplete} />
-                </TabsContent>
+                {/* Right Sidebar Navigation */}
+                <div className="w-80 flex-shrink-0">
+                  <div className="sticky top-8">
+                    <div className="clean-card p-6">
+                      <h3 className="text-lg font-semibold text-foreground mb-6">Analysis Tools</h3>
+                      <TabsList className="flex flex-col h-auto p-0 bg-transparent gap-2 w-full">
+                        <TabsTrigger 
+                          value="palm" 
+                          className="w-full justify-start gap-3 p-4 h-auto data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-secondary-foreground hover:text-foreground hover:bg-muted transition-all"
+                          data-testid="tab-palm"
+                        >
+                          <Hand className="h-5 w-5" />
+                          <div className="text-left">
+                            <div className="font-medium">Palm Reading</div>
+                            <div className="text-xs text-muted-foreground">Analyze your palm lines</div>
+                          </div>
+                        </TabsTrigger>
+                        
+                        <TabsTrigger 
+                          value="astrology" 
+                          className="w-full justify-start gap-3 p-4 h-auto data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-secondary-foreground hover:text-foreground hover:bg-muted transition-all"
+                          data-testid="tab-astrology"
+                        >
+                          <Stars className="h-5 w-5" />
+                          <div className="text-left">
+                            <div className="font-medium">Astrology</div>
+                            <div className="text-xs text-muted-foreground">Birth chart insights</div>
+                          </div>
+                        </TabsTrigger>
+                        
+                        <TabsTrigger 
+                          value="vastu" 
+                          className="w-full justify-start gap-3 p-4 h-auto data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-secondary-foreground hover:text-foreground hover:bg-muted transition-all"
+                          data-testid="tab-vastu"
+                        >
+                          <HomeIcon className="h-5 w-5" />
+                          <div className="text-left">
+                            <div className="font-medium">Vastu</div>
+                            <div className="text-xs text-muted-foreground">Space energy analysis</div>
+                          </div>
+                        </TabsTrigger>
+                        
+                        <TabsTrigger 
+                          value="numerology" 
+                          className="w-full justify-start gap-3 p-4 h-auto data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-secondary-foreground hover:text-foreground hover:bg-muted transition-all"
+                          data-testid="tab-numerology"
+                        >
+                          <Calculator className="h-5 w-5" />
+                          <div className="text-left">
+                            <div className="font-medium">Numerology</div>
+                            <div className="text-xs text-muted-foreground">Numbers and destiny</div>
+                          </div>
+                        </TabsTrigger>
+                        
+                        <TabsTrigger 
+                          value="tarot" 
+                          className="w-full justify-start gap-3 p-4 h-auto data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-secondary-foreground hover:text-foreground hover:bg-muted transition-all"
+                          data-testid="tab-tarot"
+                        >
+                          <Zap className="h-5 w-5" />
+                          <div className="text-left">
+                            <div className="font-medium">Tarot</div>
+                            <div className="text-xs text-muted-foreground">Card divination</div>
+                          </div>
+                        </TabsTrigger>
+                      </TabsList>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </Tabs>
           </div>
