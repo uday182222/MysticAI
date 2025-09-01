@@ -8,6 +8,7 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Stars, Calendar, MapPin, Clock, Loader2 } from "lucide-react";
 import { AstrologyAnalysisResult, AstrologyInput } from "@shared/schema";
+import { CosmicLoader } from "@/components/cosmic-loader";
 
 interface AstrologyAnalysisInterfaceProps {
   onAnalysisComplete: (result: AstrologyAnalysisResult, inputData: AstrologyInput, analysisId: string) => void;
@@ -162,6 +163,11 @@ export function AstrologyAnalysisInterface({ onAnalysisComplete }: AstrologyAnal
           </Card>
         </div>
       </div>
+
+      <CosmicLoader 
+        analysisType="astrology"
+        isVisible={analysisMutation.isPending}
+      />
     </div>
   );
 }

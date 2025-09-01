@@ -10,6 +10,7 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Calculator, Hash, Loader2, Building, User } from "lucide-react";
 import { NumerologyAnalysisResult, NumerologyInput } from "@shared/schema";
+import { CosmicLoader } from "@/components/cosmic-loader";
 
 interface NumerologyAnalysisInterfaceProps {
   onAnalysisComplete: (result: NumerologyAnalysisResult, inputData: NumerologyInput, analysisId: string) => void;
@@ -243,6 +244,11 @@ export function NumerologyAnalysisInterface({ onAnalysisComplete }: NumerologyAn
           </Button>
         </CardContent>
       </Card>
+
+      <CosmicLoader 
+        analysisType="numerology"
+        isVisible={analysisMutation.isPending}
+      />
     </div>
   );
 }

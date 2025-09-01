@@ -10,6 +10,7 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Sparkles, Zap, Shuffle, Loader2 } from "lucide-react";
 import { TarotAnalysisResult, TarotInput } from "@shared/schema";
+import { CosmicLoader } from "@/components/cosmic-loader";
 
 interface TarotAnalysisInterfaceProps {
   onAnalysisComplete: (result: TarotAnalysisResult, inputData: TarotInput, analysisId: string) => void;
@@ -287,6 +288,11 @@ export function TarotAnalysisInterface({ onAnalysisComplete }: TarotAnalysisInte
           </div>
         </CardContent>
       </Card>
+
+      <CosmicLoader 
+        analysisType="tarot"
+        isVisible={analysisMutation.isPending}
+      />
     </div>
   );
 }

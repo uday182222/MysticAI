@@ -10,6 +10,7 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Home, Upload, Plus, Trash2, Loader2, X } from "lucide-react";
 import { VastuAnalysisResult, VastuInput } from "@shared/schema";
+import { CosmicLoader } from "@/components/cosmic-loader";
 
 interface VastuAnalysisInterfaceProps {
   onAnalysisComplete: (result: VastuAnalysisResult, inputData: VastuInput, analysisId: string, imageUrl?: string) => void;
@@ -370,6 +371,11 @@ export function VastuAnalysisInterface({ onAnalysisComplete }: VastuAnalysisInte
           </Card>
         </div>
       </div>
+
+      <CosmicLoader 
+        analysisType="vastu"
+        isVisible={analysisMutation.isPending}
+      />
     </div>
   );
 }

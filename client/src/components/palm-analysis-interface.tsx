@@ -8,6 +8,7 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Camera, Upload, X, RefreshCw, Loader2 } from "lucide-react";
 import { PalmAnalysisResult } from "@shared/schema";
+import { CosmicLoader } from "@/components/cosmic-loader";
 
 interface PalmAnalysisInterfaceProps {
   onAnalysisComplete: (result: PalmAnalysisResult, imageUrl: string, analysisId: string) => void;
@@ -335,6 +336,11 @@ export function PalmAnalysisInterface({ onAnalysisComplete }: PalmAnalysisInterf
           </Card>
         </div>
       </div>
+
+      <CosmicLoader 
+        analysisType="palm"
+        isVisible={analysisMutation.isPending}
+      />
     </div>
   );
 }
