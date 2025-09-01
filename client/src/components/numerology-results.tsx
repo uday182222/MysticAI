@@ -83,14 +83,14 @@ export function NumerologyResults({
   };
 
   return (
-    <section id="numerology-results-section" className="py-20 bg-white">
+    <section id="numerology-results-section" className="py-20 bg-background">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           
           {/* Results Header */}
           <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold text-primary mb-4">Your Numerology Analysis</h3>
-            <p className="text-lg text-secondary">
+            <h3 className="text-3xl font-bold text-foreground mb-4">Your Numerology Analysis</h3>
+            <p className="text-lg text-secondary-foreground">
               {inputData.analysisType === "personal" 
                 ? `Personal numerology insights for ${inputData.name}` 
                 : `Business numerology analysis for ${inputData.companyName}`}
@@ -99,57 +99,57 @@ export function NumerologyResults({
 
           {/* Core Numbers Overview */}
           <div className="grid lg:grid-cols-4 gap-6 mb-12">
-            <Card className="bg-gradient-to-br from-purple-50 to-indigo-50 border-purple-200">
+            <Card className="clean-card">
               <CardContent className="p-6 text-center">
-                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl font-bold text-purple-600">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl font-bold text-white">
                     {result.coreNumbers.lifePathNumber.number}
                   </span>
                 </div>
-                <h4 className="font-semibold text-purple-800 mb-2">Life Path</h4>
-                <p className="text-sm text-purple-600">
+                <h4 className="font-semibold text-foreground mb-2">Life Path</h4>
+                <p className="text-sm text-secondary-foreground">
                   {result.coreNumbers.lifePathNumber.meaning}
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200">
+            <Card className="clean-card">
               <CardContent className="p-6 text-center">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl font-bold text-blue-600">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl font-bold text-white">
                     {result.coreNumbers.destinyNumber.number}
                   </span>
                 </div>
-                <h4 className="font-semibold text-blue-800 mb-2">Destiny</h4>
-                <p className="text-sm text-blue-600">
+                <h4 className="font-semibold text-foreground mb-2">Destiny</h4>
+                <p className="text-sm text-secondary-foreground">
                   {result.coreNumbers.destinyNumber.meaning}
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-pink-50 to-rose-50 border-pink-200">
+            <Card className="clean-card">
               <CardContent className="p-6 text-center">
-                <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl font-bold text-pink-600">
+                <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-rose-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl font-bold text-white">
                     {result.coreNumbers.soulUrgeNumber.number}
                   </span>
                 </div>
-                <h4 className="font-semibold text-pink-800 mb-2">Soul Urge</h4>
-                <p className="text-sm text-pink-600">
+                <h4 className="font-semibold text-foreground mb-2">Soul Urge</h4>
+                <p className="text-sm text-secondary-foreground">
                   {result.coreNumbers.soulUrgeNumber.meaning}
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
+            <Card className="clean-card">
               <CardContent className="p-6 text-center">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl font-bold text-green-600">
+                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl font-bold text-white">
                     {result.coreNumbers.personalityNumber.number}
                   </span>
                 </div>
-                <h4 className="font-semibold text-green-800 mb-2">Personality</h4>
-                <p className="text-sm text-green-600">
+                <h4 className="font-semibold text-foreground mb-2">Personality</h4>
+                <p className="text-sm text-secondary-foreground">
                   {result.coreNumbers.personalityNumber.meaning}
                 </p>
               </CardContent>
@@ -160,39 +160,39 @@ export function NumerologyResults({
           <div className="grid lg:grid-cols-2 gap-8 mb-12">
             
             {/* Personality Overview */}
-            <Card>
+            <Card className="clean-card">
               <CardContent className="p-6">
-                <h4 className="font-semibold text-primary mb-4 flex items-center">
-                  <Calculator className="mr-2 h-5 w-5 text-purple-600" />
+                <h4 className="font-semibold text-foreground mb-4 flex items-center">
+                  <Calculator className="mr-2 h-5 w-5 text-accent" />
                   Personality Overview
                 </h4>
-                <p className="text-secondary leading-relaxed">
+                <p className="text-secondary-foreground leading-relaxed">
                   {result.personalityOverview}
                 </p>
               </CardContent>
             </Card>
 
             {/* Core Numbers Details */}
-            <Card>
+            <Card className="clean-card">
               <CardContent className="p-6">
-                <h4 className="font-semibold text-primary mb-4 flex items-center">
-                  <Hash className="mr-2 h-5 w-5 text-purple-600" />
+                <h4 className="font-semibold text-foreground mb-4 flex items-center">
+                  <Hash className="mr-2 h-5 w-5 text-accent" />
                   Core Numbers Insights
                 </h4>
                 <div className="space-y-4">
                   <div>
-                    <h5 className="font-medium text-purple-800 mb-1">Life Path Traits</h5>
+                    <h5 className="font-medium text-foreground mb-1">Life Path Traits</h5>
                     <div className="flex flex-wrap gap-1">
                       {result.coreNumbers.lifePathNumber.traits?.map((trait, index) => (
-                        <Badge key={index} variant="secondary" className="text-xs">
+                        <Badge key={index} variant="secondary" className="text-xs bg-accent/20 text-accent-foreground">
                           {trait}
                         </Badge>
                       ))}
                     </div>
                   </div>
                   <div>
-                    <h5 className="font-medium text-blue-800 mb-1">Life Purpose</h5>
-                    <p className="text-sm text-secondary">
+                    <h5 className="font-medium text-foreground mb-1">Life Purpose</h5>
+                    <p className="text-sm text-secondary-foreground">
                       {result.coreNumbers.destinyNumber.purpose}
                     </p>
                   </div>
@@ -201,34 +201,34 @@ export function NumerologyResults({
             </Card>
 
             {/* Strengths & Challenges */}
-            <Card>
+            <Card className="clean-card">
               <CardContent className="p-6">
-                <h4 className="font-semibold text-primary mb-4 flex items-center">
-                  <TrendingUp className="mr-2 h-5 w-5 text-green-600" />
+                <h4 className="font-semibold text-foreground mb-4 flex items-center">
+                  <TrendingUp className="mr-2 h-5 w-5 text-green-400" />
                   Strengths & Challenges
                 </h4>
                 <div className="space-y-4">
                   <div>
-                    <h5 className="font-medium text-green-800 mb-2 flex items-center">
-                      <Star className="mr-1 h-4 w-4" />
+                    <h5 className="font-medium text-foreground mb-2 flex items-center">
+                      <Star className="mr-1 h-4 w-4 text-green-400" />
                       Strengths
                     </h5>
                     <div className="flex flex-wrap gap-1">
                       {result.lifeAreas.strengths.map((strength, index) => (
-                        <Badge key={index} variant="secondary" className="bg-green-100 text-green-800">
+                        <Badge key={index} variant="secondary" className="bg-green-500/20 text-green-300 border-green-500/30">
                           {strength}
                         </Badge>
                       ))}
                     </div>
                   </div>
                   <div>
-                    <h5 className="font-medium text-orange-800 mb-2 flex items-center">
-                      <Target className="mr-1 h-4 w-4" />
+                    <h5 className="font-medium text-foreground mb-2 flex items-center">
+                      <Target className="mr-1 h-4 w-4 text-orange-400" />
                       Challenges to Overcome
                     </h5>
                     <div className="flex flex-wrap gap-1">
                       {result.lifeAreas.challenges.map((challenge, index) => (
-                        <Badge key={index} variant="secondary" className="bg-orange-100 text-orange-800">
+                        <Badge key={index} variant="secondary" className="bg-orange-500/20 text-orange-300 border-orange-500/30">
                           {challenge}
                         </Badge>
                       ))}
@@ -239,28 +239,28 @@ export function NumerologyResults({
             </Card>
 
             {/* Life Areas */}
-            <Card>
+            <Card className="clean-card">
               <CardContent className="p-6">
-                <h4 className="font-semibold text-primary mb-4 flex items-center">
-                  <Compass className="mr-2 h-5 w-5 text-blue-600" />
+                <h4 className="font-semibold text-foreground mb-4 flex items-center">
+                  <Compass className="mr-2 h-5 w-5 text-blue-400" />
                   Life Areas Guidance
                 </h4>
                 <div className="space-y-4">
                   <div>
-                    <h5 className="font-medium text-blue-800 mb-1 flex items-center">
-                      <TrendingUp className="mr-1 h-4 w-4" />
+                    <h5 className="font-medium text-foreground mb-1 flex items-center">
+                      <TrendingUp className="mr-1 h-4 w-4 text-blue-400" />
                       Career Path
                     </h5>
-                    <p className="text-sm text-secondary">
+                    <p className="text-sm text-secondary-foreground">
                       {result.lifeAreas.careerPath}
                     </p>
                   </div>
                   <div>
-                    <h5 className="font-medium text-pink-800 mb-1 flex items-center">
-                      <Heart className="mr-1 h-4 w-4" />
+                    <h5 className="font-medium text-foreground mb-1 flex items-center">
+                      <Heart className="mr-1 h-4 w-4 text-pink-400" />
                       Relationships
                     </h5>
-                    <p className="text-sm text-secondary">
+                    <p className="text-sm text-secondary-foreground">
                       {result.lifeAreas.relationships}
                     </p>
                   </div>
@@ -269,34 +269,34 @@ export function NumerologyResults({
             </Card>
 
             {/* Lucky Elements */}
-            <Card>
+            <Card className="clean-card">
               <CardContent className="p-6">
-                <h4 className="font-semibold text-primary mb-4 flex items-center">
-                  <Star className="mr-2 h-5 w-5 text-yellow-600" />
+                <h4 className="font-semibold text-foreground mb-4 flex items-center">
+                  <Star className="mr-2 h-5 w-5 text-yellow-400" />
                   Lucky Elements
                 </h4>
                 <div className="space-y-4">
                   <div>
-                    <h5 className="font-medium text-purple-800 mb-2 flex items-center">
-                      <Hash className="mr-1 h-4 w-4" />
+                    <h5 className="font-medium text-foreground mb-2 flex items-center">
+                      <Hash className="mr-1 h-4 w-4 text-purple-400" />
                       Lucky Numbers
                     </h5>
                     <div className="flex flex-wrap gap-2">
                       {result.lifeAreas.luckyNumbers.map((number, index) => (
-                        <div key={index} className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                          <span className="text-sm font-bold text-purple-600">{number}</span>
+                        <div key={index} className="w-8 h-8 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full flex items-center justify-center">
+                          <span className="text-sm font-bold text-white">{number}</span>
                         </div>
                       ))}
                     </div>
                   </div>
                   <div>
-                    <h5 className="font-medium text-pink-800 mb-2 flex items-center">
-                      <Palette className="mr-1 h-4 w-4" />
+                    <h5 className="font-medium text-foreground mb-2 flex items-center">
+                      <Palette className="mr-1 h-4 w-4 text-pink-400" />
                       Favorable Colors
                     </h5>
                     <div className="flex flex-wrap gap-2">
                       {result.lifeAreas.favorableColors.map((color, index) => (
-                        <Badge key={index} variant="secondary" className="bg-pink-100 text-pink-800">
+                        <Badge key={index} variant="secondary" className="bg-pink-500/20 text-pink-300 border-pink-500/30">
                           {color}
                         </Badge>
                       ))}
@@ -307,31 +307,31 @@ export function NumerologyResults({
             </Card>
 
             {/* Predictions */}
-            <Card>
+            <Card className="clean-card">
               <CardContent className="p-6">
-                <h4 className="font-semibold text-primary mb-4 flex items-center">
-                  <Calendar className="mr-2 h-5 w-5 text-indigo-600" />
+                <h4 className="font-semibold text-foreground mb-4 flex items-center">
+                  <Calendar className="mr-2 h-5 w-5 text-indigo-400" />
                   Predictions & Opportunities
                 </h4>
                 <div className="space-y-4">
                   <div>
-                    <h5 className="font-medium text-indigo-800 mb-1">Current Year Focus</h5>
-                    <p className="text-sm text-secondary">
+                    <h5 className="font-medium text-foreground mb-1">Current Year Focus</h5>
+                    <p className="text-sm text-secondary-foreground">
                       {result.predictions.currentYear}
                     </p>
                   </div>
                   <div>
-                    <h5 className="font-medium text-green-800 mb-1">Next Phase</h5>
-                    <p className="text-sm text-secondary">
+                    <h5 className="font-medium text-foreground mb-1">Next Phase</h5>
+                    <p className="text-sm text-secondary-foreground">
                       {result.predictions.nextPhase}
                     </p>
                   </div>
                   <div>
-                    <h5 className="font-medium text-blue-800 mb-2">Upcoming Opportunities</h5>
-                    <ul className="text-sm text-secondary space-y-1">
+                    <h5 className="font-medium text-foreground mb-2">Upcoming Opportunities</h5>
+                    <ul className="text-sm text-secondary-foreground space-y-1">
                       {result.predictions.opportunities.map((opportunity, index) => (
                         <li key={index} className="flex items-start">
-                          <span className="text-blue-500 mr-2">•</span>
+                          <span className="text-blue-400 mr-2">•</span>
                           {opportunity}
                         </li>
                       ))}

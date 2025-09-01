@@ -168,7 +168,7 @@ export default function Dashboard() {
               </div>
             </div>
             <h1 className="text-4xl font-heading font-bold text-foreground mb-4">
-              Welcome back{user?.firstName ? `, ${user.firstName}` : ''}!
+              Welcome {user?.firstName ? `, ${user.firstName}` : ''}!
             </h1>
             <p className="text-xl text-secondary-foreground mb-6">
               Your personal mystical insights dashboard. Choose an analysis type to begin your journey of discovery.
