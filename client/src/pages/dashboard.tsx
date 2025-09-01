@@ -30,23 +30,28 @@ export default function Dashboard() {
   // Palm analysis state
   const [palmAnalysisResult, setPalmAnalysisResult] = useState<PalmAnalysisResult | null>(null);
   const [palmImageUrl, setPalmImageUrl] = useState<string | null>(null);
+  const [palmAnalysisId, setPalmAnalysisId] = useState<string | null>(null);
   
   // Astrology analysis state
   const [astrologyAnalysisResult, setAstrologyAnalysisResult] = useState<AstrologyAnalysisResult | null>(null);
   const [astrologyInputData, setAstrologyInputData] = useState<AstrologyInput | null>(null);
+  const [astrologyAnalysisId, setAstrologyAnalysisId] = useState<string | null>(null);
   
   // Vastu analysis state
   const [vastuAnalysisResult, setVastuAnalysisResult] = useState<VastuAnalysisResult | null>(null);
   const [vastuInputData, setVastuInputData] = useState<VastuInput | null>(null);
   const [vastuImageUrl, setVastuImageUrl] = useState<string | null>(null);
+  const [vastuAnalysisId, setVastuAnalysisId] = useState<string | null>(null);
 
   // Numerology analysis state
   const [numerologyAnalysisResult, setNumerologyAnalysisResult] = useState<NumerologyAnalysisResult | null>(null);
   const [numerologyInputData, setNumerologyInputData] = useState<NumerologyInput | null>(null);
+  const [numerologyAnalysisId, setNumerologyAnalysisId] = useState<string | null>(null);
 
   // Tarot analysis state
   const [tarotAnalysisResult, setTarotAnalysisResult] = useState<TarotAnalysisResult | null>(null);
   const [tarotInputData, setTarotInputData] = useState<TarotInput | null>(null);
+  const [tarotAnalysisId, setTarotAnalysisId] = useState<string | null>(null);
 
   // Redirect to home if not authenticated
   useEffect(() => {
@@ -56,35 +61,40 @@ export default function Dashboard() {
   }, [isAuthenticated, isLoading, setLocation]);
 
   // Palm analysis handlers
-  const handlePalmAnalysisComplete = (result: PalmAnalysisResult, imageUrl: string) => {
+  const handlePalmAnalysisComplete = (result: PalmAnalysisResult, imageUrl: string, analysisId: string) => {
     setPalmAnalysisResult(result);
     setPalmImageUrl(imageUrl);
+    setPalmAnalysisId(analysisId);
     scrollToResults();
   };
 
   const handlePalmAnalyzeAnother = () => {
     setPalmAnalysisResult(null);
     setPalmImageUrl(null);
+    setPalmAnalysisId(null);
     scrollToAnalysis();
   };
 
   // Astrology analysis handlers
-  const handleAstrologyAnalysisComplete = (result: AstrologyAnalysisResult, inputData: AstrologyInput) => {
+  const handleAstrologyAnalysisComplete = (result: AstrologyAnalysisResult, inputData: AstrologyInput, analysisId: string) => {
     setAstrologyAnalysisResult(result);
     setAstrologyInputData(inputData);
+    setAstrologyAnalysisId(analysisId);
     scrollToResults();
   };
 
   const handleAstrologyAnalyzeAnother = () => {
     setAstrologyAnalysisResult(null);
     setAstrologyInputData(null);
+    setAstrologyAnalysisId(null);
     scrollToAnalysis();
   };
 
   // Vastu analysis handlers
-  const handleVastuAnalysisComplete = (result: VastuAnalysisResult, inputData: VastuInput, imageUrl?: string) => {
+  const handleVastuAnalysisComplete = (result: VastuAnalysisResult, inputData: VastuInput, analysisId: string, imageUrl?: string) => {
     setVastuAnalysisResult(result);
     setVastuInputData(inputData);
+    setVastuAnalysisId(analysisId);
     setVastuImageUrl(imageUrl || null);
     scrollToResults();
   };
@@ -92,33 +102,38 @@ export default function Dashboard() {
   const handleVastuAnalyzeAnother = () => {
     setVastuAnalysisResult(null);
     setVastuInputData(null);
+    setVastuAnalysisId(null);
     setVastuImageUrl(null);
     scrollToAnalysis();
   };
 
   // Numerology analysis handlers
-  const handleNumerologyAnalysisComplete = (result: NumerologyAnalysisResult, inputData: NumerologyInput) => {
+  const handleNumerologyAnalysisComplete = (result: NumerologyAnalysisResult, inputData: NumerologyInput, analysisId: string) => {
     setNumerologyAnalysisResult(result);
     setNumerologyInputData(inputData);
+    setNumerologyAnalysisId(analysisId);
     scrollToResults();
   };
 
   const handleNumerologyAnalyzeAnother = () => {
     setNumerologyAnalysisResult(null);
     setNumerologyInputData(null);
+    setNumerologyAnalysisId(null);
     scrollToAnalysis();
   };
 
   // Tarot analysis handlers
-  const handleTarotAnalysisComplete = (result: TarotAnalysisResult, inputData: TarotInput) => {
+  const handleTarotAnalysisComplete = (result: TarotAnalysisResult, inputData: TarotInput, analysisId: string) => {
     setTarotAnalysisResult(result);
     setTarotInputData(inputData);
+    setTarotAnalysisId(analysisId);
     scrollToResults();
   };
 
   const handleTarotAnalyzeAnother = () => {
     setTarotAnalysisResult(null);
     setTarotInputData(null);
+    setTarotAnalysisId(null);
     scrollToAnalysis();
   };
 
@@ -324,6 +339,7 @@ export default function Dashboard() {
               result={palmAnalysisResult}
               imageUrl={palmImageUrl}
               onAnalyzeAnother={handlePalmAnalyzeAnother}
+              analysisId={palmAnalysisId || undefined}
               isAuthenticated={isAuthenticated}
             />
           )}
@@ -332,6 +348,7 @@ export default function Dashboard() {
               result={astrologyAnalysisResult}
               inputData={astrologyInputData}
               onAnalyzeAnother={handleAstrologyAnalyzeAnother}
+              analysisId={astrologyAnalysisId || undefined}
               isAuthenticated={isAuthenticated}
             />
           )}
@@ -341,6 +358,7 @@ export default function Dashboard() {
               inputData={vastuInputData}
               imageUrl={vastuImageUrl || undefined}
               onAnalyzeAnother={handleVastuAnalyzeAnother}
+              analysisId={vastuAnalysisId || undefined}
               isAuthenticated={isAuthenticated}
             />
           )}
@@ -350,6 +368,7 @@ export default function Dashboard() {
               result={numerologyAnalysisResult} 
               inputData={numerologyInputData}
               onAnalyzeAnother={handleNumerologyAnalyzeAnother}
+              analysisId={numerologyAnalysisId || undefined}
               isAuthenticated={isAuthenticated}
             />
           )}
@@ -359,6 +378,7 @@ export default function Dashboard() {
               result={tarotAnalysisResult} 
               inputData={tarotInputData}
               onAnalyzeAnother={handleTarotAnalyzeAnother}
+              analysisId={tarotAnalysisId || undefined}
               isAuthenticated={isAuthenticated}
             />
           )}

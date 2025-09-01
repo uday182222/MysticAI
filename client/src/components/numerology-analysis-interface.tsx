@@ -12,7 +12,7 @@ import { Calculator, Hash, Loader2, Building, User } from "lucide-react";
 import { NumerologyAnalysisResult, NumerologyInput } from "@shared/schema";
 
 interface NumerologyAnalysisInterfaceProps {
-  onAnalysisComplete: (result: NumerologyAnalysisResult, inputData: NumerologyInput) => void;
+  onAnalysisComplete: (result: NumerologyAnalysisResult, inputData: NumerologyInput, analysisId: string) => void;
 }
 
 export function NumerologyAnalysisInterface({ onAnalysisComplete }: NumerologyAnalysisInterfaceProps) {
@@ -29,7 +29,7 @@ export function NumerologyAnalysisInterface({ onAnalysisComplete }: NumerologyAn
       return response.json();
     },
     onSuccess: (data) => {
-      onAnalysisComplete(data.result, data.inputData);
+      onAnalysisComplete(data.result, data.inputData, data.id);
       toast({
         title: "Analysis Complete!",
         description: "Your numerology analysis is ready.",

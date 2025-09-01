@@ -10,7 +10,7 @@ import { Stars, Calendar, MapPin, Clock, Loader2 } from "lucide-react";
 import { AstrologyAnalysisResult, AstrologyInput } from "@shared/schema";
 
 interface AstrologyAnalysisInterfaceProps {
-  onAnalysisComplete: (result: AstrologyAnalysisResult, inputData: AstrologyInput) => void;
+  onAnalysisComplete: (result: AstrologyAnalysisResult, inputData: AstrologyInput, analysisId: string) => void;
 }
 
 export function AstrologyAnalysisInterface({ onAnalysisComplete }: AstrologyAnalysisInterfaceProps) {
@@ -26,7 +26,7 @@ export function AstrologyAnalysisInterface({ onAnalysisComplete }: AstrologyAnal
       return response.json();
     },
     onSuccess: (data) => {
-      onAnalysisComplete(data.result, data.inputData);
+      onAnalysisComplete(data.result, data.inputData, data.id);
       toast({
         title: "Analysis Complete!",
         description: "Your astrological chart reading is ready.",

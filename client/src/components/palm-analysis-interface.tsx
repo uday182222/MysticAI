@@ -10,7 +10,7 @@ import { Camera, Upload, X, RefreshCw, Loader2 } from "lucide-react";
 import { PalmAnalysisResult } from "@shared/schema";
 
 interface PalmAnalysisInterfaceProps {
-  onAnalysisComplete: (result: PalmAnalysisResult, imageUrl: string) => void;
+  onAnalysisComplete: (result: PalmAnalysisResult, imageUrl: string, analysisId: string) => void;
 }
 
 export function PalmAnalysisInterface({ onAnalysisComplete }: PalmAnalysisInterfaceProps) {
@@ -49,7 +49,7 @@ export function PalmAnalysisInterface({ onAnalysisComplete }: PalmAnalysisInterf
       return response.json();
     },
     onSuccess: (data) => {
-      onAnalysisComplete(data.result, data.imageUrl);
+      onAnalysisComplete(data.result, data.imageUrl, data.id);
       toast({
         title: "Analysis Complete!",
         description: "Your palm reading is ready.",

@@ -12,7 +12,7 @@ import { Sparkles, Zap, Shuffle, Loader2 } from "lucide-react";
 import { TarotAnalysisResult, TarotInput } from "@shared/schema";
 
 interface TarotAnalysisInterfaceProps {
-  onAnalysisComplete: (result: TarotAnalysisResult, inputData: TarotInput) => void;
+  onAnalysisComplete: (result: TarotAnalysisResult, inputData: TarotInput, analysisId: string) => void;
 }
 
 // Predefined tarot cards for realistic simulation
@@ -58,7 +58,7 @@ export function TarotAnalysisInterface({ onAnalysisComplete }: TarotAnalysisInte
       return response.json();
     },
     onSuccess: (data) => {
-      onAnalysisComplete(data.result, data.inputData);
+      onAnalysisComplete(data.result, data.inputData, data.id);
       toast({
         title: "Reading Complete!",
         description: "Your tarot reading is ready.",

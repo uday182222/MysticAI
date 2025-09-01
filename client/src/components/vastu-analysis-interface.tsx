@@ -12,7 +12,7 @@ import { Home, Upload, Plus, Trash2, Loader2, X } from "lucide-react";
 import { VastuAnalysisResult, VastuInput } from "@shared/schema";
 
 interface VastuAnalysisInterfaceProps {
-  onAnalysisComplete: (result: VastuAnalysisResult, inputData: VastuInput, imageUrl?: string) => void;
+  onAnalysisComplete: (result: VastuAnalysisResult, inputData: VastuInput, analysisId: string, imageUrl?: string) => void;
 }
 
 export function VastuAnalysisInterface({ onAnalysisComplete }: VastuAnalysisInterfaceProps) {
@@ -39,7 +39,7 @@ export function VastuAnalysisInterface({ onAnalysisComplete }: VastuAnalysisInte
       return response.json();
     },
     onSuccess: (data) => {
-      onAnalysisComplete(data.result, data.inputData, data.imageUrl);
+      onAnalysisComplete(data.result, data.inputData, data.id, data.imageUrl);
       toast({
         title: "Analysis Complete!",
         description: "Your Vastu analysis is ready.",
