@@ -10,11 +10,13 @@ import {
   vastuAnalysisResultSchema,
   numerologyInputSchema,
   numerologyAnalysisResultSchema,
+  tarotInputSchema,
+  tarotAnalysisResultSchema,
   insertAnalysisSchema,
   userRegistrationSchema,
   userLoginSchema
 } from "@shared/schema";
-import { analyzePalmImage, analyzeAstrologyChart, analyzeVastu, analyzeNumerology } from "./services/openai";
+import { analyzePalmImage, analyzeAstrologyChart, analyzeVastu, analyzeNumerology, analyzeTarot } from "./services/openai";
 import multer from "multer";
 import bcrypt from "bcryptjs";
 import session from "express-session";
@@ -333,6 +335,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Numerology analysis error:", error);
       res.status(500).json({ 
         message: error instanceof Error ? error.message : "Failed to analyze numerology" 
+      });
+    }
+  });
+
+  // Analyze tarot endpoint
+  app.post("/api/tarot/analyze", async (req, res) => {
+    try {
+      const tarotData = tarotInputSchema.parse(req.body);
+      
+      // Analyze using OpenAI
+      const analysisResult = await analyzeTarot(tarotData);
+      
+      // Validate the analysis result
+      const validatedResult = tarotAnalysisResultSchema.parse(analysisResult);
+      
+      // Store the analysis
+      const tarotAnalysis = await storage.createAnalysis({
+        type: "tarot",
+        inputData: tarotData,
+        analysisResult: validatedResult,
+      });
+
+      res.json({
+        id: tarotAnalysis.id,
+        result: validatedResult,
+        inputData: tarotData,
+      });
+    } catch (error) {
+      console.error("Tarot analysis error:", error);
+      res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Failed to analyze tarot reading" 
       });
     }
   });

@@ -6,15 +6,17 @@ import { PalmAnalysisInterface } from "@/components/palm-analysis-interface";
 import { AstrologyAnalysisInterface } from "@/components/astrology-analysis-interface";
 import { VastuAnalysisInterface } from "@/components/vastu-analysis-interface";
 import { NumerologyAnalysisInterface } from "@/components/numerology-analysis-interface";
+import { TarotAnalysisInterface } from "@/components/tarot-analysis-interface";
 import { AnalysisResults } from "@/components/analysis-results";
 import { AstrologyResults } from "@/components/astrology-results";
 import { VastuResults } from "@/components/vastu-results";
 import { NumerologyResults } from "@/components/numerology-results";
+import { TarotResults } from "@/components/tarot-results";
 import { HowItWorksSection } from "@/components/how-it-works-section";
 import { Footer } from "@/components/footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Hand, Stars, Home as HomeIcon, Calculator } from "lucide-react";
-import { PalmAnalysisResult, AstrologyAnalysisResult, AstrologyInput, VastuAnalysisResult, VastuInput, NumerologyAnalysisResult, NumerologyInput } from "@shared/schema";
+import { Hand, Stars, Home as HomeIcon, Calculator, Zap } from "lucide-react";
+import { PalmAnalysisResult, AstrologyAnalysisResult, AstrologyInput, VastuAnalysisResult, VastuInput, NumerologyAnalysisResult, NumerologyInput, TarotAnalysisResult, TarotInput } from "@shared/schema";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("palm");
@@ -35,6 +37,10 @@ export default function Home() {
   // Numerology analysis state
   const [numerologyAnalysisResult, setNumerologyAnalysisResult] = useState<NumerologyAnalysisResult | null>(null);
   const [numerologyInputData, setNumerologyInputData] = useState<NumerologyInput | null>(null);
+
+  // Tarot analysis state
+  const [tarotAnalysisResult, setTarotAnalysisResult] = useState<TarotAnalysisResult | null>(null);
+  const [tarotInputData, setTarotInputData] = useState<TarotInput | null>(null);
 
   const handleStartReading = () => {
     const analysisSection = document.getElementById("analysis-section");
@@ -97,6 +103,19 @@ export default function Home() {
     scrollToAnalysis();
   };
 
+  // Tarot analysis handlers
+  const handleTarotAnalysisComplete = (result: TarotAnalysisResult, inputData: TarotInput) => {
+    setTarotAnalysisResult(result);
+    setTarotInputData(inputData);
+    scrollToResults();
+  };
+
+  const handleTarotAnalyzeAnother = () => {
+    setTarotAnalysisResult(null);
+    setTarotInputData(null);
+    scrollToAnalysis();
+  };
+
   const scrollToResults = () => {
     setTimeout(() => {
       const resultsSection = document.getElementById("results-section");
@@ -115,7 +134,7 @@ export default function Home() {
     }, 100);
   };
 
-  const hasAnyResults = palmAnalysisResult || astrologyAnalysisResult || vastuAnalysisResult || numerologyAnalysisResult;
+  const hasAnyResults = palmAnalysisResult || astrologyAnalysisResult || vastuAnalysisResult || numerologyAnalysisResult || tarotAnalysisResult;
 
   return (
     <div className="min-h-screen bg-background">
@@ -129,12 +148,12 @@ export default function Home() {
             <div className="text-center mb-12">
               <h3 className="text-3xl font-bold text-primary mb-4">Choose Your Analysis Type</h3>
               <p className="text-lg text-secondary">
-                Select from palmistry, astrology, Vastu, or numerology analysis for personalized insights
+                Select from palmistry, astrology, Vastu, numerology, or tarot reading for personalized insights
               </p>
             </div>
             
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="palm" className="flex items-center gap-2" data-testid="tab-palm">
                   <Hand className="h-4 w-4" />
                   Palmistry
@@ -150,6 +169,10 @@ export default function Home() {
                 <TabsTrigger value="numerology" className="flex items-center gap-2" data-testid="tab-numerology">
                   <Calculator className="h-4 w-4" />
                   Numerology
+                </TabsTrigger>
+                <TabsTrigger value="tarot" className="flex items-center gap-2" data-testid="tab-tarot">
+                  <Zap className="h-4 w-4" />
+                  Tarot
                 </TabsTrigger>
               </TabsList>
               
@@ -167,6 +190,10 @@ export default function Home() {
               
               <TabsContent value="numerology" className="mt-6">
                 <NumerologyAnalysisInterface onAnalysisComplete={handleNumerologyAnalysisComplete} />
+              </TabsContent>
+              
+              <TabsContent value="tarot" className="mt-6">
+                <TarotAnalysisInterface onAnalysisComplete={handleTarotAnalysisComplete} />
               </TabsContent>
             </Tabs>
           </div>
@@ -206,6 +233,14 @@ export default function Home() {
               result={numerologyAnalysisResult} 
               inputData={numerologyInputData}
               onAnalyzeAnother={handleNumerologyAnalyzeAnother}
+            />
+          )}
+          
+          {tarotAnalysisResult && tarotInputData && (
+            <TarotResults 
+              result={tarotAnalysisResult} 
+              inputData={tarotInputData}
+              onAnalyzeAnother={handleTarotAnalyzeAnother}
             />
           )}
         </div>

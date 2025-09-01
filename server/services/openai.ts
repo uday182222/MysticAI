@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { AstrologyInput, VastuInput, NumerologyInput } from "@shared/schema";
+import { AstrologyInput, VastuInput, NumerologyInput, TarotInput } from "@shared/schema";
 
 const openai = new OpenAI({ 
   apiKey: process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY_ENV_VAR || "default_key"
@@ -317,5 +317,70 @@ Provide detailed numerological analysis with practical guidance for personal and
   } catch (error) {
     console.error("OpenAI numerology analysis error:", error);
     throw new Error("Failed to analyze numerology: " + (error as Error).message);
+  }
+}
+
+export async function analyzeTarot(tarotData: TarotInput): Promise<any> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: `You are an expert tarot reader with decades of experience in card interpretation and divination. Analyze the provided tarot spread and cards to give meaningful, insightful guidance. Return your analysis in JSON format with the following structure:
+
+{
+  "spreadType": "The type of spread used",
+  "personalityOverview": "Personality insights based on the overall card energy and spread",
+  "cardAnalysis": [
+    {
+      "position": "Position name in the spread",
+      "cardName": "Name of the card",
+      "meaning": "Traditional meaning of the card",
+      "interpretation": "Specific interpretation for this position and question",
+      "reversed": false,
+      "reversedMeaning": "Meaning when reversed (if applicable)"
+    }
+  ],
+  "overallMessage": "The main message from the reading",
+  "guidance": {
+    "pastInfluences": "Past influences affecting the situation",
+    "presentSituation": "Current situation analysis",
+    "futureOutlook": "Future potential and trends",
+    "advice": "Practical advice and guidance",
+    "outcome": "Potential outcome if current path continues"
+  },
+  "actionSteps": ["step1", "step2", "step3"],
+  "reflection": "Deep reflection and spiritual insights from the reading"
+}
+
+Focus on traditional tarot meanings while providing personalized, empowering guidance. Be specific about how each card relates to its position in the spread. Consider reversed cards as offering different perspectives, not necessarily negative meanings. Provide practical, actionable advice while honoring the mystical nature of tarot.`
+        },
+        {
+          role: "user",
+          content: `Please interpret this tarot reading:
+          
+Spread Type: ${tarotData.spreadType}
+${tarotData.question ? `Question: ${tarotData.question}` : 'General guidance reading'}
+
+Cards Drawn:
+${tarotData.drawnCards.map((card, index) => 
+  `${index + 1}. Position: ${card.position}
+     Card: ${card.cardName}${card.suit ? ` (${card.suit})` : ''}
+     ${card.reversed ? 'REVERSED' : 'UPRIGHT'}`
+).join('\n\n')}
+
+Provide a comprehensive tarot interpretation with deep insights, practical guidance, and spiritual wisdom. Consider the relationships between the cards and how they speak to each other within the spread. Offer empowering advice that helps the querent understand their situation and potential paths forward.`
+        },
+      ],
+      response_format: { type: "json_object" },
+      max_completion_tokens: 4000,
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || "{}");
+    return result;
+  } catch (error) {
+    console.error("OpenAI tarot analysis error:", error);
+    throw new Error("Failed to analyze tarot reading: " + (error as Error).message);
   }
 }
