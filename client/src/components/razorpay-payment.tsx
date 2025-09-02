@@ -2,10 +2,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { Check, Clock, MessageCircle, Zap } from "lucide-react";
+import { Check, Clock, MessageCircle, Zap, Loader2, CheckCircle, CreditCard } from "lucide-react";
 
 interface PaymentTier {
   id: string;
@@ -71,15 +72,11 @@ interface RazorpayPaymentProps {
   onPaymentSuccess: () => void;
 }
 
-declare global {
-  interface Window {
-    Razorpay: any;
-  }
-}
-
 export function RazorpayPayment({ onPaymentSuccess }: RazorpayPaymentProps) {
   const [selectedTier, setSelectedTier] = useState<PaymentTier | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentStep, setPaymentStep] = useState<'processing' | 'success' | 'error'>('processing');
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -95,74 +92,72 @@ export function RazorpayPayment({ onPaymentSuccess }: RazorpayPaymentProps) {
     }
   });
 
-  const handlePurchase = async (tier: PaymentTier) => {
-    if (!window.Razorpay) {
-      toast({
-        title: "Payment Error",
-        description: "Payment system is not loaded. Please refresh and try again.",
-        variant: "destructive"
+  const verifyPaymentMutation = useMutation({
+    mutationFn: async (paymentData: { paymentId: string; tier: PaymentTier }) => {
+      // Simulate payment verification with mock data
+      const response = await apiRequest("POST", "/api/payments/verify", {
+        razorpay_payment_id: `pay_mock_${Date.now()}`,
+        razorpay_order_id: `order_mock_${Date.now()}`,
+        razorpay_signature: `mock_signature_${Date.now()}`,
+        paymentId: paymentData.paymentId
       });
-      return;
+      return { response: response.json(), tier: paymentData.tier };
     }
+  });
 
+  const handlePurchase = async (tier: PaymentTier) => {
     setIsProcessing(true);
     setSelectedTier(tier);
+    setShowPaymentModal(true);
+    setPaymentStep('processing');
 
     try {
+      // Step 1: Create order
       const orderData = await createOrderMutation.mutateAsync(tier);
 
-      const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-        amount: orderData.amount * 100, // Amount in paise
-        currency: "USD",
-        name: "MysticRead AI",
-        description: `${tier.name} Plan - ${tier.minutes} minutes AI chat`,
-        order_id: orderData.orderId,
-        theme: {
-          color: "#8B5CF6"
-        },
-        handler: async (response: any) => {
-          try {
-            // Verify payment on backend
-            await apiRequest("POST", "/api/payments/verify", {
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_signature: response.razorpay_signature,
-              paymentId: orderData.paymentId
-            });
+      // Step 2: Simulate payment processing delay (2-3 seconds)
+      await new Promise(resolve => setTimeout(resolve, 2500));
 
-            toast({
-              title: "Payment Successful!",
-              description: `You've received ${tier.credits} AI chat credits (${tier.minutes} minutes)`,
-            });
-
-            // Invalidate user data to refresh credit balance
-            queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
-            onPaymentSuccess();
-          } catch (error) {
-            toast({
-              title: "Payment Verification Failed",
-              description: "Please contact support if your payment was deducted.",
-              variant: "destructive"
-            });
-          }
-        },
-        prefill: {
-          email: "user@example.com" // Will be filled from user data
-        }
-      };
-
-      const paymentObject = new window.Razorpay(options);
-      paymentObject.open();
-    } catch (error) {
-      toast({
-        title: "Payment Failed",
-        description: "Unable to create payment order. Please try again.",
-        variant: "destructive"
+      // Step 3: Process payment verification
+      await verifyPaymentMutation.mutateAsync({ 
+        paymentId: orderData.paymentId, 
+        tier 
       });
-    } finally {
-      setIsProcessing(false);
-      setSelectedTier(null);
+
+      // Step 4: Show success
+      setPaymentStep('success');
+
+      // Step 5: Update UI after a short delay
+      setTimeout(() => {
+        toast({
+          title: "Payment Successful! 🎉",
+          description: `You've received ${tier.credits} AI chat credits (${tier.minutes} minutes)`,
+        });
+
+        // Invalidate user data to refresh credit balance
+        queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+        setShowPaymentModal(false);
+        onPaymentSuccess();
+        
+        // Reset states
+        setIsProcessing(false);
+        setSelectedTier(null);
+        setPaymentStep('processing');
+      }, 1500);
+
+    } catch (error) {
+      setPaymentStep('error');
+      setTimeout(() => {
+        toast({
+          title: "Payment Failed",
+          description: "Unable to process payment. Please try again.",
+          variant: "destructive"
+        });
+        setShowPaymentModal(false);
+        setIsProcessing(false);
+        setSelectedTier(null);
+        setPaymentStep('processing');
+      }, 2000);
     }
   };
 
@@ -249,9 +244,89 @@ export function RazorpayPayment({ onPaymentSuccess }: RazorpayPaymentProps) {
       </div>
 
       <div className="text-center text-sm text-muted-foreground">
-        <p>💳 Secure payment powered by Razorpay</p>
+        <p>💳 Secure mock payment system (Demo mode)</p>
         <p>✨ Credits are valid for 30 days from purchase</p>
       </div>
+
+      {/* Mock Payment Modal */}
+      <Dialog open={showPaymentModal} onOpenChange={() => {}}>
+        <DialogContent className="sm:max-w-md"  onPointerDownOutside={(e) => e.preventDefault()}>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CreditCard className="h-5 w-5" />
+              {paymentStep === 'processing' && "Processing Payment"}
+              {paymentStep === 'success' && "Payment Successful!"}
+              {paymentStep === 'error' && "Payment Failed"}
+            </DialogTitle>
+            <DialogDescription>
+              {paymentStep === 'processing' && `Processing your ${selectedTier?.name} plan purchase...`}
+              {paymentStep === 'success' && `Your ${selectedTier?.name} plan has been activated!`}
+              {paymentStep === 'error' && "There was an issue processing your payment."}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="flex flex-col items-center py-6">
+            {paymentStep === 'processing' && (
+              <div className="flex flex-col items-center space-y-4">
+                <Loader2 className="h-12 w-12 animate-spin text-accent" />
+                <div className="text-center">
+                  <p className="text-sm text-muted-foreground mb-2">Please wait...</p>
+                  <div className="flex items-center justify-center space-x-1">
+                    <div className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                    <div className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                    <div className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {paymentStep === 'success' && (
+              <div className="flex flex-col items-center space-y-4">
+                <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+                  <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
+                </div>
+                <div className="text-center">
+                  <p className="text-lg font-medium text-foreground">Payment Complete!</p>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedTier?.credits} credits added to your account
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {paymentStep === 'error' && (
+              <div className="flex flex-col items-center space-y-4">
+                <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
+                  <Zap className="h-8 w-8 text-red-600 dark:text-red-400" />
+                </div>
+                <div className="text-center">
+                  <p className="text-lg font-medium text-foreground">Payment Failed</p>
+                  <p className="text-sm text-muted-foreground">
+                    Please try again or contact support
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {selectedTier && (
+            <div className="border-t pt-4">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Plan:</span>
+                <span className="font-medium">{selectedTier.name}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Credits:</span>
+                <span className="font-medium">{selectedTier.credits}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Amount:</span>
+                <span className="font-medium">${selectedTier.price} USD</span>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
