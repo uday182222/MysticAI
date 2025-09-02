@@ -85,8 +85,8 @@ export function AnalysisResults({
           
           {/* Results Header */}
           <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold text-primary mb-4">Your Palm Reading Results</h3>
-            <p className="text-lg text-secondary">
+            <h3 className="text-3xl font-bold bg-gradient-to-r from-purple-800 to-purple-900 bg-clip-text text-transparent mb-4">Your Palm Reading Results</h3>
+            <p className="text-lg text-gray-900">
               AI-powered analysis of your palm reveals fascinating insights about your life
             </p>
           </div>
@@ -97,7 +97,7 @@ export function AnalysisResults({
             <div className="lg:col-span-1">
               <Card className="bg-slate-50">
                 <CardContent className="p-6">
-                  <h4 className="font-semibold text-primary mb-4">Analyzed Palm Image</h4>
+                  <h4 className="font-semibold bg-gradient-to-r from-purple-800 to-purple-900 bg-clip-text text-transparent mb-4">Analyzed Palm Image</h4>
                   <div className="relative">
                     <img 
                       src={imageUrl} 
@@ -110,19 +110,19 @@ export function AnalysisResults({
                     </div>
                   </div>
                   <div className="mt-4 space-y-2">
-                    <div className="flex items-center gap-2 text-sm">
+                    <div className="flex items-center gap-2 text-sm text-gray-900">
                       <div className="w-3 h-3 bg-red-500 rounded-full"></div>
                       <span>Heart Line</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm">
+                    <div className="flex items-center gap-2 text-sm text-gray-900">
                       <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
                       <span>Head Line</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm">
+                    <div className="flex items-center gap-2 text-sm text-gray-900">
                       <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                       <span>Life Line</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm">
+                    <div className="flex items-center gap-2 text-sm text-gray-900">
                       <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
                       <span>Fate Line</span>
                     </div>
@@ -141,9 +141,9 @@ export function AnalysisResults({
                       <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
                         <User className="h-5 w-5 text-white" />
                       </div>
-                      <h4 className="text-xl font-semibold text-primary">Personality Overview</h4>
+                      <h4 className="text-xl font-semibold bg-gradient-to-r from-purple-800 to-purple-900 bg-clip-text text-transparent">Personality Overview</h4>
                     </div>
-                    <p className="text-secondary leading-relaxed mb-4" data-testid="text-personality-overview">
+                    <p className="text-gray-900 leading-relaxed mb-4" data-testid="text-personality-overview">
                       {result.personalityOverview}
                     </p>
                     <div className="flex flex-wrap gap-2">
@@ -163,7 +163,7 @@ export function AnalysisResults({
                       <div className="text-2xl font-bold text-accent mb-1" data-testid="text-life-energy">
                         {result.lifeEnergyPercentage}%
                       </div>
-                      <div className="text-sm text-secondary">Life Energy</div>
+                      <div className="text-sm text-gray-900">Life Energy</div>
                     </CardContent>
                   </Card>
                   <Card className="text-center">
@@ -171,7 +171,7 @@ export function AnalysisResults({
                       <div className="text-2xl font-bold text-success mb-1" data-testid="text-emotional-balance">
                         {result.emotionalBalancePercentage}%
                       </div>
-                      <div className="text-sm text-secondary">Emotional Balance</div>
+                      <div className="text-sm text-gray-900">Emotional Balance</div>
                     </CardContent>
                   </Card>
                   <Card className="text-center">
@@ -179,7 +179,7 @@ export function AnalysisResults({
                       <div className="text-2xl font-bold text-purple-600 mb-1" data-testid="text-career-potential">
                         {result.careerPotentialPercentage}%
                       </div>
-                      <div className="text-sm text-secondary">Career Potential</div>
+                      <div className="text-sm text-gray-900">Career Potential</div>
                     </CardContent>
                   </Card>
                 </div>
@@ -196,18 +196,18 @@ export function AnalysisResults({
                   <div className="w-10 h-10 bg-rose-500 rounded-full flex items-center justify-center">
                     <Heart className="h-5 w-5 text-white" />
                   </div>
-                  <h4 className="text-xl font-semibold text-primary">Love & Relationships</h4>
+                  <h4 className="text-xl font-semibold bg-gradient-to-r from-purple-800 to-purple-900 bg-clip-text text-transparent">Love & Relationships</h4>
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <h5 className="font-medium text-primary mb-2">Heart Line Analysis</h5>
-                    <p className="text-secondary text-sm" data-testid="text-heart-line-analysis">
+                    <h5 className="font-medium bg-gradient-to-r from-purple-800 to-purple-900 bg-clip-text text-transparent mb-2">Heart Line Analysis</h5>
+                    <p className="text-gray-900 text-sm" data-testid="text-heart-line-analysis">
                       {result.loveAndRelationships?.heartLineAnalysis || 'Analysis not available'}
                     </p>
                   </div>
                   <div>
-                    <h5 className="font-medium text-primary mb-2">Compatibility Insights</h5>
-                    <p className="text-secondary text-sm" data-testid="text-compatibility-insights">
+                    <h5 className="font-medium bg-gradient-to-r from-purple-800 to-purple-900 bg-clip-text text-transparent mb-2">Compatibility Insights</h5>
+                    <p className="text-gray-900 text-sm" data-testid="text-compatibility-insights">
                       {result.loveAndRelationships?.compatibilityInsights || 'Analysis not available'}
                     </p>
                   </div>
@@ -228,18 +228,18 @@ export function AnalysisResults({
                   <div className="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center">
                     <Briefcase className="h-5 w-5 text-white" />
                   </div>
-                  <h4 className="text-xl font-semibold text-primary">Career & Success</h4>
+                  <h4 className="text-xl font-semibold bg-gradient-to-r from-purple-800 to-purple-900 bg-clip-text text-transparent">Career & Success</h4>
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <h5 className="font-medium text-primary mb-2">Professional Strengths</h5>
-                    <p className="text-secondary text-sm" data-testid="text-professional-strengths">
+                    <h5 className="font-medium bg-gradient-to-r from-purple-800 to-purple-900 bg-clip-text text-transparent mb-2">Professional Strengths</h5>
+                    <p className="text-gray-900 text-sm" data-testid="text-professional-strengths">
                       {result.careerAndSuccess?.professionalStrengths || 'Analysis not available'}
                     </p>
                   </div>
                   <div>
-                    <h5 className="font-medium text-primary mb-2">Recommended Paths</h5>
-                    <ul className="text-secondary text-sm space-y-1">
+                    <h5 className="font-medium bg-gradient-to-r from-purple-800 to-purple-900 bg-clip-text text-transparent mb-2">Recommended Paths</h5>
+                    <ul className="text-gray-900 text-sm space-y-1">
                       {result.careerAndSuccess?.recommendedPaths?.map((path, index) => (
                         <li key={index} data-testid={`text-career-path-${index}`}>• {path}</li>
                       ))}
@@ -262,18 +262,18 @@ export function AnalysisResults({
                   <div className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center">
                     <Leaf className="h-5 w-5 text-white" />
                   </div>
-                  <h4 className="text-xl font-semibold text-primary">Health & Wellness</h4>
+                  <h4 className="text-xl font-semibold bg-gradient-to-r from-purple-800 to-purple-900 bg-clip-text text-transparent">Health & Wellness</h4>
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <h5 className="font-medium text-primary mb-2">Life Line Insights</h5>
-                    <p className="text-secondary text-sm" data-testid="text-life-line-insights">
+                    <h5 className="font-medium bg-gradient-to-r from-purple-800 to-purple-900 bg-clip-text text-transparent mb-2">Life Line Insights</h5>
+                    <p className="text-gray-900 text-sm" data-testid="text-life-line-insights">
                       {result.healthAndWellness?.lifeLineInsights || 'Analysis not available'}
                     </p>
                   </div>
                   <div>
-                    <h5 className="font-medium text-primary mb-2">Wellness Recommendations</h5>
-                    <ul className="text-secondary text-sm space-y-1">
+                    <h5 className="font-medium bg-gradient-to-r from-purple-800 to-purple-900 bg-clip-text text-transparent mb-2">Wellness Recommendations</h5>
+                    <ul className="text-gray-900 text-sm space-y-1">
                       {result.healthAndWellness?.wellnessRecommendations?.map((recommendation, index) => (
                         <li key={index} data-testid={`text-wellness-recommendation-${index}`}>• {recommendation}</li>
                       ))}
@@ -296,18 +296,18 @@ export function AnalysisResults({
                   <div className="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center">
                     <Gem className="h-5 w-5 text-white" />
                   </div>
-                  <h4 className="text-xl font-semibold text-primary">Future Insights</h4>
+                  <h4 className="text-xl font-semibold bg-gradient-to-r from-purple-800 to-purple-900 bg-clip-text text-transparent">Future Insights</h4>
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <h5 className="font-medium text-primary mb-2">Near Future (1-3 Years)</h5>
-                    <p className="text-secondary text-sm" data-testid="text-near-future">
+                    <h5 className="font-medium bg-gradient-to-r from-purple-800 to-purple-900 bg-clip-text text-transparent mb-2">Near Future (1-3 Years)</h5>
+                    <p className="text-gray-900 text-sm" data-testid="text-near-future">
                       {result.futureInsights?.nearFuture || 'Analysis not available'}
                     </p>
                   </div>
                   <div>
-                    <h5 className="font-medium text-primary mb-2">Life Path Direction</h5>
-                    <p className="text-secondary text-sm" data-testid="text-life-path-direction">
+                    <h5 className="font-medium bg-gradient-to-r from-purple-800 to-purple-900 bg-clip-text text-transparent mb-2">Life Path Direction</h5>
+                    <p className="text-gray-900 text-sm" data-testid="text-life-path-direction">
                       {result.futureInsights?.lifePathDirection || 'Analysis not available'}
                     </p>
                   </div>
