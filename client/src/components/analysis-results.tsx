@@ -163,7 +163,7 @@ export function AnalysisResults({
                       <div className="text-2xl font-bold text-accent mb-1" data-testid="text-life-energy">
                         {result.lifeEnergyPercentage}%
                       </div>
-                      <div className="text-sm text-gray-900">Life Energy</div>
+                      <div className="text-sm text-blue-500">Life Energy</div>
                     </CardContent>
                   </Card>
                   <Card className="text-center">
@@ -171,7 +171,7 @@ export function AnalysisResults({
                       <div className="text-2xl font-bold text-success mb-1" data-testid="text-emotional-balance">
                         {result.emotionalBalancePercentage}%
                       </div>
-                      <div className="text-sm text-gray-900">Emotional Balance</div>
+                      <div className="text-sm text-blue-500">Emotional Balance</div>
                     </CardContent>
                   </Card>
                   <Card className="text-center">
@@ -179,7 +179,7 @@ export function AnalysisResults({
                       <div className="text-2xl font-bold text-purple-600 mb-1" data-testid="text-career-potential">
                         {result.careerPotentialPercentage}%
                       </div>
-                      <div className="text-sm text-gray-900">Career Potential</div>
+                      <div className="text-sm text-blue-500">Career Potential</div>
                     </CardContent>
                   </Card>
                 </div>
