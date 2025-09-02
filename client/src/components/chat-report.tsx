@@ -27,6 +27,7 @@ interface ChatReportProps {
   userCredits?: number;
   creditsUsed?: number;
   minutesUsed?: number;
+  reportId?: string;
 }
 
 export function ChatReport({ 
@@ -37,7 +38,8 @@ export function ChatReport({
   analysisId,
   userCredits,
   creditsUsed,
-  minutesUsed 
+  minutesUsed,
+  reportId = 'chat-report'
 }: ChatReportProps) {
   const userMessages = messages.filter(msg => msg.role === 'user').length;
   const aiMessages = messages.filter(msg => msg.role === 'assistant').length;
@@ -89,7 +91,7 @@ export function ChatReport({
   const analysisInfo = getAnalysisSummary();
 
   return (
-    <div id="chat-report" className="max-w-4xl mx-auto bg-white text-gray-900 font-sans" style={{ padding: '2rem' }}>
+    <div id={reportId} className="max-w-4xl mx-auto bg-white text-gray-900 font-sans" style={{ padding: '2rem' }}>
       {/* Header */}
       <div className="text-center mb-8 border-b-2 border-purple-200 pb-6">
         <div className="flex items-center justify-center gap-3 mb-4">

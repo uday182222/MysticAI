@@ -285,6 +285,7 @@ export function PostAnalysisChat({
           analysisType={analysisType}
           analysisData={analysisData}
           analysisId={analysisId}
+          reportId="post-analysis-chat-report"
         />
       </div>
     </Card>

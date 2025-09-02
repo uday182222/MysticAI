@@ -372,6 +372,7 @@ export function AiChatInterface() {
           reportType="ai-chat"
           creditsUsed={messages.filter(msg => msg.role === 'user').length}
           minutesUsed={user?.aiChatMinutesUsed}
+          reportId="ai-chat-report"
         />
       </div>
     </div>
