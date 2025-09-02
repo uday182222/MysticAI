@@ -155,10 +155,10 @@ export function PostAnalysisChat({
             {messages.length === 0 ? (
               <div className="text-center py-8">
                 <Bot className="h-12 w-12 text-purple-400 mx-auto mb-3" />
-                <p className="text-gray-600">
+                <p className="text-gray-900">
                   Ask me anything about your {analysisType} analysis!
                 </p>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-gray-700 mt-1">
                   I can provide deeper insights, clarify meanings, or answer specific questions.
                 </p>
               </div>
@@ -176,7 +176,7 @@ export function PostAnalysisChat({
                     <div className={`p-3 rounded-lg ${
                       msg.role === 'user'
                         ? 'bg-blue-500 text-white'
-                        : 'bg-white border border-gray-200'
+                        : 'bg-white border border-gray-200 text-gray-900'
                     }`}>
                       <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
                       <p className="text-xs opacity-70 mt-1">
