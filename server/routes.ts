@@ -95,7 +95,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        credits: user.credits
+        credits: user.credits,
+        aiChatCredits: user.aiChatCredits,
+        aiChatMinutesUsed: user.aiChatMinutesUsed
       });
     } catch (error) {
       console.error("Registration error:", error);
@@ -130,7 +132,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        credits: user.credits
+        credits: user.credits,
+        aiChatCredits: user.aiChatCredits,
+        aiChatMinutesUsed: user.aiChatMinutesUsed
       });
     } catch (error) {
       console.error("Login error:", error);
@@ -165,7 +169,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        credits: user.credits
+        credits: user.credits,
+        aiChatCredits: user.aiChatCredits,
+        aiChatMinutesUsed: user.aiChatMinutesUsed
       });
     } catch (error) {
       console.error("Get user error:", error);
@@ -484,6 +490,150 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Mystical chat error:", error);
       res.status(500).json({ 
         message: error instanceof Error ? error.message : "Failed to generate chat response" 
+      });
+    }
+  });
+
+  // Razorpay Payment Routes
+  app.post("/api/payments/create-order", requireAuth, async (req: any, res) => {
+    try {
+      const { amount, creditsRequested, paymentTier, minutesGranted } = req.body;
+      const userId = req.session.userId;
+
+      if (!amount || !creditsRequested || !paymentTier || !minutesGranted) {
+        return res.status(400).json({ message: "Missing required payment parameters" });
+      }
+
+      // Create payment record first
+      const payment = await storage.createPayment({
+        userId,
+        amount: amount.toString(),
+        creditsGranted: creditsRequested,
+        minutesGranted,
+        paymentTier,
+        status: 'pending'
+      });
+
+      // In a real implementation, you would create a Razorpay order here
+      // For now, returning mock data for development
+      const mockOrderId = `order_${Date.now()}`;
+      
+      res.json({
+        orderId: mockOrderId,
+        amount: amount,
+        currency: "USD",
+        paymentId: payment.id
+      });
+    } catch (error) {
+      console.error("Create payment order error:", error);
+      res.status(500).json({ message: "Failed to create payment order" });
+    }
+  });
+
+  app.post("/api/payments/verify", requireAuth, async (req: any, res) => {
+    try {
+      const { razorpay_payment_id, razorpay_order_id, razorpay_signature, paymentId } = req.body;
+      const userId = req.session.userId;
+
+      // In a real implementation, you would verify the Razorpay signature here
+      // For now, simulating successful verification
+      
+      // Update payment status
+      const payment = await storage.updatePaymentStatus(
+        paymentId,
+        'completed',
+        razorpay_payment_id,
+        new Date()
+      );
+
+      // Get current user
+      const user = await storage.getUserById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Add credits to user
+      const newAiChatCredits = user.aiChatCredits + payment.creditsGranted;
+      await storage.updateUserAiChatCredits(userId, newAiChatCredits, user.aiChatMinutesUsed);
+
+      res.json({ 
+        success: true,
+        creditsAdded: payment.creditsGranted,
+        totalCredits: newAiChatCredits
+      });
+    } catch (error) {
+      console.error("Payment verification error:", error);
+      res.status(500).json({ message: "Payment verification failed" });
+    }
+  });
+
+  // Credit-based AI Chat endpoint
+  app.post("/api/ai-chat", requireAuth, async (req: any, res) => {
+    try {
+      const { message } = req.body;
+      const userId = req.session.userId;
+
+      if (!message || typeof message !== 'string') {
+        return res.status(400).json({ message: "Message is required" });
+      }
+
+      // Get current user and check credits
+      const user = await storage.getUserById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      if (user.aiChatCredits <= 0) {
+        return res.status(403).json({ 
+          message: "No AI chat credits remaining", 
+          needsPayment: true 
+        });
+      }
+
+      // Get or create AI chat session
+      let session = await storage.getActiveAiChatSession(userId);
+      if (!session) {
+        session = await storage.createAiChatSession({
+          userId,
+          status: 'active'
+        });
+      }
+
+      // Save user message
+      await storage.createAiChatMessage({
+        sessionId: session.id,
+        role: 'user',
+        content: message
+      });
+
+      // Generate AI response
+      const aiResponse = await generateMysticalChatResponse(message, []);
+
+      // Save AI response
+      await storage.createAiChatMessage({
+        sessionId: session.id,
+        role: 'assistant',
+        content: aiResponse
+      });
+
+      // Deduct 1 credit and update usage
+      const newCredits = user.aiChatCredits - 1;
+      const estimatedMinutes = parseFloat((session.minutesUsed + 0.2).toFixed(2)); // Estimate ~0.2 minutes per exchange
+      
+      await Promise.all([
+        storage.updateUserAiChatCredits(userId, newCredits, user.aiChatMinutesUsed),
+        storage.updateAiChatSessionUsage(session.id, estimatedMinutes, session.creditsUsed + 1)
+      ]);
+
+      res.json({ 
+        response: aiResponse,
+        creditsRemaining: newCredits,
+        minutesUsed: estimatedMinutes
+      });
+    } catch (error) {
+      console.error("AI chat error:", error);
+      res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Failed to process AI chat" 
       });
     }
   });

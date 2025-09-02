@@ -1,10 +1,24 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { Send, Bot, User, Sparkles } from "lucide-react";
+import { 
+  MessageCircle, 
+  Send, 
+  Loader2, 
+  Sparkles, 
+  Clock, 
+  CreditCard, 
+  AlertCircle,
+  Bot,
+  User
+} from "lucide-react";
+import { RazorpayPayment } from "./razorpay-payment";
 
 interface ChatMessage {
   id: string;
@@ -13,78 +27,91 @@ interface ChatMessage {
   timestamp: Date;
 }
 
+interface User {
+  aiChatCredits: number;
+  aiChatMinutesUsed: number;
+}
+
 export function AiChatInterface() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const [inputMessage, setInputMessage] = useState("");
+  const [showPayment, setShowPayment] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
-  // Initial welcome message
-  useEffect(() => {
-    const welcomeMessage: ChatMessage = {
-      id: 'welcome',
-      role: 'assistant',
-      content: "Welcome to your AI Mystical Assistant! I'm here to help you explore the mysteries of life through palmistry, astrology, numerology, tarot, and spiritual guidance. Ask me anything about your analyses, mystical practices, or seek personal insights. How can I assist you today?",
-      timestamp: new Date()
-    };
-    setMessages([welcomeMessage]);
-  }, []);
+  // Get user data including AI chat credits
+  const { data: user, isLoading: userLoading } = useQuery<User>({
+    queryKey: ["/api/auth/me"],
+  });
 
-  // Auto-scroll to bottom when new messages are added
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  const handleSendMessage = async () => {
-    if (!input.trim() || isLoading) return;
-
-    const userMessage: ChatMessage = {
-      id: Date.now().toString(),
-      role: 'user',
-      content: input.trim(),
-      timestamp: new Date()
-    };
-
-    setMessages(prev => [...prev, userMessage]);
-    setInput("");
-    setIsLoading(true);
-
-    try {
-      const response = await apiRequest("POST", "/api/chat", {
-        message: userMessage.content,
-        conversationHistory: messages.map(msg => ({
-          role: msg.role,
-          content: msg.content
-        }))
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to get AI response");
-      }
-
-      const data = await response.json();
-      
-      const assistantMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
+  const sendMessageMutation = useMutation({
+    mutationFn: async (message: string) => {
+      const response = await apiRequest("POST", "/api/ai-chat", { message });
+      return response.json();
+    },
+    onSuccess: (data) => {
+      // Add AI response to messages
+      const aiMessage: ChatMessage = {
+        id: Date.now().toString(),
         role: 'assistant',
         content: data.response,
         timestamp: new Date()
       };
+      setMessages(prev => [...prev, aiMessage]);
 
-      setMessages(prev => [...prev, assistantMessage]);
+      // Update credits in user query
+      queryClient.setQueryData(["/api/auth/me"], (oldData: any) => ({
+        ...oldData,
+        aiChatCredits: data.creditsRemaining
+      }));
 
-    } catch (error) {
-      console.error("Chat error:", error);
       toast({
-        title: "Chat Error",
-        description: "Failed to get response from AI assistant. Please try again.",
-        variant: "destructive",
+        title: "Response Generated",
+        description: `${data.creditsRemaining} credits remaining`,
       });
-    } finally {
-      setIsLoading(false);
+    },
+    onError: (error: any) => {
+      if (error.needsPayment) {
+        setShowPayment(true);
+        toast({
+          title: "Credits Needed",
+          description: "Purchase AI chat credits to continue the conversation",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Chat Error",
+          description: error.message || "Failed to send message",
+          variant: "destructive"
+        });
+      }
     }
+  });
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const handleSendMessage = () => {
+    if (!inputMessage.trim() || sendMessageMutation.isPending) return;
+
+    // Add user message to messages
+    const userMessage: ChatMessage = {
+      id: Date.now().toString(),
+      role: 'user', 
+      content: inputMessage.trim(),
+      timestamp: new Date()
+    };
+    setMessages(prev => [...prev, userMessage]);
+
+    // Send to API
+    sendMessageMutation.mutate(inputMessage.trim());
+    setInputMessage("");
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -94,143 +121,191 @@ export function AiChatInterface() {
     }
   };
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const handlePaymentSuccess = () => {
+    setShowPayment(false);
+    queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+    toast({
+      title: "Credits Added!",
+      description: "You can now continue your AI chat session",
+    });
   };
 
+  if (userLoading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <Loader2 className="h-8 w-8 animate-spin text-accent" />
+      </div>
+    );
+  }
+
+  // Show payment interface if no credits or user explicitly requested it
+  if (!user?.aiChatCredits || showPayment) {
+    return (
+      <div className="space-y-6">
+        <Card className="border-accent/20">
+          <CardHeader className="text-center">
+            <div className="mx-auto w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mb-4">
+              <MessageCircle className="h-8 w-8 text-accent" />
+            </div>
+            <CardTitle className="text-2xl text-foreground">AI Mystical Assistant</CardTitle>
+            <CardDescription>
+              {user?.aiChatCredits ? (
+                "Get more credits to continue your mystical journey"
+              ) : (
+                "Get personalized mystical guidance powered by AI. Purchase credits to start chatting."
+              )}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center space-y-4">
+              {user?.aiChatCredits ? (
+                <div className="flex items-center justify-center gap-4">
+                  <Badge variant="secondary" className="text-sm">
+                    <CreditCard className="h-4 w-4 mr-1" />
+                    {user.aiChatCredits} credits remaining
+                  </Badge>
+                  <Button
+                    onClick={() => setShowPayment(false)}
+                    variant="outline"
+                    size="sm"
+                  >
+                    Back to Chat
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center gap-2 text-orange-600 dark:text-orange-400">
+                  <AlertCircle className="h-5 w-5" />
+                  <span className="text-sm font-medium">No AI chat credits available</span>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <RazorpayPayment onPaymentSuccess={handlePaymentSuccess} />
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col h-[600px] max-w-4xl mx-auto">
-      {/* Chat Header */}
-      <div className="border-b border-border p-4 bg-muted/30 rounded-t-lg">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full flex items-center justify-center">
-            <Sparkles className="h-5 w-5 text-white" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-foreground">AI Mystical Assistant</h3>
-            <p className="text-sm text-muted-foreground">Your guide to mystical insights</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Chat Messages */}
-      <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
-        <div className="space-y-4">
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
-              {message.role === 'assistant' && (
-                <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Bot className="h-4 w-4 text-white" />
-                </div>
-              )}
-              
-              <div
-                className={`max-w-[80%] rounded-lg p-4 ${
-                  message.role === 'user'
-                    ? 'bg-primary text-primary-foreground ml-auto'
-                    : 'bg-muted text-foreground'
-                }`}
+    <div className="space-y-4">
+      {/* Header with Credit Info */}
+      <Card className="border-accent/20">
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center">
+                <Sparkles className="h-5 w-5 text-accent" />
+              </div>
+              <div>
+                <CardTitle className="text-lg">AI Mystical Assistant</CardTitle>
+                <CardDescription>Your guide to mystical insights</CardDescription>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <Badge variant="secondary" className="text-sm">
+                <CreditCard className="h-4 w-4 mr-1" />
+                {user.aiChatCredits} credits
+              </Badge>
+              <Badge variant="outline" className="text-sm">
+                <Clock className="h-4 w-4 mr-1" />
+                {user.aiChatMinutesUsed.toFixed(1)}m used
+              </Badge>
+              <Button
+                onClick={() => setShowPayment(true)}
+                variant="outline"
+                size="sm"
+                data-testid="button-buy-credits"
               >
-                <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                  {message.content}
-                </div>
-                <div
-                  className={`text-xs mt-2 ${
-                    message.role === 'user'
-                      ? 'text-primary-foreground/70'
-                      : 'text-muted-foreground'
-                  }`}
-                >
-                  {formatTime(message.timestamp)}
-                </div>
-              </div>
-
-              {message.role === 'user' && (
-                <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center flex-shrink-0">
-                  <User className="h-4 w-4 text-accent-foreground" />
-                </div>
-              )}
+                Buy More Credits
+              </Button>
             </div>
-          ))}
-          
-          {isLoading && (
-            <div className="flex gap-3 justify-start">
-              <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                <Bot className="h-4 w-4 text-white" />
-              </div>
-              <div className="bg-muted text-foreground rounded-lg p-4 max-w-[80%]">
-                <div className="flex items-center gap-2">
-                  <div className="flex gap-1">
-                    <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                    <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                    <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+          </div>
+        </CardHeader>
+      </Card>
+
+      {/* Chat Interface */}
+      <Card className="h-[600px] flex flex-col">
+        <CardContent className="flex-1 flex flex-col p-0">
+          {/* Messages Area */}
+          <ScrollArea className="flex-1 p-6">
+            <div className="space-y-4">
+              {messages.length === 0 ? (
+                <div className="text-center text-muted-foreground py-12">
+                  <Bot className="h-12 w-12 mx-auto mb-4 text-accent/50" />
+                  <h3 className="text-lg font-medium mb-2">Welcome to AI Mystical Chat</h3>
+                  <p className="text-sm max-w-md mx-auto">
+                    Ask me anything about spirituality, mysticism, or seek guidance on your life's journey. 
+                    Each message uses 1 credit.
+                  </p>
+                </div>
+              ) : (
+                messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div className={`flex gap-3 max-w-[80%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                        message.role === 'user' 
+                          ? 'bg-accent text-accent-foreground' 
+                          : 'bg-muted text-muted-foreground'
+                      }`}>
+                        {message.role === 'user' ? (
+                          <User className="h-4 w-4" />
+                        ) : (
+                          <Bot className="h-4 w-4" />
+                        )}
+                      </div>
+                      <div className={`rounded-lg px-4 py-3 ${
+                        message.role === 'user'
+                          ? 'bg-accent text-accent-foreground'
+                          : 'bg-muted text-foreground'
+                      }`}>
+                        <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                        <p className="text-xs opacity-70 mt-1">
+                          {message.timestamp.toLocaleTimeString()}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <span className="text-sm text-muted-foreground">AI is thinking...</span>
-                </div>
-              </div>
+                ))
+              )}
+              <div ref={messagesEndRef} />
             </div>
-          )}
-          
-          <div ref={messagesEndRef} />
-        </div>
-      </ScrollArea>
+          </ScrollArea>
 
-      {/* Chat Input */}
-      <div className="border-t border-border p-4 bg-muted/30 rounded-b-lg">
-        <div className="flex gap-2">
-          <Input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Ask about mystical insights, your analyses, or spiritual guidance..."
-            className="flex-1"
-            disabled={isLoading}
-            data-testid="input-chat-message"
-          />
-          <Button
-            onClick={handleSendMessage}
-            disabled={!input.trim() || isLoading}
-            className="px-4"
-            data-testid="button-send-message"
-          >
-            <Send className="h-4 w-4" />
-          </Button>
-        </div>
-        
-        {/* Quick Suggestions */}
-        <div className="mt-3 flex flex-wrap gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setInput("What does my palm reading mean for my career?")}
-            disabled={isLoading}
-            className="text-xs"
-          >
-            Career insights
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setInput("How can I improve my spiritual practice?")}
-            disabled={isLoading}
-            className="text-xs"
-          >
-            Spiritual guidance
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setInput("What should I focus on this month?")}
-            disabled={isLoading}
-            className="text-xs"
-          >
-            Monthly guidance
-          </Button>
-        </div>
-      </div>
+          {/* Input Area */}
+          <div className="border-t p-4">
+            <div className="flex gap-2">
+              <Input
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Ask me anything mystical..."
+                disabled={sendMessageMutation.isPending}
+                className="flex-1"
+                data-testid="input-ai-chat-message"
+              />
+              <Button
+                onClick={handleSendMessage}
+                disabled={!inputMessage.trim() || sendMessageMutation.isPending}
+                size="icon"
+                data-testid="button-send-ai-chat"
+              >
+                {sendMessageMutation.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              Each message uses 1 credit • {user.aiChatCredits} credits remaining
+            </p>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

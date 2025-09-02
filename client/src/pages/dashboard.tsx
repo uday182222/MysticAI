@@ -237,7 +237,7 @@ export default function Dashboard() {
                       <TarotAnalysisInterface onAnalysisComplete={handleTarotAnalysisComplete} />
                     </TabsContent>
                     
-                    <TabsContent value="chat" className="mt-0">
+                    <TabsContent value="ai-chat" className="mt-0">
                       <AiChatInterface />
                     </TabsContent>
                   </div>
@@ -308,11 +308,11 @@ export default function Dashboard() {
                             <div className="text-xs text-muted-foreground">Card divination</div>
                           </div>
                         </TabsTrigger>
-                        
+
                         <TabsTrigger 
-                          value="chat" 
+                          value="ai-chat" 
                           className="w-full justify-start gap-3 p-4 h-auto data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-secondary-foreground hover:text-foreground hover:bg-muted transition-all"
-                          data-testid="tab-chat"
+                          data-testid="tab-ai-chat"
                         >
                           <MessageCircle className="h-5 w-5" />
                           <div className="text-left">
@@ -320,6 +320,7 @@ export default function Dashboard() {
                             <div className="text-xs text-muted-foreground">Mystical guidance</div>
                           </div>
                         </TabsTrigger>
+                        
                       </TabsList>
                     </div>
                   </div>

@@ -17,7 +17,9 @@ export const users = pgTable("users", {
   hashedPassword: varchar("hashed_password"),
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
-  credits: integer("credits").default(0).notNull(), // Question credits
+  credits: integer("credits").default(0).notNull(), // Question credits (for post-analysis chat)
+  aiChatCredits: integer("ai_chat_credits").default(0).notNull(), // AI chat time credits
+  aiChatMinutesUsed: integer("ai_chat_minutes_used").default(0).notNull(), // Track usage
   isActive: boolean("is_active").default(true).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -54,13 +56,36 @@ export const chatMessages = pgTable("chat_messages", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// AI chat sessions for credit-based general AI chat (separate from post-analysis chat)
+export const aiChatSessions = pgTable("ai_chat_sessions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  minutesUsed: decimal("minutes_used", { precision: 5, scale: 2 }).default('0').notNull(),
+  creditsUsed: integer("credits_used").default(0).notNull(),
+  status: varchar("status").notNull(), // 'active', 'completed', 'expired'
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// AI chat messages for general chat sessions
+export const aiChatMessages = pgTable("ai_chat_messages", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  sessionId: varchar("session_id").notNull().references(() => aiChatSessions.id),
+  role: varchar("role").notNull(), // 'user' or 'assistant'
+  content: text("content").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Payment records for credit purchases
 export const payments = pgTable("payments", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").notNull().references(() => users.id),
-  stripePaymentIntentId: varchar("stripe_payment_intent_id").unique(),
-  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(), // $1.00
-  creditsGranted: integer("credits_granted").notNull(), // 5 questions per $1
+  razorpayPaymentId: varchar("razorpay_payment_id").unique(),
+  razorpayOrderId: varchar("razorpay_order_id"),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(), // Amount in USD
+  creditsGranted: integer("credits_granted").notNull(), // AI chat credits (5, 10, or 15)
+  minutesGranted: integer("minutes_granted").notNull(), // Chat minutes (5, 10, or 15)
+  paymentTier: varchar("payment_tier").notNull(), // 'tier1', 'tier2', 'tier3'
   status: varchar("status").notNull(), // 'pending', 'completed', 'failed'
   createdAt: timestamp("created_at").defaultNow().notNull(),
   completedAt: timestamp("completed_at"),
@@ -333,6 +358,17 @@ export const chatMessageSchema = z.object({
 export const createPaymentSchema = z.object({
   amount: z.number().positive(),
   creditsRequested: z.number().positive(),
+  paymentTier: z.enum(['tier1', 'tier2', 'tier3']),
+});
+
+// AI chat schemas
+export const aiChatMessageSchema = z.object({
+  role: z.enum(['user', 'assistant']),
+  content: z.string(),
+});
+
+export const createAiChatSessionSchema = z.object({
+  userId: z.string(),
 });
 
 // Generic analysis schema (updated for 5 types)
@@ -390,6 +426,17 @@ export const insertPaymentSchema = createInsertSchema(payments).omit({
   completedAt: true,
 });
 
+export const insertAiChatSessionSchema = createInsertSchema(aiChatSessions).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertAiChatMessageSchema = createInsertSchema(aiChatMessages).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types for all entities
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -424,3 +471,8 @@ export type InsertChatMessage = z.infer<typeof insertChatMessageSchema>;
 export type Payment = typeof payments.$inferSelect;
 export type InsertPayment = z.infer<typeof insertPaymentSchema>;
 export type CreatePayment = z.infer<typeof createPaymentSchema>;
+
+export type AiChatSession = typeof aiChatSessions.$inferSelect;
+export type InsertAiChatSession = z.infer<typeof insertAiChatSessionSchema>;
+export type AiChatMessage = typeof aiChatMessages.$inferSelect;
+export type InsertAiChatMessage = z.infer<typeof insertAiChatMessageSchema>;
