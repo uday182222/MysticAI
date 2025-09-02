@@ -19,8 +19,11 @@ import {
   Coins,
   Zap,
   Lock,
-  Download
+  Download,
+  Loader2
 } from "lucide-react";
+import { ChatReport } from "./chat-report";
+import { generatePDF, generateReportFilename } from "@/lib/pdf-generator";
 
 interface PostAnalysisChatProps {
   analysisId: string;
@@ -38,6 +41,7 @@ export function PostAnalysisChat({
   onLoginRequired 
 }: PostAnalysisChatProps) {
   const [message, setMessage] = useState("");
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -91,7 +95,7 @@ export function PostAnalysisChat({
     sendMessageMutation.mutate(message.trim());
   };
 
-  const handleDownloadChat = () => {
+  const handleDownloadChat = async () => {
     const messages = conversation?.messages || [];
     
     if (messages.length === 0) {
@@ -103,107 +107,30 @@ export function PostAnalysisChat({
       return;
     }
 
-    // Calculate message statistics
-    const userMessages = messages.filter(msg => msg.role === 'user').length;
-    const aiMessages = messages.filter(msg => msg.role === 'assistant').length;
+    setIsGeneratingPDF(true);
     
-    // Get analysis summary for context
-    const getAnalysisSummary = () => {
-      switch (analysisType) {
-        case 'palm':
-          return `Palm Reading Analysis - Personality traits: ${analysisData?.traits?.join(', ') || 'N/A'}, Life Energy: ${analysisData?.lifeEnergyPercentage || 'N/A'}%, Career Potential: ${analysisData?.careerPotentialPercentage || 'N/A'}%`;
-        case 'astrology':
-          return `Astrology Chart Analysis - Birth details and cosmic influences`;
-        case 'vastu':
-          return `Vastu Analysis - Home/office energy flow and recommendations`;
-        case 'numerology':
-          return `Numerology Analysis - Life path numbers and personality insights`;
-        case 'tarot':
-          return `Tarot Reading - Card interpretations and spiritual guidance`;
-        default:
-          return `${analysisType} Analysis`;
-      }
-    };
-    
-    // Format chat content with analysis context
-    const chatContent = `=== MYSTICREAD AI POST-ANALYSIS CHAT ===
-Date: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}
-Analysis Type: ${analysisType.charAt(0).toUpperCase() + analysisType.slice(1)}
-Analysis ID: ${analysisId}
+    try {
+      // Generate PDF filename
+      const filename = generateReportFilename('post-analysis', analysisType);
+      
+      // Generate PDF from the hidden report component
+      await generatePDF('post-analysis-chat-report', { filename });
 
---- ORIGINAL ANALYSIS CONTEXT ---
-${getAnalysisSummary()}
-
---- CHAT STATISTICS ---
-Total Messages: ${messages.length}
-Your Questions: ${userMessages}
-AI Responses: ${aiMessages}
-Chat Status: Unlimited (Post-Analysis)
-
---- CONVERSATION HISTORY ---
-${messages.map(msg => {
-  const timestamp = new Date(msg.createdAt).toLocaleTimeString();
-  const role = msg.role === 'user' ? 'You' : 'MysticRead AI';
-  return `[${timestamp}] ${role}: ${msg.content}`;
-}).join('\n\n')}
-
---- TECHNICAL INFORMATION ---
-AI Model: GPT-5 (Released August 7, 2025)
-Analysis Engine: MysticRead AI Multi-Modal Analysis
-Response Generation: Real-time contextual AI processing with analysis history
-Architecture: Node.js backend with React frontend
-Database: PostgreSQL with secure conversation storage
-Context Retention: Full analysis data available for enhanced responses
-
---- TECHNICAL SPECIFICATIONS ---
-Model: GPT-5 (gpt-5)
-Context Window: 128k tokens with full analysis context
-Temperature: 0.7 (balanced creativity and accuracy)
-Response Time: ~2-5 seconds average
-Processing: Multi-turn conversation with original analysis context
-Analysis Integration: Full access to your ${analysisType} reading results
-
---- AI DISCLAIMER ---
-This report contains AI-generated responses based on OpenAI's GPT-5 model in 
-conjunction with your original ${analysisType} analysis results. The follow-up 
-insights, clarifications, and additional guidance provided are generated using 
-artificial intelligence and your specific analysis data.
-
-The AI responses build upon your original analysis to provide deeper insights 
-and answer specific questions. These should be considered as guidance for 
-self-reflection and spiritual exploration rather than definitive predictions 
-or professional advice.
-
-MysticRead AI provides contextual follow-up conversations to help you better 
-understand your analysis results. The AI maintains awareness of your original 
-reading to provide relevant and personalized responses.
-
-This conversation should not replace professional counseling, medical advice, 
-financial guidance, or other expert consultation. All insights are provided 
-for entertainment, self-discovery, and spiritual exploration purposes.
-
-Your conversation data is stored securely with encryption and privacy protection.
-
-Generated by MysticRead AI - Your Mystical Analysis Platform
-Original Analysis: ${new Date().toLocaleDateString()}
-https://mysticread.ai
-
-© ${new Date().getFullYear()} MysticRead AI. All rights reserved.
-Report generated on ${new Date().toISOString()}`;
-
-    // Create and download file
-    const blob = new Blob([chatContent], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `MysticRead_${analysisType.charAt(0).toUpperCase() + analysisType.slice(1)}_Chat_${new Date().toISOString().split('T')[0]}_${Date.now()}.txt`;
-    link.click();
-    URL.revokeObjectURL(url);
-
-    toast({
-      title: "Chat Downloaded!",
-      description: `Your ${analysisType} analysis conversation with ${messages.length} messages has been saved`,
-    });
+      toast({
+        title: "PDF Report Downloaded!",
+        description: `Your ${analysisType} analysis conversation with ${messages.length} messages has been saved as a beautiful PDF`,
+      });
+      
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      toast({
+        title: "Download Failed",
+        description: "There was an error generating your PDF report. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGeneratingPDF(false);
+    }
   };
 
   const scrollToBottom = () => {
@@ -259,12 +186,16 @@ Report generated on ${new Date().toISOString()}`;
               onClick={handleDownloadChat}
               variant="secondary"
               size="sm"
-              disabled={messages.length === 0}
+              disabled={messages.length === 0 || isGeneratingPDF}
               className="bg-white/20 hover:bg-white/30 text-white border-white/20"
               data-testid="button-download-post-chat"
             >
-              <Download className="h-4 w-4 mr-1" />
-              Download Chat
+              {isGeneratingPDF ? (
+                <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4 mr-1" />
+              )}
+              {isGeneratingPDF ? 'Generating...' : 'Download PDF'}
             </Button>
             <Badge variant="secondary" className="bg-green-100 text-green-800">
               <Sparkles className="h-3 w-3 mr-1" />
@@ -345,6 +276,17 @@ Report generated on ${new Date().toISOString()}`;
           </div>
         </div>
       </CardContent>
+
+      {/* Hidden ChatReport component for PDF generation */}
+      <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
+        <ChatReport
+          messages={messages}
+          reportType="post-analysis"
+          analysisType={analysisType}
+          analysisData={analysisData}
+          analysisId={analysisId}
+        />
+      </div>
     </Card>
   );
 }
