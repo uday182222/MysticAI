@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PalmRead AI - Discover Your Future Through Palmistry</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#0f172a',
+                        secondary: '#334155',
+                        accent: '#3b82f6',
+                        success: '#10b981',
+                        background: '#f8fafc'
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+<body class="font-inter bg-background text-primary">
+    
+    <!-- Header -->
+    <!-- @COMPONENT: Header [navigation and branding] -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <nav class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
+                        <i class="fas fa-hand-paper text-white text-sm"></i>
+                    </div>
+                    <h1 class="text-xl font-bold text-primary">PalmRead AI</h1>
+                </div>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#features" class="text-secondary hover:text-primary transition-colors">Features</a>
+                    <a href="#how-it-works" class="text-secondary hover:text-primary transition-colors">How It Works</a>
+                    <a href="#about" class="text-secondary hover:text-primary transition-colors">About</a>
+                </div>
+                <div class="md:hidden">
+                    <button class="text-secondary hover:text-primary">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <!-- @END_COMPONENT: Header -->
+
+    <!-- Hero Section -->
+    <!-- @COMPONENT: HeroSection [main landing area with CTA] -->
+    <section class="bg-gradient-to-br from-slate-50 to-blue-50 py-20">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-4xl md:text-6xl font-bold text-primary mb-6">
+                    Discover Your Future <br>
+                    <span class="text-accent">Through AI Palmistry</span>
+                </h2>
+                <p class="text-xl text-secondary mb-8 max-w-2xl mx-auto">
+                    Upload or capture a photo of your palm and let our advanced AI analyze the lines, mounts, and patterns to reveal insights about your personality, relationships, and future.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <button data-event="click:scrollToUpload" class="bg-accent hover:bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors shadow-lg">
+                        <i class="fas fa-camera mr-2"></i>
+                        Start Palm Reading
+                    </button>
+                    <button class="border border-slate-300 hover:border-slate-400 text-secondary hover:text-primary px-8 py-4 rounded-lg font-semibold text-lg transition-colors">
+                        Learn More
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: HeroSection -->
+
+    <!-- Features Section -->
+    <!-- @COMPONENT: FeaturesSection [highlighting key capabilities] -->
+    <section id="features" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h3 class="text-3xl font-bold text-primary mb-4">Advanced AI Palm Analysis</h3>
+                <p class="text-lg text-secondary max-w-2xl mx-auto">
+                    Our cutting-edge AI technology provides detailed insights by analyzing multiple aspects of your palm.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <div class="bg-slate-50 rounded-xl p-8 text-center hover:shadow-lg transition-shadow">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-brain text-2xl text-accent"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold text-primary mb-4">AI-Powered Analysis</h4>
+                    <p class="text-secondary">
+                        Utilizing GPT-4 Vision model to accurately identify and interpret palm lines, mounts, and patterns with unprecedented precision.
+                    </p>
+                </div>
+                
+                <div class="bg-slate-50 rounded-xl p-8 text-center hover:shadow-lg transition-shadow">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-mobile-alt text-2xl text-success"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold text-primary mb-4">Mobile Camera Support</h4>
+                    <p class="text-secondary">
+                        Take photos directly with your device camera or upload existing images for instant analysis anywhere, anytime.
+                    </p>
+                </div>
+                
+                <div class="bg-slate-50 rounded-xl p-8 text-center hover:shadow-lg transition-shadow">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-chart-line text-2xl text-purple-600"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold text-primary mb-4">Comprehensive Readings</h4>
+                    <p class="text-secondary">
+                        Get detailed insights about personality traits, life path, relationships, health, and career prospects from your palm analysis.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: FeaturesSection -->
+
+    <!-- Main Upload/Camera Section -->
+    <!-- @COMPONENT: PalmAnalysisInterface [core functionality area] -->
+    <section id="upload-section" class="py-20 bg-background">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-12">
+                    <h3 class="text-3xl font-bold text-primary mb-4">Analyze Your Palm</h3>
+                    <p class="text-lg text-secondary">
+                        Choose your preferred method to capture your palm image for AI analysis
+                    </p>
+                </div>
+
+                <!-- API Key Input Section -->
+                <!-- @STATE: apiKey:string = "" -->
+                <!-- @STATE: isApiKeySet:boolean = false -->
+                <div class="bg-white rounded-xl border border-slate-200 p-6 mb-8" data-mock="true">
+                    <div class="flex items-center gap-3 mb-4">
+                        <i class="fas fa-key text-accent"></i>
+                        <h4 class="text-lg font-semibold text-primary">OpenAI API Configuration</h4>
+                    </div>
+                    <p class="text-sm text-secondary mb-4">
+                        Enter your OpenAI API key to enable palm analysis. Your key is stored securely in your browser and never shared.
+                    </p>
+                    <div class="flex gap-3">
+                        <input 
+                            type="password" 
+                            placeholder="sk-..." 
+                            data-bind="apiKey"
+                            data-event="change:updateApiKey"
+                            class="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+                        />
+                        <button data-event="click:saveApiKey" class="bg-accent hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+                            Save Key
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-2 mt-3" data-bind="isApiKeySet">
+                        <i class="fas fa-check-circle text-success text-sm"></i>
+                        <span class="text-sm text-success">API key configured successfully</span>
+                    </div>
+                </div>
+
+                <!-- Upload Methods -->
+                <!-- @STATE: selectedMethod:string = "upload" -->
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <!-- File Upload Option -->
+                    <div class="bg-white rounded-xl border border-slate-200 p-6 hover:border-accent transition-colors cursor-pointer" data-event="click:selectUploadMethod">
+                        <div class="text-center">
+                            <div class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-upload text-3xl text-accent"></i>
+                            </div>
+                            <h4 class="text-xl font-semibold text-primary mb-2">Upload Image</h4>
+                            <p class="text-secondary mb-4">
+                                Select an existing palm photo from your device
+                            </p>
+                            <button class="w-full bg-slate-100 hover:bg-slate-200 text-primary py-3 rounded-lg font-medium transition-colors">
+                                Choose File
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Camera Capture Option -->
+                    <div class="bg-white rounded-xl border border-slate-200 p-6 hover:border-accent transition-colors cursor-pointer" data-event="click:selectCameraMethod">
+                        <div class="text-center">
+                            <div class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-camera text-3xl text-success"></i>
+                            </div>
+                            <h4 class="text-xl font-semibold text-primary mb-2">Take Photo</h4>
+                            <p class="text-secondary mb-4">
+                                Use your device camera to capture your palm
+                            </p>
+                            <button class="w-full bg-slate-100 hover:bg-slate-200 text-primary py-3 rounded-lg font-medium transition-colors">
+                                Open Camera
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Camera Preview/Upload Area -->
+                <!-- @STATE: cameraActive:boolean = false -->
+                <!-- @STATE: uploadedImage:File = null -->
+                <div class="bg-white rounded-xl border border-slate-200 p-6">
+                    
+                    <!-- Camera View -->
+                    <div class="camera-section hidden" data-bind="cameraActive" data-mock="true">
+                        <div class="relative">
+                            <video id="camera-preview" class="w-full h-80 bg-slate-100 rounded-lg object-cover" autoplay muted></video>
+                            <!-- @FUNCTIONALITY: Camera preview should show live feed from user's camera -->
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="text-center text-slate-500">
+                                    <i class="fas fa-camera text-6xl mb-4"></i>
+                                    <p class="text-lg">Camera Preview</p>
+                                    <p class="text-sm">Position your palm clearly in the frame</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Camera Controls -->
+                            <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+                                <button data-event="click:capturePhoto" class="w-16 h-16 bg-white rounded-full border-4 border-accent shadow-lg flex items-center justify-center hover:bg-slate-50 transition-colors">
+                                    <div class="w-8 h-8 bg-accent rounded-full"></div>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between mt-4">
+                            <button data-event="click:closCamera" class="text-secondary hover:text-primary">
+                                <i class="fas fa-times mr-2"></i>Cancel
+                            </button>
+                            <button data-event="click:switchCamera" class="text-secondary hover:text-primary">
+                                <i class="fas fa-sync-alt mr-2"></i>Switch Camera
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Upload/Preview Area -->
+                    <div class="upload-section" data-mock="true">
+                        <!-- Drag and Drop Zone -->
+                        <div class="border-2 border-dashed border-slate-300 rounded-lg p-12 text-center hover:border-accent transition-colors" data-event="dragover:handleDragOver" data-event="drop:handleImageDrop">
+                            <div class="uploaded-image-preview hidden mb-6" data-bind="uploadedImage">
+                                <!-- Sample palm image preview -->
+                                <!-- A clear photo of an open palm showing palm lines and features -->
+                                <img src="https://pixabay.com/get/g1f06bc53e3b1bd8f95194b33f4fb9a5e5185db4e13b62e6fedf0e942fbd1e70fb2165ae386d8d29fb6803e02fd8ab0714bb8cb64e9094d40c5b377f7b481ed6a_1280.jpg" alt="Uploaded palm image preview" class="max-w-xs mx-auto rounded-lg shadow-md" data-mock-image="true" data-implementation="Replace with user uploaded image" />
+                                <p class="text-sm text-secondary mt-2">Palm image uploaded successfully</p>
+                            </div>
+                            
+                            <div class="upload-placeholder" data-mock="true">
+                                <i class="fas fa-hand-paper text-6xl text-slate-300 mb-4"></i>
+                                <p class="text-xl text-primary font-medium mb-2">Drop your palm image here</p>
+                                <p class="text-secondary mb-6">or click to browse your files</p>
+                                <input type="file" class="hidden" accept="image/*" data-event="change:handleFileSelect" />
+                                <button data-event="click:triggerFileSelect" class="bg-accent hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                                    <i class="fas fa-folder-open mr-2"></i>
+                                    Browse Files
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Photo Guidelines -->
+                        <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                            <h5 class="font-medium text-primary mb-3 flex items-center">
+                                <i class="fas fa-info-circle text-accent mr-2"></i>
+                                Photo Guidelines for Best Results
+                            </h5>
+                            <ul class="text-sm text-secondary space-y-1">
+                                <li>• Ensure your palm is well-lit and clearly visible</li>
+                                <li>• Keep your hand flat and open with fingers spread</li>
+                                <li>• Take the photo from directly above your palm</li>
+                                <li>• Avoid shadows and reflections</li>
+                                <li>• Use a plain background for better contrast</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Analysis Button -->
+                    <!-- @STATE: isAnalyzing:boolean = false -->
+                    <div class="mt-8 text-center">
+                        <button data-event="click:analyzePalm" class="bg-accent hover:bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span class="analyze-text" data-bind="!isAnalyzing">
+                                <i class="fas fa-magic mr-2"></i>
+                                Analyze Palm
+                            </span>
+                            <span class="analyzing-text hidden" data-bind="isAnalyzing">
+                                <i class="fas fa-spinner fa-spin mr-2"></i>
+                                Analyzing Palm...
+                            </span>
+                        </button>
+                        <p class="text-sm text-secondary mt-2">Analysis typically takes 10-30 seconds</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: PalmAnalysisInterface -->
+
+    <!-- Results Section -->
+    <!-- @COMPONENT: AnalysisResults [displaying palm reading results] -->
+    <section id="results-section" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                
+                <!-- Results Header -->
+                <div class="text-center mb-12">
+                    <h3 class="text-3xl font-bold text-primary mb-4">Your Palm Reading Results</h3>
+                    <p class="text-lg text-secondary">
+                        AI-powered analysis of your palm reveals fascinating insights about your life
+                    </p>
+                </div>
+
+                <!-- Analysis Overview -->
+                <!-- @STATE: analysisResults:object = null -->
+                <div class="grid lg:grid-cols-3 gap-8 mb-12">
+                    <!-- Palm Image with Annotations -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-slate-50 rounded-xl p-6">
+                            <h4 class="font-semibold text-primary mb-4">Analyzed Palm Image</h4>
+                            <div class="relative">
+                                <!-- Annotated palm image showing identified lines -->
+                                <!-- A detailed close-up of an open palm with visible palm lines for palmistry reading -->
+                                <img src="https://pixabay.com/get/ge463e2e8731892ed538be18095ccc505740103da9cbfff2b6860076e5d35d0b681913025dec1e4d462f013b09724320adf84c36dd7dfab90d4b70df889d8bb3f_1280.jpg" alt="Palm analysis with line annotations" class="w-full rounded-lg shadow-md" data-mock-image="true" data-implementation="Show user's palm with AI-detected line overlays" />
+                                <!-- @FUNCTIONALITY: Overlay detected palm lines with different colors and labels -->
+                                <div class="absolute inset-0 rounded-lg" style="background: linear-gradient(45deg, transparent 40%, rgba(59, 130, 246, 0.1) 50%, transparent 60%)"></div>
+                                <div class="absolute top-2 right-2 bg-white bg-opacity-90 rounded-full p-2">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                </div>
+                            </div>
+                            <div class="mt-4 space-y-2">
+                                <div class="flex items-center gap-2 text-sm">
+                                    <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                                    <span>Heart Line</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-sm">
+                                    <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                    <span>Head Line</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-sm">
+                                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                    <span>Life Line</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-sm">
+                                    <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
+                                    <span>Fate Line</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Overall Summary -->
+                    <div class="lg:col-span-2">
+                        <div class="grid gap-6">
+                            <!-- Personality Overview -->
+                            <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 border border-blue-200">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-user text-white"></i>
+                                    </div>
+                                    <h4 class="text-xl font-semibold text-primary">Personality Overview</h4>
+                                </div>
+                                <p class="text-secondary leading-relaxed" data-mock="true">
+                                    Based on your palm analysis, you exhibit strong leadership qualities with a natural tendency toward creativity and innovation. Your heart line suggests you're emotionally balanced and form deep, meaningful relationships. The head line indicates analytical thinking combined with intuitive decision-making abilities.
+                                </p>
+                                <div class="flex flex-wrap gap-2 mt-4">
+                                    <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">Leadership</span>
+                                    <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">Creative</span>
+                                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">Analytical</span>
+                                    <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">Intuitive</span>
+                                </div>
+                            </div>
+
+                            <!-- Quick Stats -->
+                            <div class="grid md:grid-cols-3 gap-4">
+                                <div class="bg-white rounded-lg p-4 border border-slate-200 text-center">
+                                    <div class="text-2xl font-bold text-accent mb-1" data-mock="true">85%</div>
+                                    <div class="text-sm text-secondary">Life Energy</div>
+                                </div>
+                                <div class="bg-white rounded-lg p-4 border border-slate-200 text-center">
+                                    <div class="text-2xl font-bold text-success mb-1" data-mock="true">92%</div>
+                                    <div class="text-sm text-secondary">Emotional Balance</div>
+                                </div>
+                                <div class="bg-white rounded-lg p-4 border border-slate-200 text-center">
+                                    <div class="text-2xl font-bold text-purple-600 mb-1" data-mock="true">78%</div>
+                                    <div class="text-sm text-secondary">Career Potential</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Analysis Sections -->
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <!-- Love & Relationships -->
+                    <div class="bg-rose-50 rounded-xl p-6 border border-rose-200">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-rose-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-heart text-white"></i>
+                            </div>
+                            <h4 class="text-xl font-semibold text-primary">Love & Relationships</h4>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <h5 class="font-medium text-primary mb-2">Heart Line Analysis</h5>
+                                <p class="text-secondary text-sm" data-mock="true">
+                                    Your heart line indicates a warm, affectionate nature with strong capacity for deep love. You likely form lasting bonds and value emotional security in relationships.
+                                </p>
+                            </div>
+                            <div>
+                                <h5 class="font-medium text-primary mb-2">Compatibility Insights</h5>
+                                <p class="text-secondary text-sm" data-mock="true">
+                                    Best compatibility with partners who appreciate stability and emotional depth. You thrive in relationships built on mutual respect and shared values.
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-rose-600">
+                                <i class="fas fa-star"></i>
+                                <span>Relationship Strength: High</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Career & Success -->
+                    <div class="bg-amber-50 rounded-xl p-6 border border-amber-200">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-briefcase text-white"></i>
+                            </div>
+                            <h4 class="text-xl font-semibold text-primary">Career & Success</h4>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <h5 class="font-medium text-primary mb-2">Professional Strengths</h5>
+                                <p class="text-secondary text-sm" data-mock="true">
+                                    Your fate line suggests strong potential in leadership roles and creative fields. Natural problem-solving abilities make you well-suited for strategic positions.
+                                </p>
+                            </div>
+                            <div>
+                                <h5 class="font-medium text-primary mb-2">Recommended Paths</h5>
+                                <ul class="text-secondary text-sm space-y-1">
+                                    <li data-mock="true">• Management and executive roles</li>
+                                    <li data-mock="true">• Creative industries and design</li>
+                                    <li data-mock="true">• Entrepreneurship and innovation</li>
+                                    <li data-mock="true">• Consulting and advisory services</li>
+                                </ul>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-amber-600">
+                                <i class="fas fa-trophy"></i>
+                                <span>Success Potential: Very High</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Health & Wellness -->
+                    <div class="bg-emerald-50 rounded-xl p-6 border border-emerald-200">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-leaf text-white"></i>
+                            </div>
+                            <h4 class="text-xl font-semibold text-primary">Health & Wellness</h4>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <h5 class="font-medium text-primary mb-2">Life Line Insights</h5>
+                                <p class="text-secondary text-sm" data-mock="true">
+                                    Your life line indicates good overall vitality and energy levels. Focus on maintaining balance between work and rest for optimal well-being.
+                                </p>
+                            </div>
+                            <div>
+                                <h5 class="font-medium text-primary mb-2">Wellness Recommendations</h5>
+                                <ul class="text-secondary text-sm space-y-1">
+                                    <li data-mock="true">• Regular exercise for stress management</li>
+                                    <li data-mock="true">• Mindfulness and meditation practices</li>
+                                    <li data-mock="true">• Balanced nutrition and hydration</li>
+                                    <li data-mock="true">• Adequate sleep and recovery time</li>
+                                </ul>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-emerald-600">
+                                <i class="fas fa-heartbeat"></i>
+                                <span>Vitality Level: Strong</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Future Predictions -->
+                    <div class="bg-indigo-50 rounded-xl p-6 border border-indigo-200">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-crystal-ball text-white"></i>
+                            </div>
+                            <h4 class="text-xl font-semibold text-primary">Future Insights</h4>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <h5 class="font-medium text-primary mb-2">Near Future (1-3 Years)</h5>
+                                <p class="text-secondary text-sm" data-mock="true">
+                                    Significant opportunities for personal and professional growth. A period of positive changes and new beginnings approaching.
+                                </p>
+                            </div>
+                            <div>
+                                <h5 class="font-medium text-primary mb-2">Life Path Direction</h5>
+                                <p class="text-secondary text-sm" data-mock="true">
+                                    Your palm suggests a path toward increased responsibility and influence. Trust your instincts during decision-making processes.
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-indigo-600">
+                                <i class="fas fa-compass"></i>
+                                <span>Path Clarity: High</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="text-center mt-12">
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button data-event="click:downloadReport" class="bg-accent hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                            <i class="fas fa-download mr-2"></i>
+                            Download Full Report
+                        </button>
+                        <button data-event="click:shareResults" class="border border-slate-300 hover:border-slate-400 text-secondary hover:text-primary px-6 py-3 rounded-lg font-medium transition-colors">
+                            <i class="fas fa-share mr-2"></i>
+                            Share Results
+                        </button>
+                        <button data-event="click:analyzeAnother" class="text-accent hover:text-blue-600 px-6 py-3 rounded-lg font-medium transition-colors">
+                            <i class="fas fa-redo mr-2"></i>
+                            Analyze Another Palm
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: AnalysisResults -->
+
+    <!-- How It Works Section -->
+    <!-- @COMPONENT: HowItWorksSection [explaining the process] -->
+    <section id="how-it-works" class="py-20 bg-slate-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h3 class="text-3xl font-bold text-primary mb-4">How PalmRead AI Works</h3>
+                <p class="text-lg text-secondary max-w-2xl mx-auto">
+                    Our advanced AI technology combines traditional palmistry knowledge with modern computer vision
+                </p>
+            </div>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-accent text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">1</div>
+                        <h4 class="text-xl font-semibold text-primary mb-4">Capture or Upload</h4>
+                        <p class="text-secondary">
+                            Take a clear photo of your palm using your device camera or upload an existing image from your gallery.
+                        </p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-accent text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">2</div>
+                        <h4 class="text-xl font-semibold text-primary mb-4">AI Analysis</h4>
+                        <p class="text-secondary">
+                            Our GPT-4 Vision model analyzes your palm lines, mounts, and patterns with incredible accuracy and detail.
+                        </p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-accent text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">3</div>
+                        <h4 class="text-xl font-semibold text-primary mb-4">Get Insights</h4>
+                        <p class="text-secondary">
+                            Receive comprehensive insights about your personality, relationships, career, health, and future prospects.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: HowItWorksSection -->
+
+    <!-- Footer -->
+    <!-- @COMPONENT: Footer [site footer with links and info] -->
+    <footer class="bg-primary text-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-6">
+                        <div class="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
+                            <i class="fas fa-hand-paper text-white text-sm"></i>
+                        </div>
+                        <h5 class="text-xl font-bold">PalmRead AI</h5>
+                    </div>
+                    <p class="text-slate-400 mb-6">
+                        Discover your future through advanced AI-powered palmistry analysis.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-slate-400 hover:text-white transition-colors">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-slate-400 hover:text-white transition-colors">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                        <a href="#" class="text-slate-400 hover:text-white transition-colors">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h6 class="font-semibold mb-4">Features</h6>
+                    <ul class="space-y-2 text-slate-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Palm Analysis</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Camera Integration</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">AI Technology</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Detailed Reports</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h6 class="font-semibold mb-4">Support</h6>
+                    <ul class="space-y-2 text-slate-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Help Center</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">API Documentation</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Status</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h6 class="font-semibold mb-4">Legal</h6>
+                    <ul class="space-y-2 text-slate-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Cookie Policy</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Disclaimer</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-slate-700 mt-12 pt-8 text-center text-slate-400">
+                <p>&copy; 2024 PalmRead AI. All rights reserved. Built with advanced AI technology.</p>
+            </div>
+        </div>
+    </footer>
+    <!-- @END_COMPONENT: Footer -->
+
+    <!-- Notification Toast (Hidden by default) -->
+    <!-- @COMPONENT: ToastNotification [user feedback messages] -->
+    <div id="toast-notification" class="fixed bottom-4 right-4 bg-white border border-slate-200 rounded-lg shadow-lg p-4 hidden max-w-sm z-50">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-success rounded-full flex items-center justify-center">
+                <i class="fas fa-check text-white text-sm"></i>
+            </div>
+            <div class="flex-1">
+                <p class="text-primary font-medium" data-bind="toastTitle">Success!</p>
+                <p class="text-secondary text-sm" data-bind="toastMessage">Operation completed successfully.</p>
+            </div>
+            <button data-event="click:closeToast" class="text-slate-400 hover:text-slate-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: ToastNotification -->
+
+    <script>
+        // TODO: Implement business logic, API calls, and state management
+        (() => {
+            // Basic UI interaction handlers (non-functional demos)
+            
+            // Smooth scrolling for navigation
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Mock camera functionality demo
+            const mockCameraPreview = () => {
+                const video = document.getElementById('camera-preview');
+                if (video) {
+                    // TODO: Implement getUserMedia for camera access
+                    console.log('Camera preview would be initialized here');
+                }
+            };
+
+            // Mock file upload handling
+            const mockFileUpload = () => {
+                // TODO: Implement file upload and validation
+                console.log('File upload handling would be implemented here');
+            };
+
+            // Mock palm analysis
+            const mockPalmAnalysis = () => {
+                // TODO: Implement OpenAI API integration for palm analysis
+                console.log('Palm analysis would be performed here using OpenAI Vision API');
+            };
+
+            // Show toast notification
+            const showToast = (title, message, type = 'success') => {
+                const toast = document.getElementById('toast-notification');
+                if (toast) {
+                    toast.classList.remove('hidden');
+                    // Auto-hide after 3 seconds
+                    setTimeout(() => {
+                        toast.classList.add('hidden');
+                    }, 3000);
+                }
+            };
+
+            // Initialize demo interactions
+            document.addEventListener('DOMContentLoaded', () => {
+                console.log('PalmRead AI initialized - Demo mode');
+                // TODO: Initialize actual app functionality
+            });
+        })();
+    </script>
+
+</body>
+</html>

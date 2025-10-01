@@ -1,72 +1,44 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Check, Clock, MessageCircle, Zap, Loader2, CheckCircle, CreditCard } from "lucide-react";
 
 interface PaymentTier {
   id: string;
   name: string;
+  amount: number; // in INR
   credits: number;
   minutes: number;
-  price: number;
-  popular?: boolean;
   description: string;
-  features: string[];
 }
 
-const paymentTiers: PaymentTier[] = [
-  {
-    id: "tier1",
-    name: "Starter",
-    credits: 5,
-    minutes: 5,
-    price: 1,
-    description: "Perfect for quick questions",
-    features: [
-      "5 minutes of AI chat",
-      "5 chat credits",
-      "Mystical guidance",
-      "24/7 availability"
-    ]
-  },
-  {
-    id: "tier2",
-    name: "Explorer",
-    credits: 10,
-    minutes: 10,
-    price: 2.5,
-    popular: true,
-    description: "Great for deeper insights",
-    features: [
-      "10 minutes of AI chat",
-      "10 chat credits",
-      "Extended conversations",
-      "Detailed guidance",
-      "Priority support"
-    ]
-  },
-  {
-    id: "tier3",
-    name: "Mystic",
-    credits: 15,
-    minutes: 15,
-    price: 5,
-    description: "Comprehensive spiritual guidance",
-    features: [
-      "15 minutes of AI chat",
-      "15 chat credits",
-      "Unlimited questions",
-      "Deep spiritual insights",
-      "Premium features",
-      "Expert guidance"
-    ]
+// Extend Window interface for Razorpay
+declare global {
+  interface Window {
+    Razorpay: any;
   }
-];
+}
+
+// Load Razorpay script
+const loadRazorpayScript = (): Promise<boolean> => {
+  return new Promise((resolve) => {
+    if (window.Razorpay) {
+      resolve(true);
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
 
 interface RazorpayPaymentProps {
   onPaymentSuccess: () => void;
@@ -80,28 +52,39 @@ export function RazorpayPayment({ onPaymentSuccess }: RazorpayPaymentProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Fetch payment tiers from API
+  const { data: paymentTiers = [], isLoading: tiersLoading } = useQuery({
+    queryKey: ["/api/payments/tiers"],
+    queryFn: async () => {
+      const response = await apiRequest("GET", "/api/payments/tiers");
+      return response.json();
+    }
+  });
+
   const createOrderMutation = useMutation({
     mutationFn: async (tier: PaymentTier) => {
       const response = await apiRequest("POST", "/api/payments/create-order", {
-        amount: tier.price,
-        creditsRequested: tier.credits,
-        paymentTier: tier.id,
-        minutesGranted: tier.minutes
+        paymentTier: tier.id
       });
       return response.json();
     }
   });
 
   const verifyPaymentMutation = useMutation({
-    mutationFn: async (paymentData: { paymentId: string; tier: PaymentTier }) => {
-      // Simulate payment verification with mock data
+    mutationFn: async (paymentData: { 
+      paymentId: string; 
+      tier: PaymentTier;
+      razorpay_payment_id: string;
+      razorpay_order_id: string;
+      razorpay_signature: string;
+    }) => {
       const response = await apiRequest("POST", "/api/payments/verify", {
-        razorpay_payment_id: `pay_mock_${Date.now()}`,
-        razorpay_order_id: `order_mock_${Date.now()}`,
-        razorpay_signature: `mock_signature_${Date.now()}`,
+        razorpay_payment_id: paymentData.razorpay_payment_id,
+        razorpay_order_id: paymentData.razorpay_order_id,
+        razorpay_signature: paymentData.razorpay_signature,
         paymentId: paymentData.paymentId
       });
-      return { response: response.json(), tier: paymentData.tier };
+      return { response: await response.json(), tier: paymentData.tier };
     }
   });
 
@@ -112,38 +95,89 @@ export function RazorpayPayment({ onPaymentSuccess }: RazorpayPaymentProps) {
     setPaymentStep('processing');
 
     try {
-      // Step 1: Create order
+      // Step 1: Load Razorpay script
+      const razorpayLoaded = await loadRazorpayScript();
+      if (!razorpayLoaded) {
+        throw new Error('Failed to load Razorpay');
+      }
+
+      // Step 2: Create order
       const orderData = await createOrderMutation.mutateAsync(tier);
 
-      // Step 2: Simulate payment processing delay (2-3 seconds)
-      await new Promise(resolve => setTimeout(resolve, 2500));
+      // Step 3: Open Razorpay checkout
+      const options = {
+        key: orderData.key,
+        amount: orderData.amount * 100, // Convert to paise
+        currency: orderData.currency,
+        name: 'MysticAI',
+        description: `${tier.name} Plan - ${tier.credits} Credits`,
+        order_id: orderData.orderId,
+        handler: async function (response: any) {
+          try {
+            // Step 4: Verify payment
+            await verifyPaymentMutation.mutateAsync({
+              paymentId: orderData.paymentId,
+              tier,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature
+            });
 
-      // Step 3: Process payment verification
-      await verifyPaymentMutation.mutateAsync({ 
-        paymentId: orderData.paymentId, 
-        tier 
-      });
+            // Step 5: Show success
+            setPaymentStep('success');
 
-      // Step 4: Show success
-      setPaymentStep('success');
+            // Step 6: Update UI after a short delay
+            setTimeout(() => {
+              toast({
+                title: "Payment Successful! 🎉",
+                description: `You've received ${tier.credits} AI chat credits (${tier.minutes} minutes)`,
+              });
 
-      // Step 5: Update UI after a short delay
-      setTimeout(() => {
-        toast({
-          title: "Payment Successful! 🎉",
-          description: `You've received ${tier.credits} AI chat credits (${tier.minutes} minutes)`,
-        });
+              // Invalidate user data to refresh credit balance
+              queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+              setShowPaymentModal(false);
+              onPaymentSuccess();
+              
+              // Reset states
+              setIsProcessing(false);
+              setSelectedTier(null);
+              setPaymentStep('processing');
+            }, 1500);
 
-        // Invalidate user data to refresh credit balance
-        queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
-        setShowPaymentModal(false);
-        onPaymentSuccess();
-        
-        // Reset states
-        setIsProcessing(false);
-        setSelectedTier(null);
-        setPaymentStep('processing');
-      }, 1500);
+          } catch (error) {
+            setPaymentStep('error');
+            setTimeout(() => {
+              toast({
+                title: "Payment Verification Failed",
+                description: "Unable to verify payment. Please contact support.",
+                variant: "destructive"
+              });
+              setShowPaymentModal(false);
+              setIsProcessing(false);
+              setSelectedTier(null);
+              setPaymentStep('processing');
+            }, 2000);
+          }
+        },
+        prefill: {
+          name: 'MysticAI User',
+          email: 'user@mysticai.com',
+        },
+        theme: {
+          color: '#6366f1'
+        },
+        modal: {
+          ondismiss: function() {
+            setIsProcessing(false);
+            setShowPaymentModal(false);
+            setSelectedTier(null);
+            setPaymentStep('processing');
+          }
+        }
+      };
+
+      const razorpay = new (window as any).Razorpay(options);
+      razorpay.open();
 
     } catch (error) {
       setPaymentStep('error');
@@ -161,6 +195,15 @@ export function RazorpayPayment({ onPaymentSuccess }: RazorpayPaymentProps) {
     }
   };
 
+  if (tiersLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Loading payment plans...</span>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -171,16 +214,16 @@ export function RazorpayPayment({ onPaymentSuccess }: RazorpayPaymentProps) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {paymentTiers.map((tier) => (
+        {paymentTiers.map((tier: PaymentTier, index: number) => (
           <Card 
             key={tier.id} 
             className={`relative transition-all hover:scale-105 ${
-              tier.popular 
+              index === 1 // Make middle tier popular
                 ? 'border-accent shadow-lg ring-2 ring-accent ring-opacity-20' 
                 : 'border-border'
             }`}
           >
-            {tier.popular && (
+            {index === 1 && (
               <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-accent text-accent-foreground">
                 Most Popular
               </Badge>
@@ -190,8 +233,8 @@ export function RazorpayPayment({ onPaymentSuccess }: RazorpayPaymentProps) {
               <CardTitle className="text-xl">{tier.name}</CardTitle>
               <CardDescription>{tier.description}</CardDescription>
               <div className="mt-4">
-                <span className="text-3xl font-bold text-foreground">${tier.price}</span>
-                <span className="text-muted-foreground"> USD</span>
+                <span className="text-3xl font-bold text-foreground">₹{tier.amount}</span>
+                <span className="text-muted-foreground"> INR</span>
               </div>
             </CardHeader>
 
@@ -208,19 +251,47 @@ export function RazorpayPayment({ onPaymentSuccess }: RazorpayPaymentProps) {
               </div>
 
               <ul className="space-y-2">
-                {tier.features.map((feature, index) => (
-                  <li key={index} className="flex items-center text-sm">
+                <li className="flex items-center text-sm">
+                  <Check className="h-4 w-4 text-accent mr-2 flex-shrink-0" />
+                  {tier.credits} AI chat credits
+                </li>
+                <li className="flex items-center text-sm">
+                  <Check className="h-4 w-4 text-accent mr-2 flex-shrink-0" />
+                  {tier.minutes} minutes of chat time
+                </li>
+                <li className="flex items-center text-sm">
+                  <Check className="h-4 w-4 text-accent mr-2 flex-shrink-0" />
+                  Mystical guidance
+                </li>
+                <li className="flex items-center text-sm">
+                  <Check className="h-4 w-4 text-accent mr-2 flex-shrink-0" />
+                  24/7 availability
+                </li>
+                {index === 1 && (
+                  <li className="flex items-center text-sm">
                     <Check className="h-4 w-4 text-accent mr-2 flex-shrink-0" />
-                    {feature}
+                    Priority support
                   </li>
-                ))}
+                )}
+                {index === 2 && (
+                  <>
+                    <li className="flex items-center text-sm">
+                      <Check className="h-4 w-4 text-accent mr-2 flex-shrink-0" />
+                      Priority support
+                    </li>
+                    <li className="flex items-center text-sm">
+                      <Check className="h-4 w-4 text-accent mr-2 flex-shrink-0" />
+                      Premium features
+                    </li>
+                  </>
+                )}
               </ul>
 
               <Button
                 onClick={() => handlePurchase(tier)}
                 disabled={isProcessing}
                 className={`w-full ${
-                  tier.popular 
+                  index === 1 
                     ? 'bg-accent hover:bg-accent/90' 
                     : 'bg-secondary hover:bg-secondary/90'
                 }`}
@@ -244,7 +315,7 @@ export function RazorpayPayment({ onPaymentSuccess }: RazorpayPaymentProps) {
       </div>
 
       <div className="text-center text-sm text-muted-foreground">
-        <p>💳 Secure mock payment system (Demo mode)</p>
+        <p>💳 Secure payment powered by Razorpay</p>
         <p>✨ Credits are valid for 30 days from purchase</p>
       </div>
 
@@ -321,7 +392,7 @@ export function RazorpayPayment({ onPaymentSuccess }: RazorpayPaymentProps) {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Amount:</span>
-                <span className="font-medium">${selectedTier.price} USD</span>
+                <span className="font-medium">₹{selectedTier.amount} INR</span>
               </div>
             </div>
           )}

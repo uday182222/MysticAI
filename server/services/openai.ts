@@ -1,54 +1,356 @@
 import OpenAI from "openai";
+import { z } from "zod";
 import { AstrologyInput, VastuInput, NumerologyInput, TarotInput } from "@shared/schema";
 
 const openai = new OpenAI({ 
   apiKey: process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY_ENV_VAR || "default_key"
 });
 
-export async function analyzePalmImage(base64Image: string): Promise<any> {
+// Function definitions for each analysis type
+const palmAnalysisFunction = {
+  name: "analyze_palm_reading",
+  description: "Analyze a palm image and provide comprehensive palmistry insights including personality, relationships, career, health, and future predictions.",
+  parameters: {
+    type: "object",
+    properties: {
+      personalityOverview: {
+        type: "string",
+        description: "Detailed personality analysis based on palm features"
+      },
+      traits: {
+        type: "array",
+        items: { type: "string" },
+        description: "Key personality traits identified from palm analysis"
+      },
+      lifeEnergyPercentage: {
+        type: "number",
+        description: "Life energy percentage (0-100)"
+      },
+      emotionalBalancePercentage: {
+        type: "number", 
+        description: "Emotional balance percentage (0-100)"
+      },
+      careerPotentialPercentage: {
+        type: "number",
+        description: "Career potential percentage (0-100)"
+      },
+      loveAndRelationships: {
+        type: "object",
+        properties: {
+          heartLineAnalysis: {
+            type: "string",
+            description: "Analysis of the heart line and its implications"
+          },
+          compatibilityInsights: {
+            type: "string",
+            description: "Relationship compatibility insights"
+          },
+          relationshipStrength: {
+            type: "string",
+            enum: ["High", "Medium", "Low"],
+            description: "Overall relationship strength"
+          }
+        },
+        required: ["heartLineAnalysis", "compatibilityInsights", "relationshipStrength"]
+      },
+      careerAndSuccess: {
+        type: "object",
+        properties: {
+          professionalStrengths: {
+            type: "string",
+            description: "Professional strengths based on palm analysis"
+          },
+          recommendedPaths: {
+            type: "array",
+            items: { type: "string" },
+            description: "Recommended career paths"
+          },
+          successPotential: {
+            type: "string",
+            enum: ["Very High", "High", "Medium", "Low"],
+            description: "Success potential level"
+          }
+        },
+        required: ["professionalStrengths", "recommendedPaths", "successPotential"]
+      },
+      healthAndWellness: {
+        type: "object",
+        properties: {
+          lifeLineInsights: {
+            type: "string",
+            description: "Life line analysis and health insights"
+          },
+          wellnessRecommendations: {
+            type: "array",
+            items: { type: "string" },
+            description: "Wellness recommendations"
+          },
+          vitalityLevel: {
+            type: "string",
+            enum: ["Strong", "Moderate", "Weak"],
+            description: "Overall vitality level"
+          }
+        },
+        required: ["lifeLineInsights", "wellnessRecommendations", "vitalityLevel"]
+      },
+      futureInsights: {
+        type: "object",
+        properties: {
+          nearFuture: {
+            type: "string",
+            description: "Predictions for the next 1-3 years"
+          },
+          lifePathDirection: {
+            type: "string",
+            description: "Overall life path direction insights"
+          },
+          pathClarity: {
+            type: "string",
+            enum: ["High", "Medium", "Low"],
+            description: "Clarity of life path direction"
+          }
+        },
+        required: ["nearFuture", "lifePathDirection", "pathClarity"]
+      },
+      palmLines: {
+        type: "object",
+        properties: {
+          heartLine: {
+            type: "string",
+            description: "Description of heart line characteristics"
+          },
+          headLine: {
+            type: "string",
+            description: "Description of head line characteristics"
+          },
+          lifeLine: {
+            type: "string",
+            description: "Description of life line characteristics"
+          },
+          fateLine: {
+            type: "string",
+            description: "Description of fate line characteristics"
+          }
+        },
+        required: ["heartLine", "headLine", "lifeLine", "fateLine"]
+      }
+    },
+    required: [
+      "personalityOverview", "traits", "lifeEnergyPercentage", "emotionalBalancePercentage",
+      "careerPotentialPercentage", "loveAndRelationships", "careerAndSuccess", 
+      "healthAndWellness", "futureInsights", "palmLines"
+    ]
+  }
+};
+
+// Zod schemas for validation
+const PalmAnalysisResultSchema = z.object({
+  personalityOverview: z.string(),
+  traits: z.array(z.string()),
+  lifeEnergyPercentage: z.number().min(0).max(100),
+  emotionalBalancePercentage: z.number().min(0).max(100),
+  careerPotentialPercentage: z.number().min(0).max(100),
+  loveAndRelationships: z.object({
+    heartLineAnalysis: z.string(),
+    compatibilityInsights: z.string(),
+    relationshipStrength: z.enum(["High", "Medium", "Low"])
+  }),
+  careerAndSuccess: z.object({
+    professionalStrengths: z.string(),
+    recommendedPaths: z.array(z.string()),
+    successPotential: z.enum(["Very High", "High", "Medium", "Low"])
+  }),
+  healthAndWellness: z.object({
+    lifeLineInsights: z.string(),
+    wellnessRecommendations: z.array(z.string()),
+    vitalityLevel: z.enum(["Strong", "Moderate", "Weak"])
+  }),
+  futureInsights: z.object({
+    nearFuture: z.string(),
+    lifePathDirection: z.string(),
+    pathClarity: z.enum(["High", "Medium", "Low"])
+  }),
+  palmLines: z.object({
+    heartLine: z.string(),
+    headLine: z.string(),
+    lifeLine: z.string(),
+    fateLine: z.string()
+  })
+});
+
+const AstrologyAnalysisResultSchema = z.object({
+  personalityOverview: z.string(),
+  sunSign: z.string(),
+  moonSign: z.string(),
+  risingSign: z.string(),
+  kundliChart: z.object({
+    houses: z.array(z.object({
+      number: z.number(),
+      sign: z.string(),
+      planets: z.array(z.string()),
+      ruling: z.string()
+    })),
+    planetaryPositions: z.object({
+      sun: z.object({ sign: z.string(), house: z.number(), degrees: z.number() }),
+      moon: z.object({ sign: z.string(), house: z.number(), degrees: z.number() }),
+      mercury: z.object({ sign: z.string(), house: z.number(), degrees: z.number() }),
+      venus: z.object({ sign: z.string(), house: z.number(), degrees: z.number() }),
+      mars: z.object({ sign: z.string(), house: z.number(), degrees: z.number() }),
+      jupiter: z.object({ sign: z.string(), house: z.number(), degrees: z.number() }),
+      saturn: z.object({ sign: z.string(), house: z.number(), degrees: z.number() }),
+      rahu: z.object({ sign: z.string(), house: z.number(), degrees: z.number() }),
+      ketu: z.object({ sign: z.string(), house: z.number(), degrees: z.number() })
+    }),
+    aspects: z.array(z.object({
+      from: z.string(),
+      to: z.string(),
+      type: z.string(),
+      influence: z.string()
+    }))
+  }),
+  planetaryPositions: z.object({
+    sun: z.string(),
+    moon: z.string(),
+    mercury: z.string(),
+    venus: z.string(),
+    mars: z.string(),
+    jupiter: z.string(),
+    saturn: z.string()
+  }),
+  lifeAreas: z.object({
+    loveAndRelationships: z.object({
+      overview: z.string(),
+      compatibility: z.string(),
+      romanticTendencies: z.string()
+    }),
+    careerAndFinances: z.object({
+      careerPath: z.string(),
+      financialLuck: z.string(),
+      professionalStrengths: z.array(z.string())
+    }),
+    healthAndWellbeing: z.object({
+      physicalHealth: z.string(),
+      mentalHealth: z.string(),
+      recommendations: z.array(z.string())
+    }),
+    spiritualGrowth: z.object({
+      lifeLesson: z.string(),
+      spiritualPath: z.string(),
+      karmaInsights: z.string()
+    })
+  }),
+  predictions: z.object({
+    thisYear: z.string(),
+    nextThreeYears: z.string(),
+    majorLifeEvents: z.array(z.string())
+  })
+});
+
+const VastuAnalysisResultSchema = z.object({
+  overallScore: z.number().min(0).max(100),
+  overallAssessment: z.string(),
+  energyFlow: z.object({
+    positive: z.array(z.string()),
+    negative: z.array(z.string()),
+    neutral: z.array(z.string())
+  }),
+  roomAnalysis: z.array(z.object({
+    room: z.string(),
+    direction: z.string(),
+    vastuCompliance: z.string(),
+    recommendations: z.array(z.string()),
+    score: z.number().min(0).max(100)
+  })),
+  recommendations: z.object({
+    immediate: z.array(z.string()),
+    longTerm: z.array(z.string()),
+    remedies: z.array(z.string())
+  }),
+  prosperity: z.object({
+    wealth: z.string(),
+    health: z.string(),
+    relationships: z.string(),
+    career: z.string()
+  })
+});
+
+const NumerologyAnalysisResultSchema = z.object({
+  personalityOverview: z.string(),
+  coreNumbers: z.object({
+    lifePathNumber: z.object({
+      number: z.number(),
+      meaning: z.string(),
+      traits: z.array(z.string())
+    }),
+    destinyNumber: z.object({
+      number: z.number(),
+      meaning: z.string(),
+      purpose: z.string()
+    }),
+    soulUrgeNumber: z.object({
+      number: z.number(),
+      meaning: z.string(),
+      desires: z.string()
+    }),
+    personalityNumber: z.object({
+      number: z.number(),
+      meaning: z.string(),
+      impression: z.string()
+    })
+  }),
+  lifeAreas: z.object({
+    strengths: z.array(z.string()),
+    challenges: z.array(z.string()),
+    careerPath: z.string(),
+    relationships: z.string(),
+    luckyNumbers: z.array(z.number()),
+    favorableColors: z.array(z.string())
+  }),
+  predictions: z.object({
+    currentYear: z.string(),
+    nextPhase: z.string(),
+    opportunities: z.array(z.string())
+  })
+});
+
+const TarotAnalysisResultSchema = z.object({
+  spreadType: z.string(),
+  personalityOverview: z.string(),
+  cardAnalysis: z.array(z.object({
+    position: z.string(),
+    cardName: z.string(),
+    meaning: z.string(),
+    interpretation: z.string(),
+    reversed: z.boolean(),
+    reversedMeaning: z.string().optional()
+  })),
+  overallMessage: z.string(),
+  guidance: z.object({
+    pastInfluences: z.string().optional(),
+    presentSituation: z.string(),
+    futureOutlook: z.string().optional(),
+    advice: z.string(),
+    outcome: z.string().optional()
+  }),
+  actionSteps: z.array(z.string()),
+  reflection: z.string()
+});
+
+// Export TypeScript types
+export type PalmAnalysisResult = z.infer<typeof PalmAnalysisResultSchema>;
+export type AstrologyAnalysisResult = z.infer<typeof AstrologyAnalysisResultSchema>;
+export type VastuAnalysisResult = z.infer<typeof VastuAnalysisResultSchema>;
+export type NumerologyAnalysisResult = z.infer<typeof NumerologyAnalysisResultSchema>;
+export type TarotAnalysisResult = z.infer<typeof TarotAnalysisResultSchema>;
+
+export async function analyzePalmImage(base64Image: string): Promise<PalmAnalysisResult> {
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content: `You are an expert palmist with decades of experience in palm reading and analysis. Analyze the provided palm image and provide detailed insights. Return your analysis in JSON format with the following structure:
-
-{
-  "personalityOverview": "Detailed personality analysis based on palm features",
-  "traits": ["trait1", "trait2", "trait3", "trait4"],
-  "lifeEnergyPercentage": 85,
-  "emotionalBalancePercentage": 92,
-  "careerPotentialPercentage": 78,
-  "loveAndRelationships": {
-    "heartLineAnalysis": "Analysis of the heart line and its implications",
-    "compatibilityInsights": "Relationship compatibility insights",
-    "relationshipStrength": "High|Medium|Low"
-  },
-  "careerAndSuccess": {
-    "professionalStrengths": "Professional strengths based on palm analysis",
-    "recommendedPaths": ["path1", "path2", "path3"],
-    "successPotential": "Very High|High|Medium|Low"
-  },
-  "healthAndWellness": {
-    "lifeLineInsights": "Life line analysis and health insights",
-    "wellnessRecommendations": ["recommendation1", "recommendation2", "recommendation3"],
-    "vitalityLevel": "Strong|Moderate|Weak"
-  },
-  "futureInsights": {
-    "nearFuture": "Predictions for the next 1-3 years",
-    "lifePathDirection": "Overall life path direction insights",
-    "pathClarity": "High|Medium|Low"
-  },
-  "palmLines": {
-    "heartLine": "Description of heart line characteristics",
-    "headLine": "Description of head line characteristics", 
-    "lifeLine": "Description of life line characteristics",
-    "fateLine": "Description of fate line characteristics"
-  }
-}
-
-Focus on traditional palmistry principles including line analysis, mounts, finger analysis, and overall palm shape. Provide positive, constructive insights while being specific and detailed.`
+          content: `You are an expert palmist with decades of experience in palm reading and analysis. Analyze the provided palm image and provide detailed insights based on traditional palmistry principles including line analysis, mounts, finger analysis, and overall palm shape. Provide positive, constructive insights while being specific and detailed.`
         },
         {
           role: "user",
@@ -66,100 +368,179 @@ Focus on traditional palmistry principles including line analysis, mounts, finge
           ],
         },
       ],
-      response_format: { type: "json_object" },
+      tools: [{ type: "function", function: palmAnalysisFunction }],
+      tool_choice: { type: "function", function: { name: "analyze_palm_reading" } },
       max_completion_tokens: 2000,
     });
 
-    const result = JSON.parse(response.choices[0].message.content || "{}");
+    const toolCall = response.choices[0].message.tool_calls?.[0];
+    if (!toolCall || !('function' in toolCall) || toolCall.function.name !== "analyze_palm_reading") {
+      throw new Error("Invalid function call response");
+    }
+
+    const rawResult = JSON.parse(toolCall.function.arguments);
+    
+    // Validate with Zod schema
+    try {
+      const result = PalmAnalysisResultSchema.parse(rawResult);
     return result;
+    } catch (validationError) {
+      console.error("Palm analysis validation failed:", validationError);
+      console.error("Raw OpenAI response:", JSON.stringify(rawResult, null, 2));
+      throw new Error("Invalid palm analysis response format");
+    }
   } catch (error) {
     console.error("OpenAI palm analysis error:", error);
     throw new Error("Failed to analyze palm image: " + (error as Error).message);
   }
 }
 
-export async function analyzeAstrologyChart(astrologyData: AstrologyInput): Promise<any> {
+const astrologyAnalysisFunction = {
+  name: "analyze_astrology_chart",
+  description: "Create a comprehensive Kundli (birth chart) analysis using Vedic astrology principles with detailed planetary positions, houses, and life predictions.",
+  parameters: {
+    type: "object",
+    properties: {
+      personalityOverview: {
+        type: "string",
+        description: "Detailed personality analysis based on birth chart"
+      },
+      sunSign: {
+        type: "string",
+        description: "Sun sign with detailed characteristics"
+      },
+      moonSign: {
+        type: "string",
+        description: "Moon sign with emotional patterns"
+      },
+      risingSign: {
+        type: "string",
+        description: "Rising sign (Lagna) with outward personality traits"
+      },
+      kundliChart: {
+        type: "object",
+        properties: {
+          houses: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                number: { type: "number" },
+                sign: { type: "string" },
+                planets: { type: "array", items: { type: "string" } },
+                ruling: { type: "string" }
+              },
+              required: ["number", "sign", "planets", "ruling"]
+            }
+          },
+          planetaryPositions: {
+            type: "object",
+            properties: {
+              sun: { type: "object", properties: { sign: { type: "string" }, house: { type: "number" }, degrees: { type: "number" } }, required: ["sign", "house", "degrees"] },
+              moon: { type: "object", properties: { sign: { type: "string" }, house: { type: "number" }, degrees: { type: "number" } }, required: ["sign", "house", "degrees"] },
+              mercury: { type: "object", properties: { sign: { type: "string" }, house: { type: "number" }, degrees: { type: "number" } }, required: ["sign", "house", "degrees"] },
+              venus: { type: "object", properties: { sign: { type: "string" }, house: { type: "number" }, degrees: { type: "number" } }, required: ["sign", "house", "degrees"] },
+              mars: { type: "object", properties: { sign: { type: "string" }, house: { type: "number" }, degrees: { type: "number" } }, required: ["sign", "house", "degrees"] },
+              jupiter: { type: "object", properties: { sign: { type: "string" }, house: { type: "number" }, degrees: { type: "number" } }, required: ["sign", "house", "degrees"] },
+              saturn: { type: "object", properties: { sign: { type: "string" }, house: { type: "number" }, degrees: { type: "number" } }, required: ["sign", "house", "degrees"] },
+              rahu: { type: "object", properties: { sign: { type: "string" }, house: { type: "number" }, degrees: { type: "number" } }, required: ["sign", "house", "degrees"] },
+              ketu: { type: "object", properties: { sign: { type: "string" }, house: { type: "number" }, degrees: { type: "number" } }, required: ["sign", "house", "degrees"] }
+            },
+            required: ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "rahu", "ketu"]
+          },
+          aspects: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                from: { type: "string" },
+                to: { type: "string" },
+                type: { type: "string" },
+                influence: { type: "string" }
+              },
+              required: ["from", "to", "type", "influence"]
+            }
+          }
+        },
+        required: ["houses", "planetaryPositions", "aspects"]
+      },
+      planetaryPositions: {
+        type: "object",
+        properties: {
+          sun: { type: "string" },
+          moon: { type: "string" },
+          mercury: { type: "string" },
+          venus: { type: "string" },
+          mars: { type: "string" },
+          jupiter: { type: "string" },
+          saturn: { type: "string" }
+        },
+        required: ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"]
+      },
+      lifeAreas: {
+        type: "object",
+        properties: {
+          loveAndRelationships: {
+            type: "object",
+            properties: {
+              overview: { type: "string" },
+              compatibility: { type: "string" },
+              romanticTendencies: { type: "string" }
+            },
+            required: ["overview", "compatibility", "romanticTendencies"]
+          },
+          careerAndFinances: {
+            type: "object",
+            properties: {
+              careerPath: { type: "string" },
+              financialLuck: { type: "string" },
+              professionalStrengths: { type: "array", items: { type: "string" } }
+            },
+            required: ["careerPath", "financialLuck", "professionalStrengths"]
+          },
+          healthAndWellbeing: {
+            type: "object",
+            properties: {
+              physicalHealth: { type: "string" },
+              mentalHealth: { type: "string" },
+              recommendations: { type: "array", items: { type: "string" } }
+            },
+            required: ["physicalHealth", "mentalHealth", "recommendations"]
+          },
+          spiritualGrowth: {
+            type: "object",
+            properties: {
+              lifeLesson: { type: "string" },
+              spiritualPath: { type: "string" },
+              karmaInsights: { type: "string" }
+            },
+            required: ["lifeLesson", "spiritualPath", "karmaInsights"]
+          }
+        },
+        required: ["loveAndRelationships", "careerAndFinances", "healthAndWellbeing", "spiritualGrowth"]
+      },
+      predictions: {
+        type: "object",
+        properties: {
+          thisYear: { type: "string" },
+          nextThreeYears: { type: "string" },
+          majorLifeEvents: { type: "array", items: { type: "string" } }
+        },
+        required: ["thisYear", "nextThreeYears", "majorLifeEvents"]
+      }
+    },
+    required: ["personalityOverview", "sunSign", "moonSign", "risingSign", "kundliChart", "planetaryPositions", "lifeAreas", "predictions"]
+  }
+};
+
+export async function analyzeAstrologyChart(astrologyData: AstrologyInput): Promise<AstrologyAnalysisResult> {
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content: `You are an expert Vedic astrologer with decades of experience in Jyotish and birth chart analysis. Analyze the provided birth information and create a comprehensive Kundli (birth chart) reading. Return your analysis in JSON format with the following structure:
-
-{
-  "personalityOverview": "Detailed personality analysis based on birth chart",
-  "sunSign": "Sun sign with detailed characteristics",
-  "moonSign": "Moon sign with emotional patterns", 
-  "risingSign": "Rising sign (Lagna) with outward personality traits",
-  "kundliChart": {
-    "houses": [
-      {
-        "number": 1,
-        "sign": "Aries",
-        "planets": ["Sun", "Mercury"],
-        "ruling": "Mars"
-      }
-    ],
-    "planetaryPositions": {
-      "sun": {"sign": "Leo", "house": 5, "degrees": 15.30},
-      "moon": {"sign": "Cancer", "house": 4, "degrees": 22.45},
-      "mercury": {"sign": "Virgo", "house": 6, "degrees": 8.15},
-      "venus": {"sign": "Libra", "house": 7, "degrees": 12.20},
-      "mars": {"sign": "Scorpio", "house": 8, "degrees": 25.10},
-      "jupiter": {"sign": "Sagittarius", "house": 9, "degrees": 18.55},
-      "saturn": {"sign": "Capricorn", "house": 10, "degrees": 3.40},
-      "rahu": {"sign": "Gemini", "house": 3, "degrees": 14.25},
-      "ketu": {"sign": "Sagittarius", "house": 9, "degrees": 14.25}
-    },
-    "aspects": [
-      {
-        "from": "Jupiter",
-        "to": "Sun", 
-        "type": "Trine",
-        "influence": "Positive influence bringing wisdom and expansion"
-      }
-    ]
-  },
-  "planetaryPositions": {
-    "sun": "Sun position and its influence",
-    "moon": "Moon position and its influence",
-    "mercury": "Mercury position and communication style",
-    "venus": "Venus position and love/relationship style",
-    "mars": "Mars position and energy/drive",
-    "jupiter": "Jupiter position and expansion/luck",
-    "saturn": "Saturn position and discipline/challenges"
-  },
-  "lifeAreas": {
-    "loveAndRelationships": {
-      "overview": "Comprehensive relationship analysis",
-      "compatibility": "Compatibility insights and ideal partner traits",
-      "romanticTendencies": "Romantic behavior and love patterns"
-    },
-    "careerAndFinances": {
-      "careerPath": "Ideal career paths and professional strengths",
-      "financialLuck": "Financial prospects and money management",
-      "professionalStrengths": ["strength1", "strength2", "strength3"]
-    },
-    "healthAndWellbeing": {
-      "physicalHealth": "Physical health tendencies and areas to watch",
-      "mentalHealth": "Mental and emotional health insights",
-      "recommendations": ["recommendation1", "recommendation2", "recommendation3"]
-    },
-    "spiritualGrowth": {
-      "lifeLesson": "Key life lessons to learn",
-      "spiritualPath": "Spiritual development and growth areas",
-      "karmaInsights": "Karmic patterns and soul purpose"
-    }
-  },
-  "predictions": {
-    "thisYear": "Major themes and events for this year",
-    "nextThreeYears": "Long-term predictions for next 3 years",
-    "majorLifeEvents": ["event1", "event2", "event3"]
-  }
-}
-
-Focus on providing insightful, positive, and constructive guidance based on traditional astrological principles.`
+          content: `You are an expert Vedic astrologer with decades of experience in Jyotish and birth chart analysis. Analyze the provided birth information and create a comprehensive Kundli (birth chart) reading. Focus on providing insightful, positive, and constructive guidance based on traditional astrological principles.`
         },
         {
           role: "user",
@@ -177,12 +558,27 @@ Calculate the exact planetary positions, houses, and aspects for this birth time
 Use traditional Vedic astrology principles and provide accurate astronomical calculations for the birth chart.`
         },
       ],
-      response_format: { type: "json_object" },
+      tools: [{ type: "function", function: astrologyAnalysisFunction }],
+      tool_choice: { type: "function", function: { name: "analyze_astrology_chart" } },
       max_completion_tokens: 3000,
     });
 
-    const result = JSON.parse(response.choices[0].message.content || "{}");
+    const toolCall = response.choices[0].message.tool_calls?.[0];
+    if (!toolCall || !('function' in toolCall) || toolCall.function.name !== "analyze_astrology_chart") {
+      throw new Error("Invalid function call response");
+    }
+
+    const rawResult = JSON.parse(toolCall.function.arguments);
+    
+    // Validate with Zod schema
+    try {
+      const result = AstrologyAnalysisResultSchema.parse(rawResult);
     return result;
+    } catch (validationError) {
+      console.error("Astrology analysis validation failed:", validationError);
+      console.error("Raw OpenAI response:", JSON.stringify(rawResult, null, 2));
+      throw new Error("Invalid astrology analysis response format");
+    }
   } catch (error) {
     console.error("OpenAI astrology analysis error:", error);
     throw new Error("Failed to analyze astrology chart: " + (error as Error).message);
@@ -206,7 +602,7 @@ ${previousMessages.map(m => `${m.role}: ${m.content}`).join('\n')}
 Provide helpful, insightful responses about the ${analysisType} analysis. Be specific, reference the previous analysis results, and offer practical guidance. Keep responses concise but meaningful.`;
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
@@ -271,7 +667,7 @@ Keep responses concise but meaningful, typically 2-4 paragraphs unless more deta
     ];
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o", // Using gpt-4o as it's the most reliable model available
+      model: "gpt-4o-mini", // Using gpt-4o-mini as it supports vision and is widely available
       messages,
       max_completion_tokens: 800,
       temperature: 0.7,
@@ -284,44 +680,97 @@ Keep responses concise but meaningful, typically 2-4 paragraphs unless more deta
   }
 }
 
-export async function analyzeVastu(vastuData: VastuInput, base64Image?: string): Promise<any> {
+const vastuAnalysisFunction = {
+  name: "analyze_vastu_layout",
+  description: "Analyze a space layout for Vastu Shastra compliance and provide detailed recommendations for optimal energy flow and prosperity.",
+  parameters: {
+    type: "object",
+    properties: {
+      overallScore: {
+        type: "number",
+        description: "Overall Vastu compliance score (0-100)"
+      },
+      overallAssessment: {
+        type: "string",
+        description: "Comprehensive assessment of the space's Vastu compliance"
+      },
+      energyFlow: {
+        type: "object",
+        properties: {
+          positive: {
+            type: "array",
+            items: { type: "string" },
+            description: "Areas with positive energy flow"
+          },
+          negative: {
+            type: "array",
+            items: { type: "string" },
+            description: "Areas with negative energy flow"
+          },
+          neutral: {
+            type: "array",
+            items: { type: "string" },
+            description: "Areas with neutral energy flow"
+          }
+        },
+        required: ["positive", "negative", "neutral"]
+      },
+      roomAnalysis: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            room: { type: "string" },
+            direction: { type: "string" },
+            vastuCompliance: { type: "string" },
+            recommendations: { type: "array", items: { type: "string" } },
+            score: { type: "number" }
+          },
+          required: ["room", "direction", "vastuCompliance", "recommendations", "score"]
+        }
+      },
+      recommendations: {
+        type: "object",
+        properties: {
+          immediate: {
+            type: "array",
+            items: { type: "string" },
+            description: "Quick fixes that can be implemented immediately"
+          },
+          longTerm: {
+            type: "array",
+            items: { type: "string" },
+            description: "Structural changes for better Vastu"
+          },
+          remedies: {
+            type: "array",
+            items: { type: "string" },
+            description: "Vastu remedies using colors, elements, symbols"
+          }
+        },
+        required: ["immediate", "longTerm", "remedies"]
+      },
+      prosperity: {
+        type: "object",
+        properties: {
+          wealth: { type: "string" },
+          health: { type: "string" },
+          relationships: { type: "string" },
+          career: { type: "string" }
+        },
+        required: ["wealth", "health", "relationships", "career"]
+      }
+    },
+    required: ["overallScore", "overallAssessment", "energyFlow", "roomAnalysis", "recommendations", "prosperity"]
+  }
+};
+
+export async function analyzeVastu(vastuData: VastuInput, base64Image?: string): Promise<VastuAnalysisResult> {
   try {
     const messages: any[] = [
       {
         role: "system",
-        content: `You are an expert Vastu consultant with deep knowledge of Vastu Shastra principles. Analyze the provided layout information and provide detailed Vastu guidance. Return your analysis in JSON format with the following structure:
-
-{
-  "overallScore": 85,
-  "overallAssessment": "Comprehensive assessment of the space's Vastu compliance",
-  "energyFlow": {
-    "positive": ["area1", "area2", "area3"],
-    "negative": ["area1", "area2"],
-    "neutral": ["area1", "area2"]
-  },
-  "roomAnalysis": [
-    {
-      "room": "Room name",
-      "direction": "Direction placement",
-      "vastuCompliance": "Compliance level and explanation",
-      "recommendations": ["recommendation1", "recommendation2"],
-      "score": 90
-    }
-  ],
-  "recommendations": {
-    "immediate": ["Quick fixes that can be implemented immediately"],
-    "longTerm": ["Structural changes for better Vastu"],
-    "remedies": ["Vastu remedies using colors, elements, symbols"]
-  },
-  "prosperity": {
-    "wealth": "Impact on financial prosperity",
-    "health": "Impact on physical and mental health",
-    "relationships": "Impact on family and relationship harmony",
-    "career": "Impact on professional growth and success"
-  }
-}
-
-Focus on practical, implementable Vastu solutions while respecting traditional principles.`
+        content: `You are an expert Vastu consultant with deep knowledge of Vastu Shastra principles. Analyze the provided layout information and provide detailed Vastu guidance. Focus on practical, implementable Vastu solutions while respecting traditional principles.`
       },
       {
         role: "user",
@@ -357,69 +806,121 @@ Provide a comprehensive Vastu analysis with practical recommendations for optima
     }
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages,
-      response_format: { type: "json_object" },
+      tools: [{ type: "function", function: vastuAnalysisFunction }],
+      tool_choice: { type: "function", function: { name: "analyze_vastu_layout" } },
       max_completion_tokens: 3000,
     });
 
-    const result = JSON.parse(response.choices[0].message.content || "{}");
+    const toolCall = response.choices[0].message.tool_calls?.[0];
+    if (!toolCall || !('function' in toolCall) || toolCall.function.name !== "analyze_vastu_layout") {
+      throw new Error("Invalid function call response");
+    }
+
+    const rawResult = JSON.parse(toolCall.function.arguments);
+    
+    // Validate with Zod schema
+    try {
+      const result = VastuAnalysisResultSchema.parse(rawResult);
     return result;
+    } catch (validationError) {
+      console.error("Vastu analysis validation failed:", validationError);
+      console.error("Raw OpenAI response:", JSON.stringify(rawResult, null, 2));
+      throw new Error("Invalid Vastu analysis response format");
+    }
   } catch (error) {
     console.error("OpenAI Vastu analysis error:", error);
     throw new Error("Failed to analyze Vastu layout: " + (error as Error).message);
   }
 }
 
-export async function analyzeNumerology(numerologyData: NumerologyInput): Promise<any> {
+const numerologyAnalysisFunction = {
+  name: "analyze_numerology",
+  description: "Calculate core numerology numbers and provide detailed insights about personality, life purpose, and future guidance using Pythagorean and Chaldean systems.",
+  parameters: {
+    type: "object",
+    properties: {
+      personalityOverview: {
+        type: "string",
+        description: "Comprehensive personality analysis based on numerological calculations"
+      },
+      coreNumbers: {
+        type: "object",
+        properties: {
+          lifePathNumber: {
+            type: "object",
+            properties: {
+              number: { type: "number" },
+              meaning: { type: "string" },
+              traits: { type: "array", items: { type: "string" } }
+            },
+            required: ["number", "meaning", "traits"]
+          },
+          destinyNumber: {
+            type: "object",
+            properties: {
+              number: { type: "number" },
+              meaning: { type: "string" },
+              purpose: { type: "string" }
+            },
+            required: ["number", "meaning", "purpose"]
+          },
+          soulUrgeNumber: {
+            type: "object",
+            properties: {
+              number: { type: "number" },
+              meaning: { type: "string" },
+              desires: { type: "string" }
+            },
+            required: ["number", "meaning", "desires"]
+          },
+          personalityNumber: {
+            type: "object",
+            properties: {
+              number: { type: "number" },
+              meaning: { type: "string" },
+              impression: { type: "string" }
+            },
+            required: ["number", "meaning", "impression"]
+          }
+        },
+        required: ["lifePathNumber", "destinyNumber", "soulUrgeNumber", "personalityNumber"]
+      },
+      lifeAreas: {
+        type: "object",
+        properties: {
+          strengths: { type: "array", items: { type: "string" } },
+          challenges: { type: "array", items: { type: "string" } },
+          careerPath: { type: "string" },
+          relationships: { type: "string" },
+          luckyNumbers: { type: "array", items: { type: "number" } },
+          favorableColors: { type: "array", items: { type: "string" } }
+        },
+        required: ["strengths", "challenges", "careerPath", "relationships", "luckyNumbers", "favorableColors"]
+      },
+      predictions: {
+        type: "object",
+        properties: {
+          currentYear: { type: "string" },
+          nextPhase: { type: "string" },
+          opportunities: { type: "array", items: { type: "string" } }
+        },
+        required: ["currentYear", "nextPhase", "opportunities"]
+      }
+    },
+    required: ["personalityOverview", "coreNumbers", "lifeAreas", "predictions"]
+  }
+};
+
+export async function analyzeNumerology(numerologyData: NumerologyInput): Promise<NumerologyAnalysisResult> {
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content: `You are an expert numerologist with deep knowledge of Pythagorean and Chaldean numerology systems. Analyze the provided information and calculate core numbers with detailed insights. Return your analysis in JSON format with the following structure:
-
-{
-  "personalityOverview": "Comprehensive personality analysis based on numerological calculations",
-  "coreNumbers": {
-    "lifePathNumber": {
-      "number": 7,
-      "meaning": "Detailed meaning of the life path number",
-      "traits": ["trait1", "trait2", "trait3", "trait4"]
-    },
-    "destinyNumber": {
-      "number": 5,
-      "meaning": "Detailed meaning of the destiny number",
-      "purpose": "Life purpose and ultimate goals"
-    },
-    "soulUrgeNumber": {
-      "number": 3,
-      "meaning": "Detailed meaning of the soul urge number",
-      "desires": "Inner desires and motivations"
-    },
-    "personalityNumber": {
-      "number": 9,
-      "meaning": "Detailed meaning of the personality number",
-      "impression": "How others perceive you"
-    }
-  },
-  "lifeAreas": {
-    "strengths": ["strength1", "strength2", "strength3", "strength4"],
-    "challenges": ["challenge1", "challenge2", "challenge3"],
-    "careerPath": "Ideal career paths and professional guidance",
-    "relationships": "Relationship patterns and compatibility insights",
-    "luckyNumbers": [7, 14, 21, 28],
-    "favorableColors": ["color1", "color2", "color3"]
-  },
-  "predictions": {
-    "currentYear": "Analysis of current year's energy and focus areas",
-    "nextPhase": "What to expect in the next phase of life",
-    "opportunities": ["opportunity1", "opportunity2", "opportunity3"]
-  }
-}
-
-Calculate numbers using traditional numerological methods. For Life Path, reduce birth date to single digit. For Destiny/Expression, use full birth name. For Soul Urge, use vowels in name. For Personality, use consonants in name. Provide positive, empowering insights while being specific and actionable.`
+          content: `You are an expert numerologist with deep knowledge of Pythagorean and Chaldean numerology systems. Analyze the provided information and calculate core numbers with detailed insights. Calculate numbers using traditional numerological methods. For Life Path, reduce birth date to single digit. For Destiny/Expression, use full birth name. For Soul Urge, use vowels in name. For Personality, use consonants in name. Provide positive, empowering insights while being specific and actionable.`
         },
         {
           role: "user",
@@ -438,53 +939,99 @@ Calculate the business destiny number from the company name and provide insights
 Provide detailed numerological analysis with practical guidance for personal and professional development.`
         },
       ],
-      response_format: { type: "json_object" },
+      tools: [{ type: "function", function: numerologyAnalysisFunction }],
+      tool_choice: { type: "function", function: { name: "analyze_numerology" } },
       max_completion_tokens: 3000,
     });
 
-    const result = JSON.parse(response.choices[0].message.content || "{}");
+    const toolCall = response.choices[0].message.tool_calls?.[0];
+    if (!toolCall || !('function' in toolCall) || toolCall.function.name !== "analyze_numerology") {
+      throw new Error("Invalid function call response");
+    }
+
+    const rawResult = JSON.parse(toolCall.function.arguments);
+    
+    // Validate with Zod schema
+    try {
+      const result = NumerologyAnalysisResultSchema.parse(rawResult);
     return result;
+    } catch (validationError) {
+      console.error("Numerology analysis validation failed:", validationError);
+      console.error("Raw OpenAI response:", JSON.stringify(rawResult, null, 2));
+      throw new Error("Invalid numerology analysis response format");
+    }
   } catch (error) {
     console.error("OpenAI numerology analysis error:", error);
     throw new Error("Failed to analyze numerology: " + (error as Error).message);
   }
 }
 
-export async function analyzeTarot(tarotData: TarotInput): Promise<any> {
+const tarotAnalysisFunction = {
+  name: "analyze_tarot_reading",
+  description: "Interpret a tarot card spread and provide comprehensive guidance including card meanings, overall message, and practical advice.",
+  parameters: {
+    type: "object",
+    properties: {
+      spreadType: {
+        type: "string",
+        description: "The type of spread used"
+      },
+      personalityOverview: {
+        type: "string",
+        description: "Personality insights based on the overall card energy and spread"
+      },
+      cardAnalysis: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            position: { type: "string" },
+            cardName: { type: "string" },
+            meaning: { type: "string" },
+            interpretation: { type: "string" },
+            reversed: { type: "boolean" },
+            reversedMeaning: { type: "string" }
+          },
+          required: ["position", "cardName", "meaning", "interpretation", "reversed"]
+        }
+      },
+      overallMessage: {
+        type: "string",
+        description: "The main message from the reading"
+      },
+      guidance: {
+        type: "object",
+        properties: {
+          pastInfluences: { type: "string" },
+          presentSituation: { type: "string" },
+          futureOutlook: { type: "string" },
+          advice: { type: "string" },
+          outcome: { type: "string" }
+        },
+        required: ["presentSituation", "advice"]
+      },
+      actionSteps: {
+        type: "array",
+        items: { type: "string" },
+        description: "Practical action steps based on the reading"
+      },
+      reflection: {
+        type: "string",
+        description: "Deep reflection and spiritual insights from the reading"
+      }
+    },
+    required: ["spreadType", "personalityOverview", "cardAnalysis", "overallMessage", "guidance", "actionSteps", "reflection"]
+  }
+};
+
+export async function analyzeTarot(tarotData: TarotInput): Promise<TarotAnalysisResult> {
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content: `You are an expert tarot reader with decades of experience in card interpretation and divination. Analyze the provided tarot spread and cards to give meaningful, insightful guidance. Return your analysis in JSON format with the following structure:
-
-{
-  "spreadType": "The type of spread used",
-  "personalityOverview": "Personality insights based on the overall card energy and spread",
-  "cardAnalysis": [
-    {
-      "position": "Position name in the spread",
-      "cardName": "Name of the card",
-      "meaning": "Traditional meaning of the card",
-      "interpretation": "Specific interpretation for this position and question",
-      "reversed": false,
-      "reversedMeaning": "Meaning when reversed (if applicable)"
-    }
-  ],
-  "overallMessage": "The main message from the reading",
-  "guidance": {
-    "pastInfluences": "Past influences affecting the situation",
-    "presentSituation": "Current situation analysis",
-    "futureOutlook": "Future potential and trends",
-    "advice": "Practical advice and guidance",
-    "outcome": "Potential outcome if current path continues"
-  },
-  "actionSteps": ["step1", "step2", "step3"],
-  "reflection": "Deep reflection and spiritual insights from the reading"
-}
-
-Focus on traditional tarot meanings while providing personalized, empowering guidance. Be specific about how each card relates to its position in the spread. Consider reversed cards as offering different perspectives, not necessarily negative meanings. Provide practical, actionable advice while honoring the mystical nature of tarot.`
+          content: `You are an expert tarot reader with decades of experience in card interpretation and divination. Analyze the provided tarot spread and cards to give meaningful, insightful guidance. Focus on traditional tarot meanings while providing personalized, empowering guidance. Be specific about how each card relates to its position in the spread. Consider reversed cards as offering different perspectives, not necessarily negative meanings. Provide practical, actionable advice while honoring the mystical nature of tarot.`
         },
         {
           role: "user",
@@ -503,12 +1050,27 @@ ${tarotData.drawnCards.map((card, index) =>
 Provide a comprehensive tarot interpretation with deep insights, practical guidance, and spiritual wisdom. Consider the relationships between the cards and how they speak to each other within the spread. Offer empowering advice that helps the querent understand their situation and potential paths forward.`
         },
       ],
-      response_format: { type: "json_object" },
+      tools: [{ type: "function", function: tarotAnalysisFunction }],
+      tool_choice: { type: "function", function: { name: "analyze_tarot_reading" } },
       max_completion_tokens: 4000,
     });
 
-    const result = JSON.parse(response.choices[0].message.content || "{}");
+    const toolCall = response.choices[0].message.tool_calls?.[0];
+    if (!toolCall || !('function' in toolCall) || toolCall.function.name !== "analyze_tarot_reading") {
+      throw new Error("Invalid function call response");
+    }
+
+    const rawResult = JSON.parse(toolCall.function.arguments);
+    
+    // Validate with Zod schema
+    try {
+      const result = TarotAnalysisResultSchema.parse(rawResult);
     return result;
+    } catch (validationError) {
+      console.error("Tarot analysis validation failed:", validationError);
+      console.error("Raw OpenAI response:", JSON.stringify(rawResult, null, 2));
+      throw new Error("Invalid tarot analysis response format");
+    }
   } catch (error) {
     console.error("OpenAI tarot analysis error:", error);
     throw new Error("Failed to analyze tarot reading: " + (error as Error).message);

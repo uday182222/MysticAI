@@ -15,7 +15,7 @@ import {
   type InsertAiChatSession,
   type AiChatMessage,
   type InsertAiChatMessage,
-  palmAnalyses, 
+  palmAnalyses,
   analyses,
   users,
   chatConversations,
@@ -24,6 +24,22 @@ import {
   aiChatSessions,
   aiChatMessages
 } from "@shared/schema";
+import * as sqliteSchema from "@shared/schema-sqlite";
+
+// Use SQLite schema in development, PostgreSQL in production
+const isDevelopment = process.env.NODE_ENV === 'development';
+const useSQLite = isDevelopment && (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes('sqlite'));
+
+const schemas = useSQLite ? sqliteSchema : {
+  palmAnalyses, 
+  analyses,
+  users,
+  chatConversations,
+  chatMessages,
+  payments,
+  aiChatSessions,
+  aiChatMessages
+};
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 
@@ -72,74 +88,90 @@ export interface IStorage {
 export class DatabaseStorage implements IStorage {
   // Palm analysis methods
   async createPalmAnalysis(insertAnalysis: InsertPalmAnalysis): Promise<PalmAnalysis> {
+    const { randomUUID } = await import('crypto');
     const [analysis] = await db
-      .insert(palmAnalyses)
-      .values(insertAnalysis)
+      .insert(schemas.palmAnalyses)
+      .values({
+        ...insertAnalysis,
+        id: randomUUID()
+      })
       .returning();
     return analysis;
   }
 
   async getPalmAnalysis(id: string): Promise<PalmAnalysis | undefined> {
-    const [analysis] = await db.select().from(palmAnalyses).where(eq(palmAnalyses.id, id));
+    const [analysis] = await db.select().from(schemas.palmAnalyses).where(eq(schemas.palmAnalyses.id, id));
     return analysis || undefined;
   }
 
   // General analysis methods
   async createAnalysis(insertAnalysis: InsertAnalysis): Promise<Analysis> {
+    const { randomUUID } = await import('crypto');
     const [analysis] = await db
-      .insert(analyses)
-      .values(insertAnalysis)
+      .insert(schemas.analyses)
+      .values({
+        ...insertAnalysis,
+        id: randomUUID()
+      })
       .returning();
     return analysis;
   }
 
   async getAnalysis(id: string): Promise<Analysis | undefined> {
-    const [analysis] = await db.select().from(analyses).where(eq(analyses.id, id));
+    const [analysis] = await db.select().from(schemas.analyses).where(eq(schemas.analyses.id, id));
     return analysis || undefined;
   }
 
   // User authentication methods
   async createUser(insertUser: InsertUser): Promise<User> {
+    const { randomUUID } = await import('crypto');
     const [user] = await db
-      .insert(users)
-      .values(insertUser)
+      .insert(schemas.users)
+      .values({
+        ...insertUser,
+        id: randomUUID()
+      })
       .returning();
     return user;
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.email, email));
+    const [user] = await db.select().from(schemas.users).where(eq(schemas.users.email, email));
     return user || undefined;
   }
 
   async getUserById(id: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.id, id));
+    const [user] = await db.select().from(schemas.users).where(eq(schemas.users.id, id));
     return user || undefined;
   }
 
   async updateUserCredits(userId: string, credits: number): Promise<User> {
     const [user] = await db
-      .update(users)
+      .update(schemas.users)
       .set({ credits, updatedAt: new Date() })
-      .where(eq(users.id, userId))
+      .where(eq(schemas.users.id, userId))
       .returning();
     return user;
   }
 
   async updateUserAiChatCredits(userId: string, aiChatCredits: number, aiChatMinutesUsed: number): Promise<User> {
     const [user] = await db
-      .update(users)
+      .update(schemas.users)
       .set({ aiChatCredits, aiChatMinutesUsed, updatedAt: new Date() })
-      .where(eq(users.id, userId))
+      .where(eq(schemas.users.id, userId))
       .returning();
     return user;
   }
 
   // Chat methods
   async createChatConversation(insertConversation: InsertChatConversation): Promise<ChatConversation> {
+    const { randomUUID } = await import('crypto');
     const [conversation] = await db
-      .insert(chatConversations)
-      .values(insertConversation)
+      .insert(schemas.chatConversations)
+      .values({
+        ...insertConversation,
+        id: randomUUID()
+      })
       .returning();
     return conversation;
   }
@@ -147,25 +179,29 @@ export class DatabaseStorage implements IStorage {
   async getChatConversationByAnalysis(analysisId: string, userId: string): Promise<ChatConversation | undefined> {
     const [conversation] = await db
       .select()
-      .from(chatConversations)
-      .where(eq(chatConversations.analysisId, analysisId));
+      .from(schemas.chatConversations)
+      .where(eq(schemas.chatConversations.analysisId, analysisId));
     return conversation || undefined;
   }
 
   async updateConversationQuestions(conversationId: string, questionsUsed: number): Promise<ChatConversation> {
     const [conversation] = await db
-      .update(chatConversations)
+      .update(schemas.chatConversations)
       .set({ questionsUsed, updatedAt: new Date() })
-      .where(eq(chatConversations.id, conversationId))
+      .where(eq(schemas.chatConversations.id, conversationId))
       .returning();
     return conversation;
   }
 
   // Chat message methods
   async createChatMessage(insertMessage: InsertChatMessage): Promise<ChatMessage> {
+    const { randomUUID } = await import('crypto');
     const [message] = await db
-      .insert(chatMessages)
-      .values(insertMessage)
+      .insert(schemas.chatMessages)
+      .values({
+        ...insertMessage,
+        id: randomUUID()
+      })
       .returning();
     return message;
   }
@@ -173,9 +209,9 @@ export class DatabaseStorage implements IStorage {
   async getChatMessagesByConversation(conversationId: string): Promise<ChatMessage[]> {
     const messages = await db
       .select()
-      .from(chatMessages)
-      .where(eq(chatMessages.conversationId, conversationId))
-      .orderBy(chatMessages.createdAt);
+      .from(schemas.chatMessages)
+      .where(eq(schemas.chatMessages.conversationId, conversationId))
+      .orderBy(schemas.chatMessages.createdAt);
     return messages;
   }
 
@@ -185,31 +221,39 @@ export class DatabaseStorage implements IStorage {
 
   // Payment methods
   async createPayment(insertPayment: InsertPayment): Promise<Payment> {
+    const { randomUUID } = await import('crypto');
     const [payment] = await db
-      .insert(payments)
-      .values(insertPayment)
+      .insert(schemas.payments)
+      .values({
+        ...insertPayment,
+        id: randomUUID()
+      })
       .returning();
     return payment;
   }
 
   async updatePaymentStatus(paymentId: string, status: string, razorpayPaymentId?: string, completedAt?: Date): Promise<Payment> {
     const [payment] = await db
-      .update(payments)
+      .update(schemas.payments)
       .set({ 
         status, 
         ...(razorpayPaymentId && { razorpayPaymentId }),
         ...(completedAt && { completedAt })
       })
-      .where(eq(payments.id, paymentId))
+      .where(eq(schemas.payments.id, paymentId))
       .returning();
     return payment;
   }
 
   // AI Chat methods
   async createAiChatSession(insertSession: InsertAiChatSession): Promise<AiChatSession> {
+    const { randomUUID } = await import('crypto');
     const [session] = await db
-      .insert(aiChatSessions)
-      .values(insertSession)
+      .insert(schemas.aiChatSessions)
+      .values({
+        ...insertSession,
+        id: randomUUID()
+      })
       .returning();
     return session;
   }
@@ -217,26 +261,30 @@ export class DatabaseStorage implements IStorage {
   async getActiveAiChatSession(userId: string): Promise<AiChatSession | undefined> {
     const [session] = await db
       .select()
-      .from(aiChatSessions)
-      .where(eq(aiChatSessions.userId, userId))
-      .orderBy(aiChatSessions.createdAt); // Get most recent
+      .from(schemas.aiChatSessions)
+      .where(eq(schemas.aiChatSessions.userId, userId))
+      .orderBy(schemas.aiChatSessions.createdAt); // Get most recent
     return session || undefined;
   }
 
   async updateAiChatSessionUsage(sessionId: string, minutesUsed: number, creditsUsed: number): Promise<AiChatSession> {
     const [session] = await db
-      .update(aiChatSessions)
+      .update(schemas.aiChatSessions)
       .set({ minutesUsed, creditsUsed, updatedAt: new Date() })
-      .where(eq(aiChatSessions.id, sessionId))
+      .where(eq(schemas.aiChatSessions.id, sessionId))
       .returning();
     return session;
   }
 
   // AI Chat message methods
   async createAiChatMessage(insertMessage: InsertAiChatMessage): Promise<AiChatMessage> {
+    const { randomUUID } = await import('crypto');
     const [message] = await db
-      .insert(aiChatMessages)
-      .values(insertMessage)
+      .insert(schemas.aiChatMessages)
+      .values({
+        ...insertMessage,
+        id: randomUUID()
+      })
       .returning();
     return message;
   }
@@ -244,9 +292,9 @@ export class DatabaseStorage implements IStorage {
   async getAiChatMessagesBySession(sessionId: string): Promise<AiChatMessage[]> {
     const messages = await db
       .select()
-      .from(aiChatMessages)
-      .where(eq(aiChatMessages.sessionId, sessionId))
-      .orderBy(aiChatMessages.createdAt);
+      .from(schemas.aiChatMessages)
+      .where(eq(schemas.aiChatMessages.sessionId, sessionId))
+      .orderBy(schemas.aiChatMessages.createdAt);
     return messages;
   }
 }

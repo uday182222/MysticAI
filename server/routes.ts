@@ -1,5 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import { randomUUID } from "crypto";
 import { storage } from "./storage";
 import { 
   insertPalmAnalysisSchema, 
@@ -16,7 +17,29 @@ import {
   userRegistrationSchema,
   userLoginSchema
 } from "@shared/schema";
+import * as sqliteSchema from "@shared/schema-sqlite";
+
+// Use SQLite schema in development, PostgreSQL in production
+const isDevelopment = process.env.NODE_ENV === 'development';
+const useSQLite = isDevelopment && (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes('sqlite'));
+
+const schemas = useSQLite ? sqliteSchema : {
+  insertPalmAnalysisSchema, 
+  palmAnalysisResultSchema, 
+  astrologyInputSchema, 
+  astrologyAnalysisResultSchema,
+  vastuInputSchema,
+  vastuAnalysisResultSchema,
+  numerologyInputSchema,
+  numerologyAnalysisResultSchema,
+  tarotInputSchema,
+  tarotAnalysisResultSchema,
+  insertAnalysisSchema,
+  userRegistrationSchema,
+  userLoginSchema
+};
 import { analyzePalmImage, analyzeAstrologyChart, analyzeVastu, analyzeNumerology, analyzeTarot, generateChatResponse, generateMysticalChatResponse } from "./services/openai";
+import { createRazorpayOrder, verifyRazorpaySignature, PAYMENT_TIERS } from "./services/razorpay";
 import multer from "multer";
 import bcrypt from "bcryptjs";
 import session from "express-session";
@@ -24,12 +47,39 @@ import connectPgSimple from "connect-pg-simple";
 
 const PgSession = connectPgSimple(session);
 
+// Extend Request interface to include user
+declare global {
+  namespace Express {
+    interface Request {
+      user?: any;
+    }
+  }
+}
+
 // Middleware to check if user is authenticated
 function requireAuth(req: any, res: any, next: any) {
+  console.log("Auth middleware - session userId:", req.session?.userId);
+  
   if (!req.session.userId) {
+    console.log("No session userId found");
     return res.status(401).json({ message: "Authentication required" });
   }
-  next();
+  
+  // Fetch and attach user object
+  storage.getUserById(req.session.userId)
+    .then(user => {
+      console.log("Auth middleware - user found:", user ? "Yes" : "No");
+      if (!user) {
+        return res.status(401).json({ message: "User not found" });
+      }
+      req.user = user;
+      console.log("Auth middleware - req.user set:", req.user?.id);
+      next();
+    })
+    .catch(error => {
+      console.error("Auth middleware error:", error);
+      return res.status(500).json({ message: "Authentication error" });
+    });
 }
 
 // Configure multer for image uploads
@@ -49,8 +99,11 @@ const upload = multer({
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Configure session middleware
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  const useSQLite = isDevelopment && (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes('sqlite'));
+  
   app.use(session({
-    store: new PgSession({
+    store: useSQLite ? undefined : new PgSession({
       conString: process.env.DATABASE_URL,
       tableName: 'session'
     }),
@@ -67,7 +120,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // User registration endpoint
   app.post("/api/auth/register", async (req, res) => {
     try {
-      const userData = userRegistrationSchema.parse(req.body);
+      const userData = schemas.userRegistrationSchema.parse(req.body);
       
       // Check if user already exists
       const existingUser = await storage.getUserByEmail(userData.email);
@@ -110,7 +163,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // User login endpoint
   app.post("/api/auth/login", async (req, res) => {
     try {
-      const loginData = userLoginSchema.parse(req.body);
+      const loginData = schemas.userLoginSchema.parse(req.body);
       
       // Find user by email
       const user = await storage.getUserByEmail(loginData.email);
@@ -182,7 +235,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Analyze palm image endpoint
-  app.post("/api/palm/analyze", upload.single('palmImage'), async (req, res) => {
+  app.post("/api/palm/analyze", requireAuth, upload.single('palmImage'), async (req, res) => {
     try {
       if (!req.file) {
         return res.status(400).json({ message: "No image file provided" });
@@ -198,20 +251,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Raw GPT-5 Response:", JSON.stringify(analysisResult, null, 2));
       
       // Validate the analysis result
-      const validatedResult = palmAnalysisResultSchema.parse(analysisResult);
+      const validatedResult = schemas.palmAnalysisResultSchema.parse(analysisResult);
       
       // Store the analysis in main analyses table for chat compatibility
-      const analysis = await storage.createAnalysis({
-        type: "palm",
-        imageUrl: `data:${req.file.mimetype};base64,${base64Image}`,
-        inputData: { imageUrl: `data:${req.file.mimetype};base64,${base64Image}` },
-        analysisResult: validatedResult,
-      });
+      console.log("Palm analysis - req.user:", req.user);
+      console.log("Palm analysis - req.user.id:", req.user?.id);
+      
+      if (!req.user || !req.user.id) {
+        throw new Error("User not authenticated properly");
+      }
+      
+      // Try to store the analysis, but don't fail if it doesn't work
+      let analysisId: string = randomUUID();
+      try {
+        const analysis = await storage.createAnalysis({
+          userId: req.user.id,
+          type: "palm",
+          imageUrl: `data:${req.file.mimetype};base64,${base64Image}`,
+          inputData: JSON.stringify({ imageUrl: `data:${req.file.mimetype};base64,${base64Image}` }),
+          analysisResult: JSON.stringify(validatedResult),
+        });
+        analysisId = analysis.id;
+        console.log("Analysis stored successfully with ID:", analysisId);
+      } catch (dbError) {
+        console.error("Failed to store analysis in database:", dbError);
+        // Continue anyway - return the result to the user
+      }
 
       res.json({
-        id: analysis.id,
+        id: analysisId,
         result: validatedResult,
-        imageUrl: analysis.imageUrl,
+        imageUrl: `data:${req.file.mimetype};base64,${base64Image}`,
       });
     } catch (error) {
       console.error("Palm analysis error:", error);
@@ -237,7 +307,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Analyze astrology chart endpoint
   app.post("/api/astrology/analyze", async (req, res) => {
     try {
-      const astrologyData = astrologyInputSchema.parse(req.body);
+      const astrologyData = schemas.astrologyInputSchema.parse(req.body);
       
       // Analyze astrology chart using OpenAI
       const analysisResult = await analyzeAstrologyChart(astrologyData);
@@ -278,7 +348,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid JSON in vastuData" });
       }
       
-      const vastuData = vastuInputSchema.parse(vastuDataRaw);
+      const vastuData = schemas.vastuInputSchema.parse(vastuDataRaw);
       
       let base64Image: string | undefined;
       let imageUrl: string | null = null;
@@ -319,7 +389,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Analyze numerology endpoint
   app.post("/api/numerology/analyze", async (req, res) => {
     try {
-      const numerologyData = numerologyInputSchema.parse(req.body);
+      const numerologyData = schemas.numerologyInputSchema.parse(req.body);
       
       // Analyze using OpenAI
       const analysisResult = await analyzeNumerology(numerologyData);
@@ -350,7 +420,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Analyze tarot endpoint
   app.post("/api/tarot/analyze", async (req, res) => {
     try {
-      const tarotData = tarotInputSchema.parse(req.body);
+      const tarotData = schemas.tarotInputSchema.parse(req.body);
       
       // Analyze using OpenAI
       const analysisResult = await analyzeTarot(tarotData);
@@ -494,35 +564,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get available payment tiers
+  app.get("/api/payments/tiers", (req, res) => {
+    res.json(PAYMENT_TIERS);
+  });
+
   // Razorpay Payment Routes
   app.post("/api/payments/create-order", requireAuth, async (req: any, res) => {
     try {
-      const { amount, creditsRequested, paymentTier, minutesGranted } = req.body;
+      const { paymentTier } = req.body;
       const userId = req.session.userId;
 
-      if (!amount || !creditsRequested || !paymentTier || !minutesGranted) {
-        return res.status(400).json({ message: "Missing required payment parameters" });
+      if (!paymentTier) {
+        return res.status(400).json({ message: "Payment tier is required" });
+      }
+
+      // Find the selected tier
+      const tier = PAYMENT_TIERS.find(t => t.id === paymentTier);
+      if (!tier) {
+        return res.status(400).json({ message: "Invalid payment tier" });
       }
 
       // Create payment record first
       const payment = await storage.createPayment({
         userId,
-        amount: amount.toString(),
-        creditsGranted: creditsRequested,
-        minutesGranted,
-        paymentTier,
+        amount: tier.amount.toString(),
+        creditsGranted: tier.credits,
+        minutesGranted: tier.minutes,
+        paymentTier: tier.id,
         status: 'pending'
       });
 
-      // In a real implementation, you would create a Razorpay order here
-      // For now, returning mock data for development
-      const mockOrderId = `order_${Date.now()}`;
+      // Create Razorpay order
+      const order = await createRazorpayOrder(tier.amount, 'INR');
       
       res.json({
-        orderId: mockOrderId,
-        amount: amount,
-        currency: "USD",
-        paymentId: payment.id
+        orderId: order.id,
+        amount: tier.amount,
+        currency: "INR",
+        paymentId: payment.id,
+        key: process.env.RAZORPAY_KEY_ID
       });
     } catch (error) {
       console.error("Create payment order error:", error);
@@ -535,8 +616,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { razorpay_payment_id, razorpay_order_id, razorpay_signature, paymentId } = req.body;
       const userId = req.session.userId;
 
-      // In a real implementation, you would verify the Razorpay signature here
-      // For now, simulating successful verification
+      if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature || !paymentId) {
+        return res.status(400).json({ message: "Missing required payment verification parameters" });
+      }
+
+      // Verify Razorpay signature
+      const isSignatureValid = verifyRazorpaySignature(
+        razorpay_order_id,
+        razorpay_payment_id,
+        razorpay_signature
+      );
+
+      if (!isSignatureValid) {
+        return res.status(400).json({ message: "Invalid payment signature" });
+      }
       
       // Update payment status
       const payment = await storage.updatePaymentStatus(
@@ -559,7 +652,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ 
         success: true,
         creditsAdded: payment.creditsGranted,
-        totalCredits: newAiChatCredits
+        totalCredits: newAiChatCredits,
+        message: `Successfully added ${payment.creditsGranted} credits to your account!`
       });
     } catch (error) {
       console.error("Payment verification error:", error);
@@ -618,7 +712,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Deduct 1 credit and update usage
       const newCredits = user.aiChatCredits - 1;
-      const estimatedMinutes = parseFloat((session.minutesUsed + 0.2).toFixed(2)); // Estimate ~0.2 minutes per exchange
+      const estimatedMinutes = parseFloat((Number(session.minutesUsed) + 0.2).toFixed(2)); // Estimate ~0.2 minutes per exchange
       
       await Promise.all([
         storage.updateUserAiChatCredits(userId, newCredits, user.aiChatMinutesUsed),

@@ -280,7 +280,12 @@ export function PostAnalysisChat({
       {/* Hidden ChatReport component for PDF generation */}
       <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
         <ChatReport
-          messages={messages}
+          messages={messages.map(msg => ({
+            role: msg.role as 'user' | 'assistant',
+            content: msg.content,
+            timestamp: msg.createdAt,
+            createdAt: msg.createdAt
+          }))}
           reportType="post-analysis"
           analysisType={analysisType}
           analysisData={analysisData}

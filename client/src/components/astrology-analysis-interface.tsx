@@ -4,11 +4,13 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { useAnalysisError } from "@/hooks/use-analysis-error";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Stars, Calendar, MapPin, Clock, Loader2 } from "lucide-react";
 import { AstrologyAnalysisResult, AstrologyInput } from "@shared/schema";
 import { CosmicLoader } from "@/components/cosmic-loader";
+import { AnalysisErrorDisplay } from "@/components/analysis-error-display";
 
 interface AstrologyAnalysisInterfaceProps {
   onAnalysisComplete: (result: AstrologyAnalysisResult, inputData: AstrologyInput, analysisId: string) => void;
@@ -20,6 +22,7 @@ export function AstrologyAnalysisInterface({ onAnalysisComplete }: AstrologyAnal
   const [birthPlace, setBirthPlace] = useState("");
   
   const { toast } = useToast();
+  const { analysisError, retryCount, clearError, setError, resetRetry, handleRetry } = useAnalysisError();
 
   const analysisMutation = useMutation({
     mutationFn: async (astrologyData: AstrologyInput) => {
@@ -27,6 +30,8 @@ export function AstrologyAnalysisInterface({ onAnalysisComplete }: AstrologyAnal
       return response.json();
     },
     onSuccess: (data) => {
+      clearError();
+      resetRetry();
       onAnalysisComplete(data.result, data.inputData, data.id);
       toast({
         title: "Analysis Complete!",
@@ -34,9 +39,11 @@ export function AstrologyAnalysisInterface({ onAnalysisComplete }: AstrologyAnal
       });
     },
     onError: (error) => {
+      const errorMessage = error.message || "An unexpected error occurred during analysis";
+      setError(errorMessage);
       toast({
         title: "Analysis Failed",
-        description: error.message,
+        description: errorMessage,
         variant: "destructive",
       });
     },
@@ -52,6 +59,7 @@ export function AstrologyAnalysisInterface({ onAnalysisComplete }: AstrologyAnal
       return;
     }
 
+    clearError();
     const astrologyData: AstrologyInput = {
       birthDate,
       birthTime,
@@ -59,6 +67,17 @@ export function AstrologyAnalysisInterface({ onAnalysisComplete }: AstrologyAnal
     };
 
     analysisMutation.mutate(astrologyData);
+  };
+
+  const handleRetryClick = () => {
+    if (!birthDate || !birthTime || !birthPlace) return;
+    
+    const astrologyData: AstrologyInput = {
+      birthDate,
+      birthTime,
+      birthPlace,
+    };
+    handleRetry(() => analysisMutation.mutate(astrologyData));
   };
 
   return (
@@ -158,6 +177,14 @@ export function AstrologyAnalysisInterface({ onAnalysisComplete }: AstrologyAnal
                   </Button>
                   <p className="text-sm text-secondary mt-2">Analysis typically takes 15-45 seconds</p>
                 </div>
+
+                {/* Error Display */}
+                <AnalysisErrorDisplay
+                  error={analysisError}
+                  retryCount={retryCount}
+                  onRetry={handleRetryClick}
+                  isPending={analysisMutation.isPending}
+                />
               </div>
             </CardContent>
           </Card>

@@ -8,7 +8,9 @@ import { VastuAnalysisInterface } from "@/components/vastu-analysis-interface";
 import { NumerologyAnalysisInterface } from "@/components/numerology-analysis-interface";
 import { TarotAnalysisInterface } from "@/components/tarot-analysis-interface";
 import { AiChatInterface } from "@/components/ai-chat-interface";
-import { AnalysisResults } from "@/components/analysis-results";
+import { CameraDebug } from "@/components/camera-debug";
+import { SimpleCameraTest } from "@/components/simple-camera-test";
+import { PalmAnalysisResultsModern } from "@/components/PalmAnalysisResultsModern";
 import { AstrologyResults } from "@/components/astrology-results";
 import { VastuResults } from "@/components/vastu-results";
 import { NumerologyResults } from "@/components/numerology-results";
@@ -17,7 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/components/auth/auth-context";
-import { Hand, Stars, Home as HomeIcon, Calculator, Zap, User, Sparkles, MessageCircle } from "lucide-react";
+import { Hand, Stars, Home as HomeIcon, Calculator, Zap, User, Sparkles, MessageCircle, Camera } from "lucide-react";
 import { PalmAnalysisResult, AstrologyAnalysisResult, AstrologyInput, VastuAnalysisResult, VastuInput, NumerologyAnalysisResult, NumerologyInput, TarotAnalysisResult, TarotInput } from "@shared/schema";
 
 export default function Dashboard() {
@@ -198,7 +200,7 @@ export default function Dashboard() {
       </section>
 
       {/* Analysis Section */}
-      <section id="analysis-section" className="py-20 bg-card">
+      <section id="analysis-section" className="py-20 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
         <div className="container mx-auto px-6">
           <div className="max-w-6xl mx-auto">
             
@@ -239,6 +241,14 @@ export default function Dashboard() {
                     
                     <TabsContent value="ai-chat" className="mt-0">
                       <AiChatInterface />
+                    </TabsContent>
+                    
+                    <TabsContent value="camera-debug" className="mt-0">
+                      <CameraDebug />
+                    </TabsContent>
+                    
+                    <TabsContent value="simple-camera" className="mt-0">
+                      <SimpleCameraTest />
                     </TabsContent>
                   </div>
                 </div>
@@ -320,6 +330,30 @@ export default function Dashboard() {
                             <div className="text-xs text-muted-foreground">Mystical guidance</div>
                           </div>
                         </TabsTrigger>
+
+                        <TabsTrigger 
+                          value="camera-debug" 
+                          className="w-full justify-start gap-3 p-4 h-auto data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-secondary-foreground hover:text-foreground hover:bg-muted transition-all"
+                          data-testid="tab-camera-debug"
+                        >
+                          <Camera className="h-5 w-5" />
+                          <div className="text-left">
+                            <div className="font-medium">Camera Debug</div>
+                            <div className="text-xs text-muted-foreground">Test camera functionality</div>
+                          </div>
+                        </TabsTrigger>
+
+                        <TabsTrigger 
+                          value="simple-camera" 
+                          className="w-full justify-start gap-3 p-4 h-auto data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-secondary-foreground hover:text-foreground hover:bg-muted transition-all"
+                          data-testid="tab-simple-camera"
+                        >
+                          <Camera className="h-5 w-5" />
+                          <div className="text-left">
+                            <div className="font-medium">Simple Camera</div>
+                            <div className="text-xs text-muted-foreground">Basic camera test</div>
+                          </div>
+                        </TabsTrigger>
                         
                       </TabsList>
                     </div>
@@ -336,12 +370,13 @@ export default function Dashboard() {
       {hasAnyResults && (
         <div id="results-section">
           {palmAnalysisResult && palmImageUrl && (
-            <AnalysisResults 
+            <PalmAnalysisResultsModern 
               result={palmAnalysisResult}
               imageUrl={palmImageUrl}
               onAnalyzeAnother={handlePalmAnalyzeAnother}
               analysisId={palmAnalysisId || undefined}
               isAuthenticated={isAuthenticated}
+              onLoginRequired={() => {}} 
             />
           )}
           {astrologyAnalysisResult && astrologyInputData && (
