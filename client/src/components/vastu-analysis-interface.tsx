@@ -129,7 +129,7 @@ export function VastuAnalysisInterface({ onAnalysisComplete }: VastuAnalysisInte
             </p>
           </div>
 
-          <Card className="relative overflow-hidden border-0 shadow-lg bg-card/95 backdrop-blur rounded-2xl">
+          <Card className="relative overflow-hidden border-0 shadow-lg bg-card/75 backdrop-blur rounded-2xl">
             {/* Gradient top border */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-400 via-purple-400 to-blue-400" />
             <CardContent className="p-8 pt-9">

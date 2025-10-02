@@ -216,7 +216,7 @@ export default function Dashboard() {
                 
                 {/* Main Content Area */}
                 <div className="flex-1">
-                  <div className="relative overflow-hidden border-0 shadow-lg bg-card/95 backdrop-blur rounded-2xl">
+                  <div className="relative overflow-hidden border-0 shadow-lg bg-card/80 backdrop-blur rounded-2xl">
                     {/* Gradient top border */}
                     <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-400 via-purple-400 to-blue-400" />
                     <div className="p-8 pt-9">
@@ -250,7 +250,7 @@ export default function Dashboard() {
                 {/* Right Sidebar Navigation */}
                 <div className="w-80 flex-shrink-0">
                   <div className="sticky top-8">
-                    <div className="relative overflow-hidden border-0 shadow-lg bg-card/95 backdrop-blur rounded-2xl">
+                    <div className="relative overflow-hidden border-0 shadow-lg bg-card/80 backdrop-blur rounded-2xl">
                       {/* Gradient top border */}
                       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-400 via-purple-400 to-blue-400" />
                       <div className="p-6 pt-7">

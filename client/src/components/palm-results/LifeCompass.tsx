@@ -64,7 +64,7 @@ export function LifeCompass({ onQuadrantClick, scores }: LifeCompassProps) {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.6, delay: 0.3 }}
     >
-      <Card className="relative border-0 shadow-lg bg-card/95 backdrop-blur overflow-hidden">
+      <Card className="relative border-0 shadow-lg bg-card/70 backdrop-blur overflow-hidden">
         {/* Gradient top border */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-400 via-purple-400 to-blue-400" />
         

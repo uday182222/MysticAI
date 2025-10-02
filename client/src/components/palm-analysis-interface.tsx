@@ -182,7 +182,7 @@ export function PalmAnalysisInterface({ onAnalysisComplete }: PalmAnalysisInterf
           {/* Upload Methods */}
           <div className="grid md:grid-cols-2 gap-6 mb-8">
             <Card 
-              className={`cursor-pointer transition-all duration-300 relative overflow-hidden border-0 shadow-sm bg-card/95 backdrop-blur ${selectedMethod === "upload" ? "shadow-lg" : "hover:shadow-md"}`}
+              className={`cursor-pointer transition-all duration-300 relative overflow-hidden border-0 shadow-sm bg-card/80 backdrop-blur ${selectedMethod === "upload" ? "shadow-lg ring-2 ring-accent" : "hover:shadow-md hover:bg-card/90"}`}
               onClick={() => setSelectedMethod("upload")}
             >
               {/* Gradient top border */}
@@ -206,7 +206,7 @@ export function PalmAnalysisInterface({ onAnalysisComplete }: PalmAnalysisInterf
             </Card>
 
             <Card 
-              className={`cursor-pointer transition-all duration-300 relative overflow-hidden border-0 shadow-sm bg-card/95 backdrop-blur ${selectedMethod === "camera" ? "shadow-lg" : "hover:shadow-md"}`}
+              className={`cursor-pointer transition-all duration-300 relative overflow-hidden border-0 shadow-sm bg-card/80 backdrop-blur ${selectedMethod === "camera" ? "shadow-lg ring-2 ring-accent" : "hover:shadow-md hover:bg-card/90"}`}
               onClick={() => {
                 setSelectedMethod("camera");
                 if (!isCameraActive) startCamera();
@@ -234,7 +234,7 @@ export function PalmAnalysisInterface({ onAnalysisComplete }: PalmAnalysisInterf
           </div>
 
           {/* Main Analysis Area */}
-          <Card className="relative overflow-hidden border-0 shadow-lg bg-card/95 backdrop-blur">
+          <Card className="relative overflow-hidden border-0 shadow-lg bg-card/70 backdrop-blur">
             {/* Gradient top border */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-400 via-purple-400 to-blue-400" />
             <CardContent className="p-6 pt-7">
@@ -364,7 +364,7 @@ export function PalmAnalysisInterface({ onAnalysisComplete }: PalmAnalysisInterf
               )}
 
               {/* Photo Guidelines */}
-              <div className="mt-6 relative overflow-hidden border-0 shadow-sm bg-card/95 backdrop-blur rounded-2xl">
+              <div className="mt-6 relative overflow-hidden border-0 shadow-sm bg-card/60 backdrop-blur rounded-2xl">
                 {/* Gradient top border */}
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-400 via-purple-400 to-blue-400" />
                 <div className="p-6 pt-7">
