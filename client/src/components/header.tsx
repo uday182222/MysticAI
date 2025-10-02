@@ -9,7 +9,7 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <header className="bg-background/95 backdrop-blur-md border-b border-border sticky top-0 z-50">
+    <header className="bg-card/95 backdrop-blur-md border-b border-border sticky top-0 z-50">
       <div className="container mx-auto px-6 py-4">
         <nav className="flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-3 group">
@@ -22,13 +22,13 @@ export function Header() {
           </Link>
           
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-secondary-foreground hover:text-foreground transition-colors duration-300">
+            <a href="#features" className="text-card-foreground hover:text-accent transition-colors duration-300">
               Features
             </a>
-            <a href="#how-it-works" className="text-secondary-foreground hover:text-foreground transition-colors duration-300">
+            <a href="#how-it-works" className="text-card-foreground hover:text-accent transition-colors duration-300">
               How It Works
             </a>
-            <a href="#about" className="text-secondary-foreground hover:text-foreground transition-colors duration-300">
+            <a href="#about" className="text-card-foreground hover:text-accent transition-colors duration-300">
               About
             </a>
           </div>
@@ -50,15 +50,15 @@ export function Header() {
         </nav>
         
         {isMobileMenuOpen && (
-          <div className="md:hidden mt-4 pb-4 border-t border-slate-200">
+          <div className="md:hidden mt-4 pb-4 border-t border-border">
             <div className="flex flex-col space-y-2 pt-4">
-              <a href="#features" className="text-secondary hover:text-primary transition-colors py-2">
+              <a href="#features" className="text-card-foreground hover:text-accent transition-colors py-2">
                 Features
               </a>
-              <a href="#how-it-works" className="text-secondary hover:text-primary transition-colors py-2">
+              <a href="#how-it-works" className="text-card-foreground hover:text-accent transition-colors py-2">
                 How It Works
               </a>
-              <a href="#about" className="text-secondary hover:text-primary transition-colors py-2">
+              <a href="#about" className="text-card-foreground hover:text-accent transition-colors py-2">
                 About
               </a>
             </div>
