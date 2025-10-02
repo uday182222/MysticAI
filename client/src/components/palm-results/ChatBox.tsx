@@ -110,7 +110,7 @@ export function ChatBox({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.5 }}
     >
-      <Card className="relative border-0 shadow-lg bg-white/90 backdrop-blur overflow-hidden">
+      <Card className="relative border-0 shadow-lg bg-card/95 backdrop-blur overflow-hidden">
         {/* Gradient top border */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-400 via-purple-400 to-blue-400" />
         

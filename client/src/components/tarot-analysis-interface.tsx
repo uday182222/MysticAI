@@ -152,15 +152,15 @@ export function TarotAnalysisInterface({ onAnalysisComplete }: TarotAnalysisInte
 
   return (
     <div className="w-full max-w-2xl mx-auto">
-      <Card className="relative overflow-hidden border-0 shadow-lg bg-white/90 backdrop-blur rounded-2xl">
+      <Card className="relative overflow-hidden border-0 shadow-lg bg-card/95 backdrop-blur rounded-2xl">
         {/* Gradient top border */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-400 via-purple-400 to-blue-400" />
         <CardHeader className="text-center pt-9">
           <div className="mx-auto w-12 h-12 bg-gradient-to-br from-violet-100 to-purple-100 rounded-full flex items-center justify-center mb-4">
             <Zap className="h-6 w-6 text-violet-500" />
           </div>
-          <CardTitle className="text-2xl text-gray-900">Tarot Reading</CardTitle>
-          <CardDescription className="text-gray-600">
+          <CardTitle className="text-2xl text-card-foreground">Tarot Reading</CardTitle>
+          <CardDescription className="text-muted-foreground">
             Discover guidance and insights through the ancient wisdom of tarot
           </CardDescription>
         </CardHeader>
@@ -200,7 +200,7 @@ export function TarotAnalysisInterface({ onAnalysisComplete }: TarotAnalysisInte
           {/* Card Drawing Section */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h4 className="font-semibold text-gray-900">Draw Your Cards</h4>
+              <h4 className="font-semibold text-card-foreground">Draw Your Cards</h4>
               <Button 
                 onClick={drawCards}
                 disabled={isDrawingCards}
@@ -230,8 +230,8 @@ export function TarotAnalysisInterface({ onAnalysisComplete }: TarotAnalysisInte
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="font-medium text-gray-900">{card.position}</p>
-                          <p className="text-sm text-gray-600">
+                          <p className="font-medium text-card-foreground">{card.position}</p>
+                          <p className="text-sm text-muted-foreground">
                             {card.cardName} {card.reversed && "(Reversed)"}
                           </p>
                           {card.suit && card.suit !== "Major Arcana" && (
@@ -252,13 +252,13 @@ export function TarotAnalysisInterface({ onAnalysisComplete }: TarotAnalysisInte
           {/* Spread Information */}
           <Card className="bg-violet-50/50 border-violet-200">
             <CardContent className="p-4">
-              <h4 className="font-semibold text-gray-900 mb-2 flex items-center">
+              <h4 className="font-semibold text-card-foreground mb-2 flex items-center">
                 <Zap className="mr-2 h-4 w-4 text-violet-500" />
                 {spreadType === "single-card" && "Single Card Reading"}
                 {spreadType === "three-card" && "Three Card Reading"}
                 {spreadType === "celtic-cross" && "Celtic Cross Reading"}
               </h4>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 {spreadType === "single-card" && "Perfect for quick daily guidance or focused questions about your current situation."}
                 {spreadType === "three-card" && "Explores the past influences, present situation, and future potential around your question."}
                 {spreadType === "celtic-cross" && "The most comprehensive spread, revealing complex layers of your situation with detailed guidance."}

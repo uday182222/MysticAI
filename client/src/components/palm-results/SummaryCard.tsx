@@ -84,7 +84,7 @@ export function SummaryCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
-      <Card className="relative overflow-hidden border-0 shadow-lg bg-white/90 backdrop-blur">
+      <Card className="relative overflow-hidden border-0 shadow-lg bg-card/95 backdrop-blur">
         {/* Subtle decorative background elements */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-violet-100/20 to-blue-100/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-purple-100/20 to-pink-100/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />

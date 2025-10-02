@@ -98,15 +98,15 @@ export function NumerologyAnalysisInterface({ onAnalysisComplete }: NumerologyAn
 
   return (
     <div className="w-full max-w-2xl mx-auto">
-      <Card className="relative overflow-hidden border-0 shadow-lg bg-white/90 backdrop-blur rounded-2xl">
+      <Card className="relative overflow-hidden border-0 shadow-lg bg-card/95 backdrop-blur rounded-2xl">
         {/* Gradient top border */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-400 via-purple-400 to-blue-400" />
         <CardHeader className="text-center pt-9">
           <div className="mx-auto w-12 h-12 bg-gradient-to-br from-violet-100 to-purple-100 rounded-full flex items-center justify-center mb-4">
             <Calculator className="h-6 w-6 text-violet-500" />
           </div>
-          <CardTitle className="text-2xl text-gray-900">Numerology Analysis</CardTitle>
-          <CardDescription className="text-gray-600">
+          <CardTitle className="text-2xl text-card-foreground">Numerology Analysis</CardTitle>
+          <CardDescription className="text-muted-foreground">
             Discover the hidden meanings behind numbers in your life
           </CardDescription>
         </CardHeader>
@@ -172,11 +172,11 @@ export function NumerologyAnalysisInterface({ onAnalysisComplete }: NumerologyAn
               {/* Personal Analysis Features */}
               <Card className="bg-violet-50/50 border-violet-200">
                 <CardContent className="p-4">
-                  <h4 className="font-semibold text-gray-900 mb-2 flex items-center">
+                  <h4 className="font-semibold text-card-foreground mb-2 flex items-center">
                     <Hash className="mr-2 h-4 w-4 text-violet-500" />
                     Personal Analysis Includes:
                   </h4>
-                  <ul className="text-sm text-gray-600 space-y-1">
+                  <ul className="text-sm text-muted-foreground space-y-1">
                     <li>• Life Path Number - Your life's purpose and journey</li>
                     <li>• Destiny Number - Your ultimate life goals</li>
                     <li>• Soul Urge Number - Your inner desires and motivations</li>
@@ -207,11 +207,11 @@ export function NumerologyAnalysisInterface({ onAnalysisComplete }: NumerologyAn
               {/* Business Analysis Features */}
               <Card className="bg-violet-50/50 border-violet-200">
                 <CardContent className="p-4">
-                  <h4 className="font-semibold text-gray-900 mb-2 flex items-center">
+                  <h4 className="font-semibold text-card-foreground mb-2 flex items-center">
                     <Hash className="mr-2 h-4 w-4 text-violet-500" />
                     Business Analysis Includes:
                   </h4>
-                  <ul className="text-sm text-gray-600 space-y-1">
+                  <ul className="text-sm text-muted-foreground space-y-1">
                     <li>• Business Destiny Number - Company's ultimate purpose</li>
                     <li>• Success potential and growth opportunities</li>
                     <li>• Favorable business activities and ventures</li>
