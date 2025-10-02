@@ -92,5 +92,16 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
+  plugins: [
+    require("tailwindcss-animate"),
+    // Only include typography plugin if available
+    ...(function() {
+      try {
+        return [require("@tailwindcss/typography")];
+      } catch (e) {
+        // Plugin not available, skip it
+        return [];
+      }
+    })()
+  ],
 } satisfies Config;
