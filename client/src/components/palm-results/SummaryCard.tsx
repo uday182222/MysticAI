@@ -27,7 +27,7 @@ function CircularProgress({ value, label, color, delay }: CircularProgressProps)
             stroke="currentColor"
             strokeWidth="8"
             fill="none"
-            className="text-gray-200"
+            className="text-white/60"
           />
           {/* Progress circle */}
           <motion.circle
@@ -56,7 +56,7 @@ function CircularProgress({ value, label, color, delay }: CircularProgressProps)
           </motion.span>
         </div>
       </div>
-      <span className="text-sm font-medium text-gray-700 mt-2">{label}</span>
+      <span className="text-sm font-medium text-white/90 mt-2">{label}</span>
     </div>
   );
 }
@@ -131,7 +131,7 @@ export function SummaryCard({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.6, delay: 0.4 }}
-                    className="text-gray-700 leading-relaxed"
+                    className="text-white/90 leading-relaxed"
                   >
                     {personalityOverview}
                   </motion.p>
@@ -163,7 +163,7 @@ export function SummaryCard({
 
             {/* Right: Progress Rings */}
             <div className="lg:border-l lg:border-gray-200/50 lg:pl-8">
-              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-6 text-center">
+              <h3 className="text-sm font-semibold text-white/70 uppercase tracking-wider mb-6 text-center">
                 Life Metrics
               </h3>
               <div className="space-y-6">

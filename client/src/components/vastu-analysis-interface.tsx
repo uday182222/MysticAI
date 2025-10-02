@@ -137,7 +137,7 @@ export function VastuAnalysisInterface({ onAnalysisComplete }: VastuAnalysisInte
                 {/* Basic Information */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="layoutType" className="text-card-foreground font-medium">
+                    <Label htmlFor="layoutType" className="text-white font-medium">
                       Layout Type
                     </Label>
                     <Select value={layoutType} onValueChange={setLayoutType}>
@@ -154,7 +154,7 @@ export function VastuAnalysisInterface({ onAnalysisComplete }: VastuAnalysisInte
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="entrance" className="text-card-foreground font-medium">
+                    <Label htmlFor="entrance" className="text-white font-medium">
                       Main Entrance Direction
                     </Label>
                     <Select value={entrance} onValueChange={setEntrance}>
@@ -177,7 +177,7 @@ export function VastuAnalysisInterface({ onAnalysisComplete }: VastuAnalysisInte
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="buildingShape" className="text-card-foreground font-medium">
+                    <Label htmlFor="buildingShape" className="text-white font-medium">
                       Building Shape
                     </Label>
                     <Select value={buildingShape} onValueChange={setBuildingShape}>
@@ -195,7 +195,7 @@ export function VastuAnalysisInterface({ onAnalysisComplete }: VastuAnalysisInte
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="surroundings" className="text-card-foreground font-medium">
+                    <Label htmlFor="surroundings" className="text-white font-medium">
                       Surroundings
                     </Label>
                     <Textarea
@@ -212,7 +212,7 @@ export function VastuAnalysisInterface({ onAnalysisComplete }: VastuAnalysisInte
                 {/* Rooms Section */}
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <Label className="text-card-foreground font-medium text-lg">Rooms Layout</Label>
+                    <Label className="text-white font-medium text-lg">Rooms Layout</Label>
                     <Button 
                       onClick={addRoom} 
                       variant="outline" 
@@ -295,7 +295,7 @@ export function VastuAnalysisInterface({ onAnalysisComplete }: VastuAnalysisInte
 
                 {/* Layout Image Upload */}
                 <div className="space-y-4">
-                  <Label className="text-card-foreground font-medium text-lg">
+                  <Label className="text-white font-medium text-lg">
                     Layout Image (Optional)
                   </Label>
                   
@@ -318,7 +318,7 @@ export function VastuAnalysisInterface({ onAnalysisComplete }: VastuAnalysisInte
                           <X className="h-4 w-4" />
                         </Button>
                       </div>
-                      <p className="text-sm text-muted-foreground">Layout image uploaded successfully</p>
+                      <p className="text-sm text-white/80">Layout image uploaded successfully</p>
                     </div>
                   ) : (
                     <div 
@@ -327,8 +327,8 @@ export function VastuAnalysisInterface({ onAnalysisComplete }: VastuAnalysisInte
                       data-testid="layout-drop-zone"
                     >
                       <Upload className="h-12 w-12 text-violet-400 mx-auto mb-4" />
-                      <p className="text-lg text-card-foreground font-medium mb-2">Upload Layout Plan</p>
-                      <p className="text-muted-foreground mb-4">Floor plan, sketch, or photo of your layout</p>
+                      <p className="text-lg text-white font-medium mb-2">Upload Layout Plan</p>
+                      <p className="text-white/80 mb-4">Floor plan, sketch, or photo of your layout</p>
                       <Button className="bg-gradient-to-r from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600" data-testid="button-browse-layout-files">
                         <Upload className="mr-2 h-4 w-4" />
                         Browse Files
@@ -366,7 +366,7 @@ export function VastuAnalysisInterface({ onAnalysisComplete }: VastuAnalysisInte
                       </>
                     )}
                   </Button>
-                  <p className="text-sm text-muted-foreground mt-2">Analysis typically takes 20-60 seconds</p>
+                  <p className="text-sm text-white/80 mt-2">Analysis typically takes 20-60 seconds</p>
                 </div>
               </div>
             </CardContent>

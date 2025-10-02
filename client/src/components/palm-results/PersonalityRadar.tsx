@@ -33,7 +33,7 @@ export function PersonalityRadar({ traits }: PersonalityRadarProps) {
               <h3 className="text-xl font-bold bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">
                 Personality Map
               </h3>
-              <p className="text-sm text-gray-600">Your core trait distribution</p>
+              <p className="text-sm text-white/80">Your core trait distribution</p>
             </div>
           </div>
 
@@ -73,7 +73,7 @@ export function PersonalityRadar({ traits }: PersonalityRadarProps) {
                 <div className="text-lg font-bold text-violet-600">
                   {Math.round(item.value)}%
                 </div>
-                <div className="text-xs text-gray-600">{item.trait}</div>
+                <div className="text-xs text-white/80">{item.trait}</div>
               </motion.div>
             ))}
           </div>

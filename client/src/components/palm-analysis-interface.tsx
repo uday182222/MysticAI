@@ -191,8 +191,8 @@ export function PalmAnalysisInterface({ onAnalysisComplete }: PalmAnalysisInterf
                 <div className="w-20 h-20 bg-gradient-to-br from-violet-100 to-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Upload className="h-8 w-8 text-violet-500" />
                 </div>
-                <h4 className="text-xl font-semibold text-card-foreground mb-2">Upload Image</h4>
-                <p className="text-muted-foreground mb-4">
+                <h4 className="text-xl font-semibold text-white mb-2">Upload Image</h4>
+                <p className="text-white/80 mb-4">
                   Select an existing palm photo from your device
                 </p>
                 <Button 
@@ -218,8 +218,8 @@ export function PalmAnalysisInterface({ onAnalysisComplete }: PalmAnalysisInterf
                 <div className="w-20 h-20 bg-gradient-to-br from-violet-100 to-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Camera className="h-8 w-8 text-violet-500" />
                 </div>
-                <h4 className="text-xl font-semibold text-card-foreground mb-2">Take Photo</h4>
-                <p className="text-muted-foreground mb-4">
+                <h4 className="text-xl font-semibold text-white mb-2">Take Photo</h4>
+                <p className="text-white/80 mb-4">
                   Use your device camera to capture your palm
                 </p>
                 <Button 
@@ -343,8 +343,8 @@ export function PalmAnalysisInterface({ onAnalysisComplete }: PalmAnalysisInterf
                       data-testid="drop-zone"
                     >
                       <Upload className="h-16 w-16 text-violet-400 mx-auto mb-4" />
-                      <p className="text-xl text-card-foreground font-medium mb-2">Drop your palm image here</p>
-                      <p className="text-muted-foreground mb-6">or click to browse your files</p>
+                      <p className="text-xl text-white font-medium mb-2">Drop your palm image here</p>
+                      <p className="text-white/80 mb-6">or click to browse your files</p>
                       <Button className="bg-gradient-to-r from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600 text-white" data-testid="button-browse-files">
                         <Upload className="mr-2 h-4 w-4" />
                         Browse Files
@@ -368,11 +368,11 @@ export function PalmAnalysisInterface({ onAnalysisComplete }: PalmAnalysisInterf
                 {/* Gradient top border */}
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-400 via-purple-400 to-blue-400" />
                 <div className="p-6 pt-7">
-                  <h5 className="font-medium text-card-foreground mb-3 flex items-center">
+                  <h5 className="font-medium text-white mb-3 flex items-center">
                     <Camera className="text-violet-500 mr-2 h-4 w-4" />
                     Photo Guidelines for Best Results
                   </h5>
-                  <ul className="text-sm text-muted-foreground space-y-1">
+                  <ul className="text-sm text-white/80 space-y-1">
                     <li>• Ensure your palm is well-lit and clearly visible</li>
                     <li>• Keep your hand flat and open with fingers spread</li>
                     <li>• Take the photo from directly above your palm</li>

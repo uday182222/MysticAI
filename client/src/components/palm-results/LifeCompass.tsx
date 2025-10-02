@@ -73,7 +73,7 @@ export function LifeCompass({ onQuadrantClick, scores }: LifeCompassProps) {
             <h3 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent mb-2">
               Life Compass
             </h3>
-            <p className="text-sm text-gray-600">Click any quadrant to explore that area</p>
+            <p className="text-sm text-white/80">Click any quadrant to explore that area</p>
           </div>
 
           <div className="relative w-full max-w-md mx-auto aspect-square">

@@ -136,7 +136,7 @@ export function ChatBox({
           <div className="p-6 bg-white">
             {localMessages.length === 0 ? (
               <div className="space-y-4">
-                <p className="text-center text-gray-600 mb-6">
+                <p className="text-center text-white/80 mb-6">
                   Start a conversation! Here are some suggested questions:
                 </p>
                 <div className="grid gap-3">
@@ -153,7 +153,7 @@ export function ChatBox({
                     >
                       <div className="flex items-start gap-3">
                         <MessageCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-sm text-gray-700">{question}</span>
+                        <span className="text-sm text-white/90">{question}</span>
                       </div>
                     </motion.button>
                   ))}
@@ -181,7 +181,7 @@ export function ChatBox({
                         className={`max-w-[80%] rounded-2xl p-4 ${
                           msg.role === "user"
                             ? "bg-gradient-to-br from-violet-500 to-purple-600 text-white"
-                            : "bg-gray-100 text-gray-800"
+                            : "bg-gray-100 text-white/90"
                         }`}
                       >
                         <p className="text-sm leading-relaxed whitespace-pre-wrap">
@@ -199,7 +199,7 @@ export function ChatBox({
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="flex gap-3 items-center text-gray-500"
+                      className="flex gap-3 items-center text-white/70"
                     >
                       <Loader2 className="w-4 h-4 animate-spin" />
                       <span className="text-sm">AI is thinking...</span>

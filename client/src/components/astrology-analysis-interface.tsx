@@ -98,7 +98,7 @@ export function AstrologyAnalysisInterface({ onAnalysisComplete }: AstrologyAnal
               <div className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="birthDate" className="text-card-foreground font-medium">
+                    <Label htmlFor="birthDate" className="text-white font-medium">
                       <Calendar className="inline mr-2 h-4 w-4 text-violet-500" />
                       Birth Date
                     </Label>
@@ -113,7 +113,7 @@ export function AstrologyAnalysisInterface({ onAnalysisComplete }: AstrologyAnal
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="birthTime" className="text-card-foreground font-medium">
+                    <Label htmlFor="birthTime" className="text-white font-medium">
                       <Clock className="inline mr-2 h-4 w-4 text-violet-500" />
                       Birth Time
                     </Label>
@@ -129,7 +129,7 @@ export function AstrologyAnalysisInterface({ onAnalysisComplete }: AstrologyAnal
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="birthPlace" className="text-card-foreground font-medium">
+                  <Label htmlFor="birthPlace" className="text-white font-medium">
                     <MapPin className="inline mr-2 h-4 w-4 text-violet-500" />
                     Birth Place (City, Country)
                   </Label>
@@ -145,11 +145,11 @@ export function AstrologyAnalysisInterface({ onAnalysisComplete }: AstrologyAnal
                 </div>
 
                 <div className="p-4 bg-violet-50 rounded-lg border border-violet-200">
-                  <h5 className="font-medium text-card-foreground mb-3 flex items-center">
+                  <h5 className="font-medium text-white mb-3 flex items-center">
                     <Stars className="text-violet-500 mr-2 h-4 w-4" />
                     Why We Need This Information
                   </h5>
-                  <ul className="text-sm text-muted-foreground space-y-1">
+                  <ul className="text-sm text-white/80 space-y-1">
                     <li>• <strong>Birth Date:</strong> Determines your sun sign and planetary positions</li>
                     <li>• <strong>Birth Time:</strong> Essential for calculating rising sign and house positions</li>
                     <li>• <strong>Birth Place:</strong> Used to determine exact celestial coordinates</li>
@@ -177,7 +177,7 @@ export function AstrologyAnalysisInterface({ onAnalysisComplete }: AstrologyAnal
                       </>
                     )}
                   </Button>
-                  <p className="text-sm text-muted-foreground mt-2">Analysis typically takes 15-45 seconds</p>
+                  <p className="text-sm text-white/80 mt-2">Analysis typically takes 15-45 seconds</p>
                 </div>
 
                 {/* Error Display */}

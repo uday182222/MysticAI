@@ -105,8 +105,8 @@ export function NumerologyAnalysisInterface({ onAnalysisComplete }: NumerologyAn
           <div className="mx-auto w-12 h-12 bg-gradient-to-br from-violet-100 to-purple-100 rounded-full flex items-center justify-center mb-4">
             <Calculator className="h-6 w-6 text-violet-500" />
           </div>
-          <CardTitle className="text-2xl text-card-foreground">Numerology Analysis</CardTitle>
-          <CardDescription className="text-muted-foreground">
+          <CardTitle className="text-2xl text-white">Numerology Analysis</CardTitle>
+          <CardDescription className="text-white/80">
             Discover the hidden meanings behind numbers in your life
           </CardDescription>
         </CardHeader>
@@ -149,7 +149,7 @@ export function NumerologyAnalysisInterface({ onAnalysisComplete }: NumerologyAn
                     placeholder="Enter your full name as on birth certificate"
                     data-testid="input-numerology-name"
                   />
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-white/80">
                     Use your complete birth name for the most accurate reading
                   </p>
                 </div>
@@ -163,7 +163,7 @@ export function NumerologyAnalysisInterface({ onAnalysisComplete }: NumerologyAn
                     onChange={(e) => setBirthDate(e.target.value)}
                     data-testid="input-numerology-birthdate"
                   />
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-white/80">
                     Your birth date is used to calculate your Life Path number
                   </p>
                 </div>
@@ -172,11 +172,11 @@ export function NumerologyAnalysisInterface({ onAnalysisComplete }: NumerologyAn
               {/* Personal Analysis Features */}
               <Card className="bg-violet-50/50 border-violet-200">
                 <CardContent className="p-4">
-                  <h4 className="font-semibold text-card-foreground mb-2 flex items-center">
+                  <h4 className="font-semibold text-white mb-2 flex items-center">
                     <Hash className="mr-2 h-4 w-4 text-violet-500" />
                     Personal Analysis Includes:
                   </h4>
-                  <ul className="text-sm text-muted-foreground space-y-1">
+                  <ul className="text-sm text-white/80 space-y-1">
                     <li>• Life Path Number - Your life's purpose and journey</li>
                     <li>• Destiny Number - Your ultimate life goals</li>
                     <li>• Soul Urge Number - Your inner desires and motivations</li>
@@ -199,7 +199,7 @@ export function NumerologyAnalysisInterface({ onAnalysisComplete }: NumerologyAn
                   placeholder="Enter the full company name"
                   data-testid="input-numerology-company"
                 />
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-white/80">
                   Use the complete business name as registered
                 </p>
               </div>
@@ -207,11 +207,11 @@ export function NumerologyAnalysisInterface({ onAnalysisComplete }: NumerologyAn
               {/* Business Analysis Features */}
               <Card className="bg-violet-50/50 border-violet-200">
                 <CardContent className="p-4">
-                  <h4 className="font-semibold text-card-foreground mb-2 flex items-center">
+                  <h4 className="font-semibold text-white mb-2 flex items-center">
                     <Hash className="mr-2 h-4 w-4 text-violet-500" />
                     Business Analysis Includes:
                   </h4>
-                  <ul className="text-sm text-muted-foreground space-y-1">
+                  <ul className="text-sm text-white/80 space-y-1">
                     <li>• Business Destiny Number - Company's ultimate purpose</li>
                     <li>• Success potential and growth opportunities</li>
                     <li>• Favorable business activities and ventures</li>
