@@ -22,10 +22,10 @@ services:
         description: "OpenAI API key for AI analysis features (starts with sk-)"
       - key: RAZORPAY_KEY_ID
         sync: false
-        description: "Razorpay Key ID for payment processing"
+        description: "Razorpay Key ID for payment processing (optional - leave empty to disable payments)"
       - key: RAZORPAY_KEY_SECRET
         sync: false
-        description: "Razorpay Key Secret for payment processing"
+        description: "Razorpay Key Secret for payment processing (optional - leave empty to disable payments)"
       - key: SESSION_SECRET
         generateValue: true
         description: "Secret key for encrypting user sessions (auto-generated)"

@@ -1,11 +1,23 @@
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 
-// Initialize Razorpay
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || '',
-  key_secret: process.env.RAZORPAY_KEY_SECRET || '',
-});
+// Initialize Razorpay only if keys are provided
+let razorpay: Razorpay | null = null;
+const hasRazorpayKeys = process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET;
+
+if (hasRazorpayKeys) {
+  try {
+    razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID!,
+      key_secret: process.env.RAZORPAY_KEY_SECRET!,
+    });
+    console.log('Razorpay initialized successfully');
+  } catch (error) {
+    console.error('Failed to initialize Razorpay:', error);
+  }
+} else {
+  console.log('Razorpay keys not provided - payment functionality disabled');
+}
 
 export interface PaymentTier {
   id: string;
@@ -44,6 +56,10 @@ export const PAYMENT_TIERS: PaymentTier[] = [
 ];
 
 export async function createRazorpayOrder(amount: number, currency: string = 'INR') {
+  if (!razorpay) {
+    throw new Error('Payment service is not available - Razorpay keys not configured');
+  }
+
   try {
     const options = {
       amount: amount * 100, // Razorpay expects amount in paise
@@ -67,10 +83,15 @@ export function verifyRazorpaySignature(
   razorpay_payment_id: string,
   razorpay_signature: string
 ): boolean {
+  if (!razorpay || !process.env.RAZORPAY_KEY_SECRET) {
+    console.error('Payment service not available for signature verification');
+    return false;
+  }
+
   try {
     const body = razorpay_order_id + '|' + razorpay_payment_id;
     const expectedSignature = crypto
-      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET || '')
+      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
       .update(body.toString())
       .digest('hex');
 
@@ -82,6 +103,10 @@ export function verifyRazorpaySignature(
 }
 
 export async function getRazorpayPaymentDetails(paymentId: string) {
+  if (!razorpay) {
+    throw new Error('Payment service is not available - Razorpay keys not configured');
+  }
+
   try {
     const payment = await razorpay.payments.fetch(paymentId);
     return payment;
