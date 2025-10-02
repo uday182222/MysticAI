@@ -31,8 +31,8 @@ services:
         description: "Secret key for encrypting user sessions (auto-generated)"
 
 # Optional: Database service (uncomment if you want Render to manage your database)
-# - type: pserv
-#   name: mysticai-db
-#   env: postgresql
-#   plan: free
-#   region: oregon
+- type: pserv
+  name: mysticai-db
+  env: postgresql
+  plan: free
+  region: oregon
