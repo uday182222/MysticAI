@@ -8,8 +8,6 @@ import { VastuAnalysisInterface } from "@/components/vastu-analysis-interface";
 import { NumerologyAnalysisInterface } from "@/components/numerology-analysis-interface";
 import { TarotAnalysisInterface } from "@/components/tarot-analysis-interface";
 import { AiChatInterface } from "@/components/ai-chat-interface";
-import { CameraDebug } from "@/components/camera-debug";
-import { SimpleCameraTest } from "@/components/simple-camera-test";
 import { PalmAnalysisResultsModern } from "@/components/PalmAnalysisResultsModern";
 import { AstrologyResults } from "@/components/astrology-results";
 import { VastuResults } from "@/components/vastu-results";
@@ -19,7 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/components/auth/auth-context";
-import { Hand, Stars, Home as HomeIcon, Calculator, Zap, User, Sparkles, MessageCircle, Camera } from "lucide-react";
+import { Hand, Stars, Home as HomeIcon, Calculator, Zap, User, Sparkles, MessageCircle } from "lucide-react";
 import { PalmAnalysisResult, AstrologyAnalysisResult, AstrologyInput, VastuAnalysisResult, VastuInput, NumerologyAnalysisResult, NumerologyInput, TarotAnalysisResult, TarotInput } from "@shared/schema";
 
 export default function Dashboard() {
@@ -218,7 +216,10 @@ export default function Dashboard() {
                 
                 {/* Main Content Area */}
                 <div className="flex-1">
-                  <div className="clean-card p-8">
+                  <div className="relative overflow-hidden border-0 shadow-lg bg-white/90 backdrop-blur rounded-2xl">
+                    {/* Gradient top border */}
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-400 via-purple-400 to-blue-400" />
+                    <div className="p-8 pt-9">
                     <TabsContent value="palm" className="mt-0">
                       <PalmAnalysisInterface onAnalysisComplete={handlePalmAnalysisComplete} />
                     </TabsContent>
@@ -242,120 +243,94 @@ export default function Dashboard() {
                     <TabsContent value="ai-chat" className="mt-0">
                       <AiChatInterface />
                     </TabsContent>
-                    
-                    <TabsContent value="camera-debug" className="mt-0">
-                      <CameraDebug />
-                    </TabsContent>
-                    
-                    <TabsContent value="simple-camera" className="mt-0">
-                      <SimpleCameraTest />
-                    </TabsContent>
+                    </div>
                   </div>
                 </div>
 
                 {/* Right Sidebar Navigation */}
                 <div className="w-80 flex-shrink-0">
                   <div className="sticky top-8">
-                    <div className="clean-card p-6">
-                      <h3 className="text-lg font-semibold text-foreground mb-6">Analysis Tools</h3>
-                      <TabsList className="flex flex-col h-auto p-0 bg-transparent gap-2 w-full">
+                    <div className="relative overflow-hidden border-0 shadow-lg bg-white/90 backdrop-blur rounded-2xl">
+                      {/* Gradient top border */}
+                      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-400 via-purple-400 to-blue-400" />
+                      <div className="p-6 pt-7">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-6">Analysis Tools</h3>
+                        <TabsList className="flex flex-col h-auto p-0 bg-transparent gap-2 w-full">
                         <TabsTrigger 
                           value="palm" 
-                          className="w-full justify-start gap-3 p-4 h-auto data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-secondary-foreground hover:text-foreground hover:bg-muted transition-all"
+                          className="w-full justify-start gap-3 p-4 h-auto data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-purple-500 data-[state=active]:text-white text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all rounded-lg"
                           data-testid="tab-palm"
                         >
                           <Hand className="h-5 w-5" />
                           <div className="text-left">
                             <div className="font-medium">Palm Reading</div>
-                            <div className="text-xs text-muted-foreground">Analyze your palm lines</div>
+                            <div className="text-xs text-gray-500">Analyze your palm lines</div>
                           </div>
                         </TabsTrigger>
                         
                         <TabsTrigger 
                           value="astrology" 
-                          className="w-full justify-start gap-3 p-4 h-auto data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-secondary-foreground hover:text-foreground hover:bg-muted transition-all"
+                          className="w-full justify-start gap-3 p-4 h-auto data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-purple-500 data-[state=active]:text-white text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all rounded-lg"
                           data-testid="tab-astrology"
                         >
                           <Stars className="h-5 w-5" />
                           <div className="text-left">
                             <div className="font-medium">Astrology</div>
-                            <div className="text-xs text-muted-foreground">Birth chart insights</div>
+                            <div className="text-xs text-gray-500">Birth chart insights</div>
                           </div>
                         </TabsTrigger>
                         
                         <TabsTrigger 
                           value="vastu" 
-                          className="w-full justify-start gap-3 p-4 h-auto data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-secondary-foreground hover:text-foreground hover:bg-muted transition-all"
+                          className="w-full justify-start gap-3 p-4 h-auto data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-purple-500 data-[state=active]:text-white text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all rounded-lg"
                           data-testid="tab-vastu"
                         >
                           <HomeIcon className="h-5 w-5" />
                           <div className="text-left">
                             <div className="font-medium">Vastu</div>
-                            <div className="text-xs text-muted-foreground">Space energy analysis</div>
+                            <div className="text-xs text-gray-500">Space energy analysis</div>
                           </div>
                         </TabsTrigger>
                         
                         <TabsTrigger 
                           value="numerology" 
-                          className="w-full justify-start gap-3 p-4 h-auto data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-secondary-foreground hover:text-foreground hover:bg-muted transition-all"
+                          className="w-full justify-start gap-3 p-4 h-auto data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-purple-500 data-[state=active]:text-white text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all rounded-lg"
                           data-testid="tab-numerology"
                         >
                           <Calculator className="h-5 w-5" />
                           <div className="text-left">
                             <div className="font-medium">Numerology</div>
-                            <div className="text-xs text-muted-foreground">Numbers and destiny</div>
+                            <div className="text-xs text-gray-500">Numbers and destiny</div>
                           </div>
                         </TabsTrigger>
                         
                         <TabsTrigger 
                           value="tarot" 
-                          className="w-full justify-start gap-3 p-4 h-auto data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-secondary-foreground hover:text-foreground hover:bg-muted transition-all"
+                          className="w-full justify-start gap-3 p-4 h-auto data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-purple-500 data-[state=active]:text-white text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all rounded-lg"
                           data-testid="tab-tarot"
                         >
                           <Zap className="h-5 w-5" />
                           <div className="text-left">
                             <div className="font-medium">Tarot</div>
-                            <div className="text-xs text-muted-foreground">Card divination</div>
+                            <div className="text-xs text-gray-500">Card divination</div>
                           </div>
                         </TabsTrigger>
 
                         <TabsTrigger 
                           value="ai-chat" 
-                          className="w-full justify-start gap-3 p-4 h-auto data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-secondary-foreground hover:text-foreground hover:bg-muted transition-all"
+                          className="w-full justify-start gap-3 p-4 h-auto data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-purple-500 data-[state=active]:text-white text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all rounded-lg"
                           data-testid="tab-ai-chat"
                         >
                           <MessageCircle className="h-5 w-5" />
                           <div className="text-left">
                             <div className="font-medium">AI Chat</div>
-                            <div className="text-xs text-muted-foreground">Mystical guidance</div>
+                            <div className="text-xs text-gray-500">Mystical guidance</div>
                           </div>
                         </TabsTrigger>
 
-                        <TabsTrigger 
-                          value="camera-debug" 
-                          className="w-full justify-start gap-3 p-4 h-auto data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-secondary-foreground hover:text-foreground hover:bg-muted transition-all"
-                          data-testid="tab-camera-debug"
-                        >
-                          <Camera className="h-5 w-5" />
-                          <div className="text-left">
-                            <div className="font-medium">Camera Debug</div>
-                            <div className="text-xs text-muted-foreground">Test camera functionality</div>
-                          </div>
-                        </TabsTrigger>
-
-                        <TabsTrigger 
-                          value="simple-camera" 
-                          className="w-full justify-start gap-3 p-4 h-auto data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-secondary-foreground hover:text-foreground hover:bg-muted transition-all"
-                          data-testid="tab-simple-camera"
-                        >
-                          <Camera className="h-5 w-5" />
-                          <div className="text-left">
-                            <div className="font-medium">Simple Camera</div>
-                            <div className="text-xs text-muted-foreground">Basic camera test</div>
-                          </div>
-                        </TabsTrigger>
                         
                       </TabsList>
+                      </div>
                     </div>
                   </div>
                 </div>

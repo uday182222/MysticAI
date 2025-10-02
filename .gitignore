@@ -7,3 +7,4 @@ vite.config.ts.*
 .config/
 .local/
 dev.db
+.env

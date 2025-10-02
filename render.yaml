@@ -3,8 +3,12 @@ services:
     name: mysticai-app
     env: node
     plan: free
-    buildCommand: npm run build
+    region: oregon
+    branch: main
+    buildCommand: npm install && npm run build
     startCommand: npm start
+    healthCheckPath: /
+    autoDeploy: true
     envVars:
       - key: NODE_ENV
         value: production
@@ -12,11 +16,23 @@ services:
         value: 10000
       - key: DATABASE_URL
         sync: false
+        description: "PostgreSQL database connection string (e.g., from Neon, Supabase, or Render PostgreSQL)"
       - key: OPENAI_API_KEY
         sync: false
+        description: "OpenAI API key for AI analysis features (starts with sk-)"
       - key: RAZORPAY_KEY_ID
         sync: false
+        description: "Razorpay Key ID for payment processing"
       - key: RAZORPAY_KEY_SECRET
         sync: false
+        description: "Razorpay Key Secret for payment processing"
       - key: SESSION_SECRET
         generateValue: true
+        description: "Secret key for encrypting user sessions (auto-generated)"
+
+# Optional: Database service (uncomment if you want Render to manage your database)
+# - type: pserv
+#   name: mysticai-db
+#   env: postgresql
+#   plan: free
+#   region: oregon

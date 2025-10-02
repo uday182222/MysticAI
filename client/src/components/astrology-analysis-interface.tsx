@@ -85,19 +85,21 @@ export function AstrologyAnalysisInterface({ onAnalysisComplete }: AstrologyAnal
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold text-primary mb-4">Astrology Chart Analysis</h3>
-            <p className="text-lg text-secondary">
+            <h3 className="text-3xl font-bold text-white mb-4">Astrology Chart Analysis</h3>
+            <p className="text-lg text-gray-300">
               Enter your birth details to receive a comprehensive astrological reading
             </p>
           </div>
 
-          <Card>
-            <CardContent className="p-8">
+          <Card className="relative overflow-hidden border-0 shadow-lg bg-white/90 backdrop-blur rounded-2xl">
+            {/* Gradient top border */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-400 via-purple-400 to-blue-400" />
+            <CardContent className="p-8 pt-9">
               <div className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="birthDate" className="text-primary font-medium">
-                      <Calendar className="inline mr-2 h-4 w-4" />
+                    <Label htmlFor="birthDate" className="text-gray-900 font-medium">
+                      <Calendar className="inline mr-2 h-4 w-4 text-violet-500" />
                       Birth Date
                     </Label>
                     <Input
@@ -111,8 +113,8 @@ export function AstrologyAnalysisInterface({ onAnalysisComplete }: AstrologyAnal
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="birthTime" className="text-primary font-medium">
-                      <Clock className="inline mr-2 h-4 w-4" />
+                    <Label htmlFor="birthTime" className="text-gray-900 font-medium">
+                      <Clock className="inline mr-2 h-4 w-4 text-violet-500" />
                       Birth Time
                     </Label>
                     <Input
@@ -127,8 +129,8 @@ export function AstrologyAnalysisInterface({ onAnalysisComplete }: AstrologyAnal
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="birthPlace" className="text-primary font-medium">
-                    <MapPin className="inline mr-2 h-4 w-4" />
+                  <Label htmlFor="birthPlace" className="text-gray-900 font-medium">
+                    <MapPin className="inline mr-2 h-4 w-4 text-violet-500" />
                     Birth Place (City, Country)
                   </Label>
                   <Input
@@ -142,12 +144,12 @@ export function AstrologyAnalysisInterface({ onAnalysisComplete }: AstrologyAnal
                   />
                 </div>
 
-                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <h5 className="font-medium text-primary mb-3 flex items-center">
-                    <Stars className="text-accent mr-2 h-4 w-4" />
+                <div className="p-4 bg-violet-50 rounded-lg border border-violet-200">
+                  <h5 className="font-medium text-gray-900 mb-3 flex items-center">
+                    <Stars className="text-violet-500 mr-2 h-4 w-4" />
                     Why We Need This Information
                   </h5>
-                  <ul className="text-sm text-secondary space-y-1">
+                  <ul className="text-sm text-gray-600 space-y-1">
                     <li>• <strong>Birth Date:</strong> Determines your sun sign and planetary positions</li>
                     <li>• <strong>Birth Time:</strong> Essential for calculating rising sign and house positions</li>
                     <li>• <strong>Birth Place:</strong> Used to determine exact celestial coordinates</li>
@@ -160,7 +162,7 @@ export function AstrologyAnalysisInterface({ onAnalysisComplete }: AstrologyAnal
                     onClick={handleAnalyze}
                     disabled={analysisMutation.isPending || !birthDate || !birthTime || !birthPlace}
                     size="lg"
-                    className="bg-accent hover:bg-blue-600 text-white px-8 py-4 text-lg shadow-lg"
+                    className="bg-gradient-to-r from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600 text-white px-8 py-4 text-lg shadow-lg"
                     data-testid="button-analyze-astrology"
                   >
                     {analysisMutation.isPending ? (
@@ -175,7 +177,7 @@ export function AstrologyAnalysisInterface({ onAnalysisComplete }: AstrologyAnal
                       </>
                     )}
                   </Button>
-                  <p className="text-sm text-secondary mt-2">Analysis typically takes 15-45 seconds</p>
+                  <p className="text-sm text-gray-600 mt-2">Analysis typically takes 15-45 seconds</p>
                 </div>
 
                 {/* Error Display */}

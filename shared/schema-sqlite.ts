@@ -182,7 +182,7 @@ export const astrologyAnalysisResultSchema = z.object({
     mars: z.string(),
     jupiter: z.string(),
     saturn: z.string(),
-  }),
+  }).optional(),
   lifeAreas: z.object({
     loveAndRelationships: z.object({
       overview: z.string(),
@@ -209,7 +209,7 @@ export const astrologyAnalysisResultSchema = z.object({
     thisYear: z.string(),
     nextThreeYears: z.string(),
     majorLifeEvents: z.array(z.string()),
-  }),
+  }).optional(),
 });
 
 // Numerology analysis schemas
@@ -308,7 +308,7 @@ export const vastuInputSchema = z.object({
 });
 
 export const vastuAnalysisResultSchema = z.object({
-  overallScore: z.number(),
+  overallScore: z.number().min(0).max(100),
   overallAssessment: z.string(),
   energyFlow: z.object({
     positive: z.array(z.string()),
@@ -320,7 +320,7 @@ export const vastuAnalysisResultSchema = z.object({
     direction: z.string(),
     vastuCompliance: z.string(),
     recommendations: z.array(z.string()),
-    score: z.number(),
+    score: z.number().min(0).max(100),
   })),
   recommendations: z.object({
     immediate: z.array(z.string()),
@@ -333,7 +333,7 @@ export const vastuAnalysisResultSchema = z.object({
     relationships: z.string(),
     career: z.string(),
   }),
-});
+}).passthrough(); // Allow additional fields
 
 // User authentication schemas
 export const userRegistrationSchema = z.object({

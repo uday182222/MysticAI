@@ -369,7 +369,7 @@ export async function analyzePalmImage(base64Image: string): Promise<PalmAnalysi
         },
       ],
       tools: [{ type: "function", function: palmAnalysisFunction }],
-      tool_choice: { type: "function", function: { name: "analyze_palm_reading" } },
+      tool_choice: "auto",
       max_completion_tokens: 2000,
     });
 
@@ -559,7 +559,7 @@ Use traditional Vedic astrology principles and provide accurate astronomical cal
         },
       ],
       tools: [{ type: "function", function: astrologyAnalysisFunction }],
-      tool_choice: { type: "function", function: { name: "analyze_astrology_chart" } },
+      tool_choice: "auto",
       max_completion_tokens: 3000,
     });
 
@@ -569,6 +569,9 @@ Use traditional Vedic astrology principles and provide accurate astronomical cal
     }
 
     const rawResult = JSON.parse(toolCall.function.arguments);
+    
+    // Log the raw result for debugging
+    console.log("Raw astrology result:", JSON.stringify(rawResult, null, 2));
     
     // Validate with Zod schema
     try {
@@ -809,7 +812,7 @@ Provide a comprehensive Vastu analysis with practical recommendations for optima
       model: "gpt-4o-mini",
       messages,
       tools: [{ type: "function", function: vastuAnalysisFunction }],
-      tool_choice: { type: "function", function: { name: "analyze_vastu_layout" } },
+      tool_choice: "auto",
       max_completion_tokens: 3000,
     });
 
@@ -940,7 +943,7 @@ Provide detailed numerological analysis with practical guidance for personal and
         },
       ],
       tools: [{ type: "function", function: numerologyAnalysisFunction }],
-      tool_choice: { type: "function", function: { name: "analyze_numerology" } },
+      tool_choice: "auto",
       max_completion_tokens: 3000,
     });
 
@@ -1051,7 +1054,7 @@ Provide a comprehensive tarot interpretation with deep insights, practical guida
         },
       ],
       tools: [{ type: "function", function: tarotAnalysisFunction }],
-      tool_choice: { type: "function", function: { name: "analyze_tarot_reading" } },
+      tool_choice: "auto",
       max_completion_tokens: 4000,
     });
 
