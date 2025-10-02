@@ -216,10 +216,13 @@ export default function Dashboard() {
                 
                 {/* Main Content Area */}
                 <div className="flex-1">
-                  <div className="relative overflow-hidden border-0 shadow-lg bg-card/80 backdrop-blur rounded-2xl">
+                  <div className="relative overflow-hidden border-0 shadow-lg bg-card/60 backdrop-blur rounded-2xl">
+                    {/* Subtle background pattern */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-blue-500/5" />
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-violet-400/10 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
                     {/* Gradient top border */}
                     <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-400 via-purple-400 to-blue-400" />
-                    <div className="p-8 pt-9">
+                    <div className="relative p-8 pt-9">
                     <TabsContent value="palm" className="mt-0">
                       <PalmAnalysisInterface onAnalysisComplete={handlePalmAnalysisComplete} />
                     </TabsContent>
@@ -250,7 +253,7 @@ export default function Dashboard() {
                 {/* Right Sidebar Navigation */}
                 <div className="w-80 flex-shrink-0">
                   <div className="sticky top-8">
-                    <div className="relative overflow-hidden border-0 shadow-lg bg-card/80 backdrop-blur rounded-2xl">
+                    <div className="relative overflow-hidden border-0 shadow-lg bg-card/60 backdrop-blur rounded-2xl">
                       {/* Gradient top border */}
                       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-400 via-purple-400 to-blue-400" />
                       <div className="p-6 pt-7">
